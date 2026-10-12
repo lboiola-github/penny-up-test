@@ -660,7 +660,7 @@ function endFrenzy(){T.frenzyMeter=0;wrap.classList.remove('frenzy');play('frenz
 // ---------- helpers ----------
 // Helpers orbit the coin in rings, inner ring first, like Cookie Clicker's cursor rings (it draws every
 // cursor, 50 per ring). A phone has less room: 3 rings of 12 + 18 + 24 = 54 hands, smaller further out.
-const RINGS=[{n:12,gap:20,size:38},{n:18,gap:42,size:29},{n:24,gap:62,size:23}];
+const RINGS=[{n:48,gap:20,size:38},{n:72,gap:42,size:29},{n:96,gap:62,size:23}];
 const HAND_MAX=RINGS.reduce((a,r)=>a+r.n,0);
 let hands=[],hrings=[];
 function layoutHands(restyle){
