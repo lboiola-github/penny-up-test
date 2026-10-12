@@ -42,7 +42,7 @@ body{margin:0;background:var(--page);font-family:var(--body);color:var(--ink);di
 .props{position:absolute;inset:0;pointer-events:none}
 .prop{position:absolute;height:auto;pointer-events:none}
 .coin-shadow{position:absolute;left:50%;bottom:16%;width:44%;height:5%;transform:translateX(-50%);background:#2B2340;opacity:.16;border-radius:50%}
-.coin-wrap{position:relative;z-index:1;width:min(200px,52vw);aspect-ratio:1}
+.coin-wrap{position:relative;z-index:1;width:min(220px,57vw);aspect-ratio:1}
 .ring{position:absolute;inset:-14px;width:calc(100% + 28px);height:calc(100% + 28px);transform:rotate(-90deg);pointer-events:none}
 .ring .track{fill:none;stroke:rgba(43,35,64,.12);stroke-width:7}
 .ring .fill{fill:none;stroke:var(--gold);stroke-width:7;stroke-linecap:round;transition:stroke .2s}
@@ -622,7 +622,7 @@ function floatText(px,py,text,crit){
   if(reduce)return;
   const f=document.createElement('div');f.className='float'+(crit?' crit':'');f.textContent=text;
   f.style.left=px+'px';f.style.top=py+'px';scene.appendChild(f);
-  f.animate([{transform:'translate(-50%,-50%) scale(.6)',opacity:1},{transform:'translate(-50%,-160%) scale(1.1)',opacity:1,offset:.3},{transform:'translate(-50%,-320%) scale(1)',opacity:0}],{duration:crit?1200:900,easing:'cubic-bezier(.2,.7,.3,1)'}).onfinish=()=>f.remove();
+  f.animate([{transform:'translate(-50%,-50%) scale(.6)',opacity:1},{transform:'translate(-50%,-160%) scale(1.1)',opacity:1,offset:.3},{transform:'translate(-50%,-320%) scale(1)',opacity:0}],{duration:crit?1920:1440,easing:'cubic-bezier(.2,.7,.3,1)'}).onfinish=()=>f.remove();
 }
 function sparks(px,py,n){
   if(reduce)return;
