@@ -64,9 +64,10 @@ body{margin:0;background:var(--page);font-family:var(--body);color:var(--ink);di
 .float.crit{font-size:30px;color:var(--penny-dk)}
 .spark{position:absolute;width:14px;height:14px;border-radius:50%;background:var(--penny);border:2.5px solid var(--ink);pointer-events:none;z-index:4}
 .rain{position:absolute;top:-24px;width:18px;height:18px;border-radius:50%;background:var(--gold);border:2.5px solid var(--ink);pointer-events:none;z-index:0}
-.piggy{position:absolute;right:23%;bottom:4%;width:21%;min-width:64px;border:0;background:none;padding:0;cursor:pointer;z-index:2;display:grid;justify-items:center;gap:2px}
+.piggy{position:absolute;right:5%;bottom:5%;width:21%;min-width:64px;border:0;background:none;padding:0;cursor:pointer;z-index:2;display:grid;justify-items:center;gap:2px}
 .piggy img{width:100%;height:auto;display:block;filter:drop-shadow(0 4px 0 rgba(43,35,64,.18));-webkit-user-drag:none}
-.piggy.full img{animation:wiggle 1.6s ease-in-out infinite}
+.piggy.full img{animation:pighop 1.6s ease-in-out infinite;transform-origin:50% 100%}
+@keyframes pighop{0%,50%,100%{transform:translateY(0) rotate(0)}58%{transform:translateY(-16%) rotate(-6deg)}66%{transform:translateY(0) rotate(5deg)}74%{transform:translateY(-7%) rotate(-3deg)}82%{transform:translateY(0) rotate(0)}}
 @keyframes wiggle{0%,70%,100%{transform:rotate(0)}78%{transform:rotate(-6deg)}86%{transform:rotate(6deg)}94%{transform:rotate(-3deg)}}
 .piggy .pbar{width:80%;height:7px;border:2px solid var(--ink);border-radius:6px;background:#fff;overflow:hidden}
 .piggy .pbar i{display:block;height:100%;width:0;background:var(--gold)}
@@ -161,8 +162,9 @@ body{margin:0;background:var(--page);font-family:var(--body);color:var(--ink);di
 .scene svg.bg,.props{filter:saturate(.7) contrast(.7)}
 .veil{position:absolute;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 60% 55% at 50% 48%,rgba(255,246,229,0) 40%,rgba(43,35,64,.22) 100%)}
 .coin-wrap::before{content:"";position:absolute;inset:-2.5%;border-radius:50%;background:radial-gradient(circle,rgba(255,226,140,.95) 0%,rgba(255,214,110,.55) 55%,rgba(255,214,110,0) 72%);z-index:-1}
-.piggy img{filter:drop-shadow(3px 0 0 #fff) drop-shadow(-3px 0 0 #fff) drop-shadow(0 3px 0 #fff) drop-shadow(0 -3px 0 #fff) drop-shadow(0 5px 0 rgba(43,35,64,.3))}
-.piggy::before{content:"";position:absolute;left:-18%;right:-18%;bottom:-6%;height:46%;border-radius:50%;background:radial-gradient(ellipse,rgba(255,226,140,.9),rgba(255,226,140,0) 70%);z-index:-1}
+.piggy:not(.on) img{filter:saturate(.7) contrast(.7)}
+.piggy.on img{filter:drop-shadow(3px 0 0 #fff) drop-shadow(-3px 0 0 #fff) drop-shadow(0 3px 0 #fff) drop-shadow(0 -3px 0 #fff) drop-shadow(0 5px 0 rgba(43,35,64,.3))}
+.piggy.on::before{content:"";position:absolute;left:-18%;right:-18%;bottom:-6%;height:46%;border-radius:50%;background:radial-gradient(ellipse,rgba(255,226,140,.9),rgba(255,226,140,0) 70%);z-index:-1}
 .lucky img{filter:drop-shadow(0 0 .8px #fff) drop-shadow(0 0 .8px #fff) drop-shadow(0 0 4px rgba(255,244,200,.55))}
 @media (prefers-reduced-motion:reduce){.coin img,.piggy.full img,.buy.ready,.heir.ready{animation:none}.row.bump{animation:none}}
 </style>
@@ -296,12 +298,12 @@ const BG={
   station:`<rect width="400" height="420" fill="#2F2C50"/><g stroke="#3F3B68" stroke-width="3" fill="none"><path d="M100 0V296M200 0V296M300 0V296M0 100H400M0 200H400"/></g><g fill="#56528A"><rect x="94" y="94" width="12" height="12" rx="3"/><rect x="194" y="194" width="12" height="12" rx="3"/><rect x="294" y="94" width="12" height="12" rx="3"/></g><rect y="290" width="400" height="16" fill="#8FD3F4"/><rect y="306" width="400" height="114" fill="#737896"/><path d="M0 306H400" stroke="#2B2340" stroke-width="4"/><g stroke="#5D627F" stroke-width="3"><path d="M0 350H400M0 392H400M100 306V420M200 306V420M300 306V420"/></g>`,
 };
 const SCENES={
-  room:{coin:'coin.svg',piggy:'a/piggy-bank.svg',props:[['window.svg','right:6%;top:6%;width:28%'],['poster.svg','left:6%;top:9%;width:22%;transform:rotate(-4deg)'],['mattress.svg','left:-4%;bottom:6%;width:44%'],['a/box.svg','right:2%;bottom:5%;width:22%']]},
-  studioapt:{coin:'a/coin-5.svg',piggy:'a/piggy-bank.svg',props:[['window.svg','right:6%;top:6%;width:28%'],['a/studio-bed.svg','left:-3%;bottom:3%;width:44%'],['a/studio-table-plant.svg','right:0;bottom:4%;width:23%']]},
-  suburban:{coin:'a/coin-10.svg',piggy:'a/cash-register.svg',props:[['a/suburban-frame.svg','left:6%;top:6%;width:20%'],['a/suburban-window.svg','right:4%;top:3%;width:31%'],['a/suburban-sofa.svg','left:-3%;bottom:3%;width:42%'],['a/suburban-bookshelf.svg','right:-11%;bottom:12%;width:55%']]},
-  penthouse:{coin:'a/coin-25.svg',piggy:'a/cash-register.svg',props:[['a/penthouse-window.svg','left:3%;top:2%;width:34%'],['a/suburban-frame.svg','right:7%;top:8%;width:18%'],['a/suburban-sofa.svg','left:-3%;bottom:3%;width:42%'],['a/penthouse-lamp.svg','right:-10%;bottom:13%;width:51%']]},
+  room:{coin:'coin.svg',piggy:'a/piggy-bank.svg',props:[['window.svg','right:6%;top:6%;width:28%'],['poster.svg','left:6%;top:9%;width:22%;transform:rotate(-4deg)'],['mattress.svg','left:-4%;bottom:6%;width:44%'],['a/box.svg','right:3%;bottom:17%;width:20%']]},
+  studioapt:{coin:'a/coin-5.svg',piggy:'a/piggy-bank.svg',props:[['window.svg','right:6%;top:6%;width:28%'],['a/studio-bed.svg','left:-3%;bottom:3%;width:44%'],['a/studio-table-plant.svg','right:1%;bottom:16%;width:22%']]},
+  suburban:{coin:'a/coin-10.svg',piggy:'a/cash-register.svg',props:[['a/suburban-frame.svg','left:6%;top:6%;width:20%'],['a/suburban-window.svg','right:4%;top:3%;width:31%'],['a/suburban-sofa.svg','left:-3%;bottom:3%;width:42%'],['a/suburban-bookshelf.svg','right:-19%;bottom:16%;width:50%']]},
+  penthouse:{coin:'a/coin-25.svg',piggy:'a/cash-register.svg',props:[['a/penthouse-window.svg','right:3%;top:2%;width:34%'],['a/suburban-frame.svg','left:8%;top:8%;width:18%'],['a/penthouse-lamp.svg','left:-14%;bottom:13%;width:51%'],['a/suburban-sofa.svg','left:-3%;bottom:3%;width:42%']]},
   mansion:{coin:'a/coin-1d.svg',piggy:'a/safe.svg',props:[['a/mansion-chandelier.svg','left:5%;top:-6%;width:25%'],['a/suburban-frame.svg','right:7%;top:8%;width:18%'],['a/mansion-staircase.svg','left:-3%;bottom:3%;width:42%']]},
-  island:{coin:'a/coin-gold.svg',piggy:'a/treasure-chest.svg',props:[['a/island-palm.svg','right:-4%;bottom:8%;width:32%'],['a/island-hammock.svg','left:-3%;bottom:3%;width:44%']]},
+  island:{coin:'a/coin-gold.svg',piggy:'a/treasure-chest.svg',props:[['a/island-palm.svg','right:-8%;bottom:19%;width:30%'],['a/island-hammock.svg','left:-3%;bottom:3%;width:44%']]},
   station:{coin:'a/coin-diamond.svg',piggy:'a/treasure-chest.svg',props:[['a/station-porthole.svg','right:4%;top:3%;width:31%'],['a/station-armchair.svg','left:1%;bottom:3%;width:32%']]},
 };
 // ---------- state ----------
@@ -411,7 +413,7 @@ const sfx={
   appear1(){const t=ac.currentTime;tone(1568,t,.15,{type:'sine',vol:.07});tone(2093,t+.08,.2,{type:'sine',vol:.06})},
   appear2(){const t=ac.currentTime;[1047,1319,1568].forEach((f,i)=>tone(f,t+i*.07,.25,{type:'sine',vol:.07}))},
   appear3(){const t=ac.currentTime;[1568,1976,2349,2637,3136].forEach((f,i)=>tone(f,t+i*.06,.4,{type:'sine',vol:.07}));noise(t,.4,{vol:.04,hp:7000})},
-  helper(){tone(1000+Math.random()*300,ac.currentTime,.08,{vol:.035,to:600})},
+  helper(){const t=ac.currentTime;tone(640+Math.random()*80,t,.05,{type:'sine',vol:.04,to:420,attack:.002});noise(t,.012,{vol:.006,hp:3500})},
   move(){const t=ac.currentTime;[523,659,784,1047,1319].forEach((f,i)=>tone(f,t+i*.1,i===4?.9:.25,{type:'sine',vol:.09}))},
 };
 function playAppear(rr){play('appear'+RARITY.indexOf(rr))}
@@ -794,7 +796,7 @@ function offline(){
 function drawPiggy(){
   const max=piggyMax(),f=max>0?Math.min(1,S.piggy/max):0;
   $('piggyAmt').textContent=S.piggy>0?fmt(S.piggy):'';
-  $('piggy').classList.toggle('full',S.piggy>0);
+  $('piggy').classList.toggle('on',S.piggy>0);$('piggy').classList.toggle('full',max>0&&S.piggy>=max*.999);
 }
 function collectPiggy(){
   const name=HOMES[homeIdx()].piggy;
