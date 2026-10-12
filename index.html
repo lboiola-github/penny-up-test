@@ -135,6 +135,19 @@ body{margin:0;background:var(--page);font-family:var(--body);color:var(--ink);di
 .heirs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 12px;text-align:center}
 .heirs div{border:2.5px solid var(--ink);border-radius:12px;background:#fff;padding:8px 4px;font-size:12px;font-weight:800;color:var(--muted)}
 .heirs b{display:block;font-family:var(--display);font-size:24px;color:var(--ink)}
+.keeplose{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 10px;font-size:12px;font-weight:700;color:var(--ink)}
+.keeplose div{border:2px dashed var(--ink);border-radius:12px;padding:6px 8px;background:#fff}
+.keeplose b{display:block;font-family:var(--display);font-weight:600;font-size:13px;margin-bottom:2px}
+.keeplose .lose b{color:#B4362B}.keeplose .keep b{color:var(--cash)}
+.keeplose ul{margin:0;padding-left:16px;line-height:1.4}
+.nextheir{font-size:12px;font-weight:800;color:var(--muted);margin:0 0 4px}
+.nextbar{height:10px;border:2px solid var(--ink);border-radius:6px;background:#fff;overflow:hidden;margin-bottom:10px}
+.nextbar i{display:block;height:100%;background:var(--gold)}
+.heirhint{font-size:13px;font-weight:800;color:var(--ink);background:#FFE9A8;border-radius:10px;padding:6px 10px;margin:0 0 10px}
+.trophyrow{display:flex;justify-content:center;gap:14px;margin:2px 0 12px}
+.trophyrow div{font-size:11px;font-weight:800;color:var(--muted);display:grid;justify-items:center;gap:2px}
+.trophyrow img{width:38px;height:38px}
+.trophyrow .locked img{filter:grayscale(1);opacity:.35}
 .msg{font-size:13px;font-weight:800;color:var(--cash-dk);min-height:18px;margin-top:4px}
 @media (prefers-reduced-motion:reduce){.coin img,.piggy.full img,.buy.ready,.heir.ready{animation:none}.row.bump{animation:none}}
 </style>
@@ -180,15 +193,19 @@ body{padding:0;display:block;background:var(--cream);overscroll-behavior:none;-w
       <div class="streakbig" id="streakBig"></div>
       <div class="cal" id="cal"></div>
       <div class="mile" id="mile"></div>
+      <div class="trophyrow" id="trophyRow"></div>
       <button class="claim" id="claim">Claim</button>
     </div>
   </div>
   <div class="overlay" id="heirPanel">
     <div class="panel" role="dialog" aria-label="Inheritance">
       <h3>Inheritance <button class="close" id="closeHeir">Close</button></h3>
-      <p>Pass your fortune on to your heirs. You start again in the Rented Room, but every heir makes all your income and taps 5% bigger, forever. Your streak, trophies and settings stay.</p>
+      <p>Retire and leave your fortune to your heirs. You start over in the Rented Room, but <b>every heir makes all your income and taps 5% bigger, forever</b>. The more you have earned in your whole life, the more heirs you get.</p>
       <div class="heirs"><div>Heirs now<b id="heirNow">0</b><span id="heirNowPct"></span></div><div>Heirs if you pass it on<b id="heirNew">0</b><span id="heirNewPct"></span></div></div>
-      <p id="heirHint"></p>
+      <div class="keeplose"><div class="lose"><b>You lose</b><ul><li>Your money</li><li>Businesses and Helpers</li><li>Upgrades</li><li>Your home</li></ul></div><div class="keep"><b>You keep</b><ul><li>Your heirs (+5% each)</li><li>Lifetime earnings</li><li>Daily streak and trophies</li><li>Settings</li></ul></div></div>
+      <div class="nextheir" id="heirNext"></div>
+      <div class="nextbar"><i id="heirBar"></i></div>
+      <p class="heirhint" id="heirHint"></p>
       <div class="btns"><button class="btn" id="doHeir">Pass it on</button></div>
     </div>
   </div>
@@ -416,9 +433,16 @@ function showHeir(){
   const a=heirsAvail(),unlocked=homeIdx()>=HOMEIDX[C.inheritance.unlockHome];
   $('heirNow').textContent=S.heirs;$('heirNowPct').textContent='+'+Math.round(S.heirs*C.inheritance.perHeir*100)+'%';
   $('heirNew').textContent=Math.max(a,S.heirs);$('heirNewPct').textContent='+'+Math.round(Math.max(a,S.heirs)*C.inheritance.perHeir*100)+'%';
-  const ok=unlocked&&a>S.heirs;
-  const nextAt=C.inheritance.divisor*Math.pow(S.heirs+1,3);
-  $('heirHint').textContent=!unlocked?'Unlocks when you reach the Hillside Mansion.':ok?(a>=S.heirs*2&&S.heirs>0?'Good moment: you would double your heirs.':'Tip: waiting until you can double your heirs pays off more.'):`Your next heir comes at ${fmt(nextAt)} earned in total (you have ${fmt(S.alltime)}).`;
+  const ok=unlocked&&a>S.heirs,n=Math.max(a,S.heirs),pct=k=>Math.round(k*C.inheritance.perHeir*100);
+  // heirs = cube root of lifetime earnings / divisor, so each next heir costs more
+  const at=k=>C.inheritance.divisor*Math.pow(k,3),lo=at(n),hi=at(n+1);
+  $('heirNext').textContent=`Heir #${n+1} at ${fmt(hi)} lifetime earned (you have ${fmt(S.alltime)})`;
+  $('heirBar').style.width=Math.max(0,Math.min(100,(S.alltime-lo)/(hi-lo)*100))+'%';
+  $('heirHint').textContent=!unlocked?'Unlocks when you reach the Hillside Mansion.'
+    :!ok?'Not yet: passing it on now gives you no new heirs. Keep earning.'
+    :S.heirs===0?`Good moment: your first ${a} heir${a>1?'s':''} make everything ${pct(a)}% bigger from your first tap.`
+    :a>=S.heirs*2?`Good moment: you would double your heirs (+${pct(S.heirs)}% → +${pct(a)}%).`
+    :`You can, but it pays more to wait until you have ${S.heirs*2} heirs (double what you have).`;
   $('doHeir').disabled=!ok;$('doHeir').textContent='Pass it on';heirArmed=false;
   $('heirPanel').classList.add('on');
 }
@@ -715,7 +739,7 @@ function collectPiggy(){
 }
 function showStats(){
   const first=id=>S.ms[id]!==undefined?mmss(S.ms[id]):'not yet';
-  $('stats').innerHTML=`Active play time: <b>${mmss(S.play)}</b><br>Studio: <b>${first('home-studioapt')}</b> · Suburban: <b>${first('home-suburban')}</b> · Penthouse: <b>${first('home-penthouse')}</b> · Mansion: <b>${first('home-mansion')}</b><br>First Car Wash: <b>${first('carwash-1')}</b> · $1M earned: <b>${first('$1000000')}</b><br>Upgrades: <b>${S.ups.length}/${UPS.length}</b> · Heirs: <b>${S.heirs}</b><br>Lifetime earned: <b>${fmt(S.alltime)}</b>`;
+  $('stats').innerHTML=`Active play time: <b>${mmss(S.play)}</b><br>Studio: <b>${first('home-studioapt')}</b> · Suburban: <b>${first('home-suburban')}</b> · Penthouse: <b>${first('home-penthouse')}</b> · Mansion: <b>${first('home-mansion')}</b><br>First Car Wash: <b>${first('carwash-1')}</b> · $1M earned: <b>${first('$1000000')}</b><br>Upgrades: <b>${S.ups.length}/${UPS.length}</b> · Heirs: <b>${S.heirs}</b><br>Trophies: <b>${(S.streak.trophies||[]).length}/3</b> (daily streak of 15, 30 and 100 days)<br>Lifetime earned: <b>${fmt(S.alltime)}</b>`;
 }
 // ---------- daily reward and streak ----------
 const CAL=[{h:.5,label:'30m'},{h:1,label:'1h'},{h:1.5,label:'1.5h'},{h:2,label:'2h'},{h:3,label:'3h'},{h:4,label:'4h'},{coin:2,label:'Gold'}];
@@ -740,6 +764,7 @@ function showDaily(){
   const m=MILES[st.count];
   const next=Object.keys(MILES).map(Number).find(n=>n>st.count);
   $('mile').textContent=m?`Streak milestone! You also get ${m.text}.`:next?`${next-st.count} more day${next-st.count>1?'s':''} to unlock ${MILES[next].text}.`:'';
+  $('trophyRow').innerHTML=trophyRow();
   $('claim').textContent='Claim '+(CAL[ci].coin?'Gold coin':fmt(incomeHours(CAL[ci].h)));
   $('daily').classList.add('on');
 }
@@ -747,11 +772,23 @@ $('claim').onclick=()=>{
   audioInit();const st=S.streak;if(st.claimed){$('daily').classList.remove('on');return}
   const c=CAL[(st.count-1)%7],m=MILES[st.count];let v=0;
   if(c.coin!==undefined)S.queue.push(c.coin);else v+=incomeHours(c.h);
-  if(m){if(m.h)v+=incomeHours(m.h);if(m.coin!==undefined)S.queue.push(m.coin);if(m.trophy&&!(st.trophies||[]).includes(m.trophy)){st.trophies=(st.trophies||[]).concat(m.trophy);drawTrophies()}}
+  if(m){if(m.h)v+=incomeHours(m.h);if(m.coin!==undefined)S.queue.push(m.coin);}
+  awardTrophies();
   if(v>0){earn(v);toast('Daily reward! +'+fmt(v))}
   st.claimed=true;play('find');buzz(30);$('daily').classList.remove('on');save();
 };
 const TROPHIES=['bronze','silver','gold'];
+const TROPHY_DAYS={bronze:15,silver:30,gold:100};
+// trophies come from the daily streak: 15, 30 and 100 days in a row
+function awardTrophies(){
+  const st=S.streak;st.trophies=st.trophies||[];let got=false;
+  TROPHIES.forEach(k=>{if(st.count>=TROPHY_DAYS[k]&&!st.trophies.includes(k)){st.trophies.push(k);got=true;toast(`New ${k} trophy! It is now on display at home`,'#F5C542')}});
+  if(got)drawTrophies();
+}
+function trophyRow(){
+  const own=S.streak.trophies||[];
+  return TROPHIES.map(k=>`<div class="${own.includes(k)?'':'locked'}"><img src="a/trophy-${k}.svg" alt="${k} trophy">${TROPHY_DAYS[k]} days</div>`).join('');
+}
 function drawTrophies(){
   document.querySelectorAll('.trophy').forEach(e=>e.remove());
   (S.streak.trophies||[]).forEach((k,i)=>{
