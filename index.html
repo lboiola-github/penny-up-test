@@ -148,6 +148,7 @@ body{margin:0;background:var(--page);font-family:var(--body);color:var(--ink);di
 .trophyrow div{font-size:11px;font-weight:800;color:var(--muted);display:grid;justify-items:center;gap:2px}
 .trophyrow img{width:38px;height:38px}
 .trophyrow .locked img{filter:grayscale(1);opacity:.35}
+.langsw{display:flex;gap:4px}
 .msg{font-size:13px;font-weight:800;color:var(--cash-dk);min-height:18px;margin-top:4px}
 /* layering: the room steps back, what you can tap pops (approved proposal v5) */
 .scene svg.bg,.props{filter:saturate(.7) contrast(.7)}
@@ -166,12 +167,12 @@ body{padding:0;display:block;background:var(--cream);overscroll-behavior:none;-w
 
 <div class="phone" id="phone">
   <header class="stats">
-    <div class="label">Net worth</div>
+    <div class="label" data-es="Patrimonio">Net worth</div>
     <div class="money" id="money">$0.00</div>
     <div class="rates"><span class="rate" id="rate">+$0.00 / sec</span><span class="ptap" id="ptap">$0.25 / tap</span></div>
     <div class="home" id="home"><b id="homeName">Rented Room</b><span class="hbar"><i id="homeFill"></i></span><span id="homeNext"></span></div>
-    <button class="gear heir" id="heirBtn" aria-label="Inheritance"><svg viewBox="0 0 24 24" fill="#FFF6E5" stroke="#2B2340" stroke-width="2" stroke-linejoin="round"><path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z"/></svg></button>
-    <button class="gear" id="gear" aria-label="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="#2B2340" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></button>
+    <button class="gear heir" id="heirBtn" aria-label="Inheritance" data-es-aria="Herencia"><svg viewBox="0 0 24 24" fill="#FFF6E5" stroke="#2B2340" stroke-width="2" stroke-linejoin="round"><path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z"/></svg></button>
+    <button class="gear" id="gear" aria-label="Settings" data-es-aria="Ajustes"><svg viewBox="0 0 24 24" fill="none" stroke="#2B2340" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></button>
   </header>
 
   <main class="scene" id="scene">
@@ -187,17 +188,17 @@ body{padding:0;display:block;background:var(--cream);overscroll-behavior:none;-w
     <div class="bonusbar" id="bonusbar" aria-live="polite"><div class="t"><span id="bonusName"></span><span id="bonusLeft"></span></div><div class="bar"><i id="bonusFill"></i></div></div>
   </main>
 
-  <section class="shop" aria-label="Shop">
+  <section class="shop" aria-label="Shop" data-es-aria="Tienda">
     <div class="tabs" role="tablist">
-      <button class="tab" role="tab" id="tabBiz" aria-selected="true">Businesses <span class="badge" id="ownedBadge" style="background:var(--penny)"></span></button>
-      <button class="tab" role="tab" id="tabUp" aria-selected="false">Upgrades <span class="badge" id="upBadge"></span></button>
+      <button class="tab" role="tab" id="tabBiz" aria-selected="true"><span data-es="Negocios">Businesses</span> <span class="badge" id="ownedBadge" style="background:var(--penny)"></span></button>
+      <button class="tab" role="tab" id="tabUp" aria-selected="false"><span data-es="Mejoras">Upgrades</span> <span class="badge" id="upBadge"></span></button>
     </div>
     <div class="list" id="list"></div>
   </section>
 
   <div class="overlay daily" id="daily">
-    <div class="panel" role="dialog" aria-label="Daily reward">
-      <h3 style="justify-content:center">Daily reward</h3>
+    <div class="panel" role="dialog" aria-label="Daily reward" data-es-aria="Premio diario">
+      <h3 style="justify-content:center" data-es="Premio diario">Daily reward</h3>
       <div class="streakbig" id="streakBig"></div>
       <div class="cal" id="cal"></div>
       <div class="mile" id="mile"></div>
@@ -206,11 +207,11 @@ body{padding:0;display:block;background:var(--cream);overscroll-behavior:none;-w
     </div>
   </div>
   <div class="overlay" id="heirPanel">
-    <div class="panel" role="dialog" aria-label="Inheritance">
-      <h3>Inheritance <button class="close" id="closeHeir">Close</button></h3>
-      <p>Retire and leave your fortune to your heirs. You start over in the Rented Room, but <b>every heir makes all your income and taps 5% bigger, forever</b>. The more you have earned in your whole life, the more heirs you get.</p>
-      <div class="heirs"><div>Heirs now<b id="heirNow">0</b><span id="heirNowPct"></span></div><div>Heirs if you pass it on<b id="heirNew">0</b><span id="heirNewPct"></span></div></div>
-      <div class="keeplose"><div class="lose"><b>You lose</b><ul><li>Your money</li><li>Businesses and Helpers</li><li>Upgrades</li><li>Your home</li></ul></div><div class="keep"><b>You keep</b><ul><li>Your heirs (+5% each)</li><li>Lifetime earnings</li><li>Daily streak and trophies</li><li>Settings</li></ul></div></div>
+    <div class="panel" role="dialog" aria-label="Inheritance" data-es-aria="Herencia">
+      <h3><span data-es="Herencia">Inheritance</span> <button class="close" id="closeHeir" data-es="Cerrar">Close</button></h3>
+      <p data-es="Retirate y dejale tu fortuna a tus herederos. Volvés a empezar en la Pieza Alquilada, pero &lt;b&gt;cada heredero hace que todos tus ingresos y toques sean 5% más grandes, para siempre&lt;/b&gt;. Cuanto más ganaste en toda tu vida, más herederos tenés.">Retire and leave your fortune to your heirs. You start over in the Rented Room, but <b>every heir makes all your income and taps 5% bigger, forever</b>. The more you have earned in your whole life, the more heirs you get.</p>
+      <div class="heirs"><div><span data-es="Herederos ahora">Heirs now</span><b id="heirNow">0</b><span id="heirNowPct"></span></div><div><span data-es="Herederos si heredás">Heirs if you pass it on</span><b id="heirNew">0</b><span id="heirNewPct"></span></div></div>
+      <div class="keeplose" data-es="&lt;div class=&quot;lose&quot;&gt;&lt;b&gt;Perdés&lt;/b&gt;&lt;ul&gt;&lt;li&gt;Tu plata&lt;/li&gt;&lt;li&gt;Negocios y Ayudantes&lt;/li&gt;&lt;li&gt;Mejoras&lt;/li&gt;&lt;li&gt;Tu casa&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;div class=&quot;keep&quot;&gt;&lt;b&gt;Te quedás con&lt;/b&gt;&lt;ul&gt;&lt;li&gt;Tus herederos (+5% c/u)&lt;/li&gt;&lt;li&gt;Lo ganado en toda tu vida&lt;/li&gt;&lt;li&gt;Racha diaria y trofeos&lt;/li&gt;&lt;li&gt;Ajustes&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;"><div class="lose"><b>You lose</b><ul><li>Your money</li><li>Businesses and Helpers</li><li>Upgrades</li><li>Your home</li></ul></div><div class="keep"><b>You keep</b><ul><li>Your heirs (+5% each)</li><li>Lifetime earnings</li><li>Daily streak and trophies</li><li>Settings</li></ul></div></div>
       <div class="nextheir" id="heirNext"></div>
       <div class="nextbar"><i id="heirBar"></i></div>
       <p class="heirhint" id="heirHint"></p>
@@ -218,19 +219,20 @@ body{padding:0;display:block;background:var(--cream);overscroll-behavior:none;-w
     </div>
   </div>
   <div class="overlay" id="overlay">
-    <div class="panel" role="dialog" aria-label="Settings">
-      <h3>Settings <button class="close" id="closeSet">Done</button></h3>
-      <div class="set"><span>Sound</span><input type="range" id="volS" min="0" max="100" aria-label="Sound volume"><button class="sw" id="swS" aria-pressed="true">On</button></div>
-      <div class="set"><span>Music</span><input type="range" id="volM" min="0" max="100" aria-label="Music volume"><button class="sw" id="swM" aria-pressed="true">On</button></div>
-      <div class="set"><span>Vibration</span><span></span><button class="sw" id="swV" aria-pressed="true">On</button></div>
-      <h4>Tester stats</h4>
+    <div class="panel" role="dialog" aria-label="Settings" data-es-aria="Ajustes">
+      <h3><span data-es="Ajustes">Settings</span> <button class="close" id="closeSet" data-es="Listo">Done</button></h3>
+      <div class="set"><span data-es="Idioma">Language</span><span></span><span class="langsw"><button class="sw" id="langEn" aria-pressed="true">English</button><button class="sw" id="langEs" aria-pressed="false">Español</button></span></div>
+      <div class="set"><span data-es="Sonido">Sound</span><input type="range" id="volS" min="0" max="100" aria-label="Sound volume" data-es-aria="Volumen del sonido"><button class="sw" id="swS" aria-pressed="true">On</button></div>
+      <div class="set"><span data-es="Música">Music</span><input type="range" id="volM" min="0" max="100" aria-label="Music volume" data-es-aria="Volumen de la música"><button class="sw" id="swM" aria-pressed="true">On</button></div>
+      <div class="set"><span data-es="Vibración">Vibration</span><span></span><button class="sw" id="swV" aria-pressed="true">On</button></div>
+      <h4 data-es="Estadísticas de prueba">Tester stats</h4>
       <p id="stats"></p>
-      <h4>Tester save</h4>
-      <p>Progress saves automatically on this device. To keep it safe or move it to another device, copy the save code and paste it somewhere (Notes, WhatsApp). To restore, paste a code and press Load.</p>
-      <textarea id="saveOut" readonly aria-label="Your save code"></textarea>
-      <div class="btns"><button class="btn" id="copySave">Copy save code</button></div>
-      <textarea id="saveIn" placeholder="Paste a save code here" aria-label="Save code to load" style="margin-top:10px"></textarea>
-      <div class="btns"><button class="btn" id="loadSave">Load</button><button class="btn warn" id="resetSave">Reset progress</button></div>
+      <h4 data-es="Guardado de prueba">Tester save</h4>
+      <p data-es="El progreso se guarda solo en este dispositivo. Para resguardarlo o pasarlo a otro dispositivo, copiá el código de guardado y pegalo en algún lado (Notas, WhatsApp). Para recuperarlo, pegá un código y tocá Cargar.">Progress saves automatically on this device. To keep it safe or move it to another device, copy the save code and paste it somewhere (Notes, WhatsApp). To restore, paste a code and press Load.</p>
+      <textarea id="saveOut" readonly aria-label="Your save code" data-es-aria="Tu código de guardado"></textarea>
+      <div class="btns"><button class="btn" id="copySave" data-es="Copiar código">Copy save code</button></div>
+      <textarea id="saveIn" placeholder="Paste a save code here" data-es-ph="Pegá un código acá" aria-label="Save code to load" data-es-aria="Código para cargar" style="margin-top:10px"></textarea>
+      <div class="btns"><button class="btn" id="loadSave" data-es="Cargar">Load</button><button class="btn warn" id="resetSave" data-es="Borrar progreso">Reset progress</button></div>
       <div class="msg" id="saveMsg" aria-live="polite"></div>
     </div>
   </div>
@@ -248,19 +250,23 @@ const HOMES=C.homes;
 const HOMEIDX=Object.fromEntries(HOMES.map((h,i)=>[h.id,i]));
 const HELPER={cost:C.helper.baseCost,interval:C.helper.interval};
 const TAP=0.25, GROWTH=C.growth;
-const UPS=C.upgrades.map(u=>({...u,desc:upDesc(u)})).sort((a,b)=>a.cost-b.cost);
+const UPS=C.upgrades.map(u=>({...u,descEn:u.desc,desc:''})).sort((a,b)=>a.cost-b.cost);
 const UPM=Object.fromEntries(UPS.map(u=>[u.id,u]));
 function upDesc(u){
-  if(u.type==='business')return `${BIZM_raw(u.effect.bizMult[0])} earns ×2`;
-  if(u.type==='synergy')return `${BIZM_raw(u.effect.synergy[0])} +1% per ${BIZM_raw(u.effect.synergy[1])}`;
-  if(u.type==='global')return u.desc;
+  const nm=id=>BIZM[id].name;
+  if(u.type==='business')return t(`${nm(u.effect.bizMult[0])} earns ×2`,`${nm(u.effect.bizMult[0])} gana ×2`);
+  if(u.type==='synergy')return t(`${nm(u.effect.synergy[0])} +1% per ${nm(u.effect.synergy[1])}`,`${nm(u.effect.synergy[0])} +1% por cada ${nm(u.effect.synergy[1])}`);
+  if(u.type==='global')return t(u.descEn,`Todos los negocios +${Math.round((u.effect.prodMult-1)*100)}%`);
   const [k,v]=Object.entries(u.effect)[0];
+  if(L()==='es')return {tapMult:'Los toques valen ×2',hustle:`Cada toque suma ${+(v*100).toFixed(1)}% de tus $/seg`,critChance:`Probabilidad de toque crítico +${v*100}%`,critMult:`Los toques críticos pagan ×${v}`,
+    helperSpeed:`Los Ayudantes tocan ×${v} más rápido`,helperValue:'Los toques de los Ayudantes valen ×2',helperHustle:`Cada toque de Ayudante suma ${+(v*100).toFixed(2)}% de tus $/seg`,
+    coinFreq:'Las monedas de bonus aparecen 25% más seguido',rareChance:'Las monedas de Oro y Diamante salen el doble',findMult:'Las monedas de Bronce pagan ×2',bonusDuration:'Los bonus duran 50% más',
+    frenzyFill:'El Frenesí se llena 50% más rápido',frenzyLength:`El Frenesí dura ${v}s`,frenzyMult:`En Frenesí los toques valen ×${v} en vez de ×7`}[k]||'';
   return {tapMult:'Taps are worth ×2',hustle:`Each tap adds ${+(v*100).toFixed(1)}% of your $/sec`,critChance:`Critical tap chance +${v*100}%`,critMult:`Critical taps pay ×${v}`,
     helperSpeed:`Helpers tap ×${v} faster`,helperValue:'Helper taps are worth ×2',helperHustle:`Each Helper tap adds ${+(v*100).toFixed(2)}% of your $/sec`,
     coinFreq:'Bonus coins show up 25% more often',rareChance:'Gold and Diamond coins are twice as likely',findMult:'Bronze coins pay ×2',bonusDuration:'Bonuses last 50% longer',
     frenzyFill:'Frenzy fills 50% faster',frenzyLength:`Frenzy lasts ${v}s`,frenzyMult:`Frenzy taps ×${v} instead of ×7`}[k]||'';
 }
-function BIZM_raw(id){return C.businesses.find(b=>b.id===id).name}
 const ICON={lemonade:'lemonade-stand',dogs:'dog-walking',truck:'food-truck',store:'corner-store',carwash:'car-wash',coffee:'coffee-shop',gym:'gym',restaurant:'restaurant',
   realestate:'real-estate',factory:'factory',startup:'tech-startup',bank:'bank',airline:'airline',studio:'movie-studio',space:'space-company'};
 BIZ.forEach(b=>b.icon='a/'+ICON[b.id]+'.svg');
@@ -294,8 +300,26 @@ const SCENES={
 // ---------- state ----------
 const KEY='p2e-save-v1';
 function fresh(){return{v:2,money:0,total:0,alltime:0,heirs:0,owned:Object.fromEntries(BIZ.map(b=>[b.id,0])),helpers:0,ups:[],pity:0,play:0,ms:{},piggy:0,dayOffset:0,queue:[],streak:{last:null,count:0,best:0,grace:null,claimed:false},
-  settings:{sound:80,music:50,soundOn:true,musicOn:true,vib:true},lastSeen:Date.now()}}
+  settings:{sound:80,music:50,soundOn:true,musicOn:true,vib:true,lang:/^es/i.test(navigator.language||'')?'es':'en'},lastSeen:Date.now()}}
 let S=fresh();
+// ---------- language: English / Spanish, saved in settings ----------
+const L=()=>S.settings.lang==='es'?'es':'en';
+const t=(en,es)=>L()==='es'?es:en;
+const ES={"biz": {"lemonade": "Puesto de Limonada", "dogs": "Paseo de Perros", "truck": "Carrito de Comida", "store": "Almacén", "carwash": "Lavadero de Autos", "coffee": "Cafetería", "gym": "Gimnasio", "restaurant": "Restaurante", "realestate": "Inmobiliaria", "factory": "Fábrica", "startup": "Startup Tecnológica", "bank": "Banco", "airline": "Aerolínea", "studio": "Estudio de Cine", "space": "Empresa Espacial"}, "home": {"room": {"name": "Pieza Alquilada", "coin": "Centavo", "piggy": "Alcancía"}, "studioapt": {"name": "Monoambiente", "coin": "Moneda de 5¢", "piggy": "Alcancía"}, "suburban": {"name": "Casa en las Afueras", "coin": "Moneda de 10¢", "piggy": "Caja Registradora"}, "penthouse": {"name": "Penthouse en el Centro", "coin": "Moneda de 25¢", "piggy": "Caja Registradora"}, "mansion": {"name": "Mansión en la Colina", "coin": "Dólar de Plata", "piggy": "Caja Fuerte"}, "island": {"name": "Isla Privada", "coin": "Moneda de Oro", "piggy": "Cofre del Tesoro"}, "station": {"name": "Estación Orbital", "coin": "Moneda de Diamante", "piggy": "Cofre del Tesoro"}}, "rar": {"find": {"metal": "Bronce", "name": "Hallazgo"}, "sale": {"metal": "Plata", "name": "¡Oferta!"}, "touch": {"metal": "Oro", "name": "Toque Dorado"}, "jackpot": {"metal": "Diamante", "name": "¡Premio Mayor!"}}, "up": {"lemonade-1": "Limones Frescos", "lemonade-2": "Limonada Rosa", "lemonade-3": "Cubitos de Hielo", "lemonade-4": "Sorbetes Flexibles", "lemonade-5": "Limones Orgánicos", "lemonade-6": "Franquicia de Limonada", "dogs-1": "Correas Más Largas", "dogs-2": "Premios para Perros", "dogs-3": "Guardería Canina", "dogs-4": "Spa Canino", "dogs-5": "Hotel de Mascotas", "dogs-6": "App Perruna", "truck-1": "Salsa Secreta", "truck-2": "Segunda Plancha", "truck-3": "Festival de Comida", "truck-4": "Menú Gourmet", "truck-5": "Flota de Carritos", "truck-6": "Hamburguesa Viral", "store-1": "Abierto Hasta Tarde", "store-2": "Tarjetas de Fidelidad", "store-3": "Autocobro", "store-4": "Panadería Propia", "store-5": "Bicis de Reparto", "store-6": "Cadena de Almacenes", "carwash-1": "Cañón de Espuma", "carwash-2": "Paquete de Cera", "carwash-3": "Túnel de Lavado", "carwash-4": "Limpieza Interior", "carwash-5": "Abono Mensual", "carwash-6": "Imperio del Lavado", "coffee-1": "Café Doble", "coffee-2": "Arte Latte", "coffee-3": "Sillones Cómodos", "coffee-4": "Tostadero Propio", "coffee-5": "Ventanilla para Autos", "coffee-6": "Cadena de Cafeterías", "gym-1": "Mancuernas Nuevas", "gym-2": "Entrenadores Personales", "gym-3": "Clases de Yoga", "gym-4": "Barra de Licuados", "gym-5": "Abierto 24/7", "gym-6": "App Fitness", "restaurant-1": "Especial del Chef", "restaurant-2": "Carta de Vinos", "restaurant-3": "Estrella Michelin", "restaurant-4": "Chef Famoso", "restaurant-5": "Segundo Local", "restaurant-6": "Grupo Gastronómico", "realestate-1": "Casas Abiertas", "realestate-2": "Reciclar Casas", "realestate-3": "Unidades en Alquiler", "realestate-4": "Torre de Oficinas", "realestate-5": "Manzana Entera", "realestate-6": "Horizonte Propio", "factory-1": "Cintas Transportadoras", "factory-2": "Turno Noche", "factory-3": "Brazos Robot", "factory-4": "Depósito Más Grande", "factory-5": "Exportación Global", "factory-6": "Fábrica Inteligente", "startup-1": "Snacks Gratis", "startup-2": "Ronda Semilla", "startup-3": "App Viral", "startup-4": "Unicornio", "startup-5": "Salida a Bolsa", "startup-6": "Gigante Tecnológico", "bank-1": "Cuentas Alcancía", "bank-2": "Tarjetas de Crédito", "bank-3": "Bóveda Dorada", "bank-4": "Banca de Inversión", "bank-5": "Banca Privada", "bank-6": "Banco Global", "airline-1": "Asientos Amplios", "airline-2": "Viajeros Frecuentes", "airline-3": "Jumbos", "airline-4": "Salas VIP", "airline-5": "Rutas Nuevas", "airline-6": "Jets Supersónicos", "studio-1": "Taquillazo", "studio-2": "Secuelas", "studio-3": "Contrato de Streaming", "studio-4": "Estrellas de Cine", "studio-5": "Parque Temático", "studio-6": "Temporada de Premios", "space-1": "Cohetes Reutilizables", "space-2": "Red de Satélites", "space-3": "Turismo Espacial", "space-4": "Base Lunar", "space-5": "Minería de Asteroides", "space-6": "Colonia en Marte", "grip1": "Mejor Agarre", "grip2": "Pulgar Curtido", "hustle1": "Changuita", "crit1": "Pulgar de la Suerte", "grip3": "Dedo Pro", "hustle2": "Trasnochar", "crit2": "Gran Propina", "grip4": "Dedo de Hierro", "hustle3": "Modo Laburo", "crit3": "Ojo Fino", "grip5": "Dedo de Oro", "hustle4": "Mentalidad de Imperio", "crit4": "Gran Apostador", "grip6": "Toque de Midas", "hustle5": "Siempre Cerrando Tratos", "helper1": "Cafetera", "helper2": "Espíritu de Equipo", "helper3": "Contratar Pasantes", "helper4": "Escritorios de Pie", "helper5": "Contratar Asistentes", "helper6": "Bonos de Fin de Año", "helper7": "Ayudantes Robot", "helper8": "Horas Extra Pagas", "helper9": "Equipo Soñado", "helper10": "Empleado del Mes", "syn1": "Limonada en el Menú", "syn2": "Café Pet Friendly", "syn3": "Góndola de Snacks", "syn4": "Camionetas Relucientes", "syn5": "Espresso Pre-Entreno", "syn6": "Menú Proteico", "syn7": "Locales Comerciales", "syn8": "Espacio de Depósito", "syn9": "Manufactura Inteligente", "syn10": "Fintech", "syn11": "Préstamos a Comercios", "syn12": "Películas a Bordo", "syn13": "Publicidad en Películas", "syn14": "Combustible de Cohete", "syn15": "Vuelos Espaciales", "glob1": "Contabilidad", "glob2": "Tarjetas Personales", "glob3": "Equipo de Marketing", "glob4": "Contador", "glob5": "Equipo Legal", "glob6": "Directorio", "glob7": "Jet Privado", "glob8": "Imperio de Medios", "glob9": "Holding", "glob10": "Marca Global", "luck1": "Trébol de Cuatro Hojas", "luck2": "Pata de Conejo", "luck3": "Hueso de la Suerte", "luck4": "Herradura", "luck5": "Amuleto", "luck6": "Gallina de los Huevos de Oro", "frenzy1": "Adrenalina", "frenzy2": "Segundo Aire", "frenzy3": "Bebida Energética", "frenzy4": "Modo Bestia"}};
+function langData(){
+  const es=L()==='es';
+  BIZ.forEach(b=>{if(!b.en)b.en=b.name;b.name=es?ES.biz[b.id]:b.en});
+  HOMES.forEach(h=>{if(!h.en)h.en={name:h.name,coin:h.coin,piggy:h.piggy};Object.assign(h,es?ES.home[h.id]:h.en)});
+  RARITY.forEach(r=>{if(!r.en)r.en={metal:r.metal,name:r.name};Object.assign(r,es?ES.rar[r.id]:r.en)});
+  UPS.forEach(u=>{if(!u.en)u.en=u.name;u.name=es&&ES.up[u.id]||u.en;u.desc=upDesc(u)});
+}
+function applyLang(){
+  const es=L()==='es';document.documentElement.lang=L();
+  document.querySelectorAll('[data-es]').forEach(e=>{if(e.dataset.en===undefined)e.dataset.en=e.innerHTML;e.innerHTML=es?e.dataset.es:e.dataset.en});
+  document.querySelectorAll('[data-es-aria]').forEach(e=>{if(e.dataset.enAria===undefined)e.dataset.enAria=e.getAttribute('aria-label');e.setAttribute('aria-label',es?e.dataset.esAria:e.dataset.enAria)});
+  document.querySelectorAll('[data-es-ph]').forEach(e=>{if(e.dataset.enPh===undefined)e.dataset.enPh=e.placeholder;e.placeholder=es?e.dataset.esPh:e.dataset.enPh});
+  langData();$('langEn').setAttribute('aria-pressed',!es);$('langEs').setAttribute('aria-pressed',es);
+}
 const T={frenzyMeter:0,frenzyUntil:0,lastTap:0,bonus:null,bonusEnd:0,nextLucky:0,luckyOnScreen:false,helperAcc:0,home:-1};
 const $=id=>document.getElementById(id);
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -417,12 +441,12 @@ function applyHome(i,announce){
   $('bg').innerHTML=BG[h.id];
   $('props').innerHTML=sc.props.map(([src,st])=>`<img class="prop" src="${src}" alt="" style="${st}">`).join('');
   $('coinImg').src=sc.coin;$('piggyImg').src=sc.piggy;
-  $('coin').setAttribute('aria-label',`Tap the ${h.coin} to earn money`);
-  $('piggy').setAttribute('aria-label',`${h.piggy}: tap to collect what you earned while away`);
+  $('coin').setAttribute('aria-label',t(`Tap the ${h.coin} to earn money`,'Tocá la moneda para ganar plata'));
+  $('piggy').setAttribute('aria-label',t(`${h.piggy}: tap to collect what you earned while away`,`${h.piggy}: tocá para cobrar lo que ganaste mientras no estabas`));
   drawHome();
   if(announce){
     mark('home-'+h.id);play('move');buzz([30,40,60]);
-    toast(`You moved to the ${h.name}! Income ×${h.incomeMult}`,'#8FD3F4');
+    toast(t(`You moved to the ${h.name}! Income ×${h.incomeMult}`,`¡Nueva casa: ${h.name}! Ingresos ×${h.incomeMult}`),'#8FD3F4');
     if(!reduce){const r=scene.getBoundingClientRect();burst(r.width/2,r.height/2,'#F5C542',26)}
   }
 }
@@ -430,8 +454,8 @@ function drawHome(){
   const i=homeIdx(),h=HOMES[i],n=HOMES[i+1];
   $('homeName').textContent=h.name;
   if(n){const lo=Math.max(1,h.threshold),f=Math.max(0,Math.min(1,Math.log(Math.max(1,S.total)/lo)/Math.log(n.threshold/lo)));
-    $('homeFill').style.width=(f*100)+'%';$('homeNext').textContent='Next: '+fmtShort(n.threshold);$('home').title=`${n.name} when you have earned ${fmt(n.threshold)}`}
-  else{$('homeFill').style.width='100%';$('homeNext').textContent='Top home'}
+    $('homeFill').style.width=(f*100)+'%';$('homeNext').textContent=t('Next: ','Próxima: ')+fmtShort(n.threshold);$('home').title=t(`${n.name} when you have earned ${fmt(n.threshold)}`,`${n.name} cuando hayas ganado ${fmt(n.threshold)}`)}
+  else{$('homeFill').style.width='100%';$('homeNext').textContent=t('Top home','Mejor casa')}
   const avail=heirsAvail(),show=homeIdx()>=HOMEIDX[C.inheritance.unlockHome]||S.heirs>0;
   $('heirBtn').classList.toggle('on',show);$('heirBtn').classList.toggle('ready',show&&avail>S.heirs);
 }
@@ -444,14 +468,19 @@ function showHeir(){
   const ok=unlocked&&a>S.heirs,n=Math.max(a,S.heirs),pct=k=>Math.round(k*C.inheritance.perHeir*100);
   // heirs = cube root of lifetime earnings / divisor, so each next heir costs more
   const at=k=>C.inheritance.divisor*Math.pow(k,3),lo=at(n),hi=at(n+1);
-  $('heirNext').textContent=`Heir #${n+1} at ${fmt(hi)} lifetime earned (you have ${fmt(S.alltime)})`;
+  $('heirNext').textContent=t(`Heir #${n+1} at ${fmt(hi)} lifetime earned (you have ${fmt(S.alltime)})`,`Heredero #${n+1} al ganar ${fmt(hi)} en toda tu vida (llevás ${fmt(S.alltime)})`);
   $('heirBar').style.width=Math.max(0,Math.min(100,(S.alltime-lo)/(hi-lo)*100))+'%';
-  $('heirHint').textContent=!unlocked?'Unlocks when you reach the Hillside Mansion.'
+  $('heirHint').textContent=L()==='es'?(!unlocked?'Se desbloquea cuando llegás a la Mansión en la Colina.'
+    :!ok?'Todavía no: si heredás ahora no sumás herederos. Seguí ganando.'
+    :S.heirs===0?`Buen momento: ${a>1?`tus primeros ${a} herederos hacen`:'tu primer heredero hace'} todo ${pct(a)}% más grande desde el primer toque.`
+    :a>=S.heirs*2?`Buen momento: duplicarías tus herederos (+${pct(S.heirs)}% → +${pct(a)}%).`
+    :`Podés, pero conviene esperar a tener ${S.heirs*2} herederos (el doble de los que tenés).`)
+    :!unlocked?'Unlocks when you reach the Hillside Mansion.'
     :!ok?'Not yet: passing it on now gives you no new heirs. Keep earning.'
     :S.heirs===0?`Good moment: your first ${a} heir${a>1?'s':''} make everything ${pct(a)}% bigger from your first tap.`
     :a>=S.heirs*2?`Good moment: you would double your heirs (+${pct(S.heirs)}% → +${pct(a)}%).`
     :`You can, but it pays more to wait until you have ${S.heirs*2} heirs (double what you have).`;
-  $('doHeir').disabled=!ok;$('doHeir').textContent='Pass it on';heirArmed=false;
+  $('doHeir').disabled=!ok;$('doHeir').textContent=t('Pass it on','Heredar');heirArmed=false;
   $('heirPanel').classList.add('on');
 }
 let heirArmed=false;
@@ -459,13 +488,13 @@ $('heirBtn').onclick=()=>{audioInit();showHeir()};
 $('closeHeir').onclick=()=>$('heirPanel').classList.remove('on');
 $('heirPanel').addEventListener('click',e=>{if(e.target.id==='heirPanel')$('heirPanel').classList.remove('on')});
 $('doHeir').onclick=()=>{
-  if(!heirArmed){heirArmed=true;$('doHeir').textContent='Tap again to pass it on';return}
+  if(!heirArmed){heirArmed=true;$('doHeir').textContent=t('Tap again to pass it on','Tocá de nuevo para heredar');return}
   inherit();$('heirPanel').classList.remove('on');
 };
 function inherit(){
   const keep={alltime:S.alltime,heirs:Math.max(heirsAvail(),S.heirs),settings:S.settings,streak:S.streak,dayOffset:S.dayOffset,play:S.play,ms:S.ms,queue:S.queue};
   S=Object.assign(fresh(),keep);mark('inherit-'+S.heirs);
-  resetRuntime();save();play('jackpot');toast(`${S.heirs} heirs: everything +${Math.round(S.heirs*C.inheritance.perHeir*100)}%`,'#F5C542');
+  resetRuntime();save();play('jackpot');toast(t(`${S.heirs} heirs: everything +${Math.round(S.heirs*C.inheritance.perHeir*100)}%`,`${S.heirs} herederos: todo +${Math.round(S.heirs*C.inheritance.perHeir*100)}%`),'#F5C542');
 }
 // ---------- shop rendering ----------
 let tabSel='biz';
@@ -485,33 +514,33 @@ function reqMet(u){
 const upAvailable=u=>!has(u.id)&&reqMet(u)&&revealed(u);
 function upHint(u){
   const r=u.req||{};
-  if(r.owned2)return `Own 15 ${BIZM[r.owned[0]].name} and 15 ${BIZM[r.owned2[0]].name}`;
-  if(r.owned&&S.owned[r.owned[0]]<r.owned[1])return `Own ${r.owned[1]} ${BIZM[r.owned[0]].name}`;
-  if(r.helpers&&S.helpers<r.helpers)return `Hire ${r.helpers} Helpers`;
-  return 'Keep earning to reveal';
+  if(r.owned2)return t(`Own 15 ${BIZM[r.owned[0]].name} and 15 ${BIZM[r.owned2[0]].name}`,`Tené 15 ${BIZM[r.owned[0]].name} y 15 ${BIZM[r.owned2[0]].name}`);
+  if(r.owned&&S.owned[r.owned[0]]<r.owned[1])return t(`Own ${r.owned[1]} ${BIZM[r.owned[0]].name}`,`Tené ${r.owned[1]} ${BIZM[r.owned[0]].name}`);
+  if(r.helpers&&S.helpers<r.helpers)return t(`Hire ${r.helpers} Helpers`,`Contratá ${r.helpers} Ayudantes`);
+  return t('Keep earning to reveal','Seguí ganando para descubrirla');
 }
 function renderList(){
   const list=$('list');list.innerHTML='';
   if(tabSel==='biz'){
     if(helperKnown()){
-      const el=row('helper',`<img src="${helperImg()}" alt="">`,`Helper <span class="owned">${S.helpers||''}</span>`,`Taps the coin for you every ${+(HELPER.interval/helperSpeed()).toFixed(2)}s`,fmt(helperPrice()),()=>buyHelper());
+      const el=row('helper',`<img src="${helperImg()}" alt="">`,`${t('Helper','Ayudante')} <span class="owned">${S.helpers||''}</span>`,t(`Taps the coin for you every ${+(HELPER.interval/helperSpeed()).toFixed(2)}s`,`Toca la moneda por vos cada ${+(HELPER.interval/helperSpeed()).toFixed(2)}s`),fmt(helperPrice()),()=>buyHelper());
       list.appendChild(el);
     }
     BIZ.forEach((b,i)=>{
       if(!bizOpen(b))return;
       const k=known(b,i);
       const icon=k?`<img src="${b.icon}" alt="">`:`<span class="q">?</span>`;
-      list.appendChild(row(b.id,icon,`${k?b.name:'???'} <span class="owned">${S.owned[b.id]||''}</span>`,k?'+'+fmt(b.rate*bizMult(b.id)*globalMult())+' / sec each':'Keep earning to reveal',fmt(price(b)),()=>buy(b),!k));
+      list.appendChild(row(b.id,icon,`${k?b.name:'???'} <span class="owned">${S.owned[b.id]||''}</span>`,k?'+'+fmt(b.rate*bizMult(b.id)*globalMult())+t(' / sec each',' / seg c/u'):t('Keep earning to reveal','Seguí ganando para descubrirlo'),fmt(price(b)),()=>buy(b),!k));
     });
     const n=HOMES[homeIdx()+1];
-    if(n&&BIZ.some(b=>b.home===n.id))list.appendChild(row('next-home','<span class="q">?</span>','More businesses',`Move to the ${n.name} (earn ${fmt(n.threshold)})`,'Locked',null,true));
+    if(n&&BIZ.some(b=>b.home===n.id))list.appendChild(row('next-home','<span class="q">?</span>',t('More businesses','Más negocios'),t(`Move to the ${n.name} (earn ${fmt(n.threshold)})`,`Mudate a: ${n.name} (ganá ${fmt(n.threshold)})`),t('Locked','Bloqueado'),null,true));
   }else{
     const avail=UPS.filter(upAvailable);
     const next=UPS.filter(u=>!has(u.id)&&!upAvailable(u)&&(!u.req.owned||bizOpen(BIZM[u.req.owned[0]]))).slice(0,2);
-    if(!avail.length&&!next.length){list.innerHTML='<div class="empty">You bought every upgrade. Time to pass it on?</div>';return refresh()}
+    if(!avail.length&&!next.length){list.innerHTML='<div class="empty">'+t('You bought every upgrade. Time to pass it on?','¡Compraste todas las mejoras! ¿Hora de heredar?')+'</div>';return refresh()}
     avail.forEach(u=>list.appendChild(row('up-'+u.id,upIcon(u),u.name,u.desc,fmt(u.cost),()=>buyUp(u))));
     next.forEach(u=>list.appendChild(row('up-'+u.id,'<span class="q">?</span>',revealed(u)?u.name:'???',upHint(u),fmt(u.cost),null,true)));
-    const done=S.ups.length;if(done)list.insertAdjacentHTML('beforeend',`<div class="empty">${done} of ${UPS.length} upgrades bought</div>`);
+    const done=S.ups.length;if(done)list.insertAdjacentHTML('beforeend',`<div class="empty">${t(`${done} of ${UPS.length} upgrades bought`,`${done} de ${UPS.length} mejoras compradas`)}</div>`);
   }
   refresh();
 }
@@ -542,8 +571,8 @@ function costOf(id){
 }
 function refresh(){
   $('money').textContent=fmt(S.money);
-  $('rate').textContent='+'+fmt(rate()+helperRate())+' / sec';
-  $('ptap').textContent=fmt(tapValue()*(inFrenzy()?frenzyMult():1))+' / tap';
+  $('rate').textContent='+'+fmt(rate()+helperRate())+t(' / sec',' / seg');
+  $('ptap').textContent=fmt(tapValue()*(inFrenzy()?frenzyMult():1))+t(' / tap',' / toque');
   $('ownedBadge').textContent=Object.values(S.owned).reduce((a,b)=>a+b,0)||'';
   const n=UPS.filter(u=>upAvailable(u)&&S.money>=u.cost).length;$('upBadge').textContent=n||'';
   document.querySelectorAll('#list .row:not(.locked) .buy:not(.owned)').forEach(btn=>{
@@ -565,10 +594,10 @@ function buyHelper(){const p=helperPrice();if(S.money<p)return;S.money-=p;S.help
 function buyUp(u){
   if(S.money<u.cost||has(u.id))return;S.money-=u.cost;S.ups.push(u.id);mark(u.id);holdList=Date.now()+1050;
   const r=$('row-up-'+u.id);
-  if(r){const b=r.querySelector('.buy');b.classList.remove('ready');b.classList.add('owned');b.disabled=true;b.textContent='✓ Owned';setTimeout(()=>r.classList.add('gone'),700)}
+  if(r){const b=r.querySelector('.buy');b.classList.remove('ready');b.classList.add('owned');b.disabled=true;b.textContent=t('✓ Owned','✓ Comprada');setTimeout(()=>r.classList.add('gone'),700)}
   if(u.type==='helper')layoutHands(true);
   setTimeout(()=>{sig='';maybeRerender()},1100);
-  play('buy');buzz(20);toast(u.name+'!');save();
+  play('buy');buzz(20);toast(t(u.name+'!','¡'+u.name+'!'));save();
 }
 $('tabBiz').onclick=()=>{tabSel='biz';$('tabBiz').setAttribute('aria-selected','true');$('tabUp').setAttribute('aria-selected','false');sig='';maybeRerender()};
 $('tabUp').onclick=()=>{tabSel='up';$('tabUp').setAttribute('aria-selected','true');$('tabBiz').setAttribute('aria-selected','false');sig='';maybeRerender()};
@@ -602,14 +631,14 @@ function tap(x,y){
     if(T.frenzyMeter>=1)startFrenzy();
   }
   const r=scene.getBoundingClientRect();
-  floatText(x-r.left,y-r.top,(crit?'CRIT! ':'')+'+'+fmt(gain),crit);
+  floatText(x-r.left,y-r.top,(crit?t('CRIT! ','¡CRÍTICO! '):'')+'+'+fmt(gain),crit);
   sparks(x-r.left,y-r.top,crit?9:5);
 }
 coin.addEventListener('pointerdown',e=>{e.preventDefault();tap(e.clientX,e.clientY)});
 coin.addEventListener('keydown',e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();const r=coin.getBoundingClientRect();tap(r.left+r.width/2,r.top+r.height/3)}});
 function startFrenzy(){
   T.frenzyUntil=now()+fx('frenzyLength',10,max);T.frenzyLen=T.frenzyUntil-now();
-  wrap.classList.add('frenzy');play('frenzyOn');buzz(40);toast(`FRENZY! Taps ×${frenzyMult()}`);
+  wrap.classList.add('frenzy');play('frenzyOn');buzz(40);toast(t(`FRENZY! Taps ×${frenzyMult()}`,`¡FRENESÍ! Toques ×${frenzyMult()}`));
 }
 function endFrenzy(){T.frenzyMeter=0;wrap.classList.remove('frenzy');play('frenzyOff')}
 // ---------- helpers ----------
@@ -652,7 +681,7 @@ function spawnLucky(forced){
   const rr=forced||pickRarity();
   if(!forced)S.pity=(rr.id==='touch'||rr.id==='jackpot')?0:S.pity+1;
   const r=scene.getBoundingClientRect();
-  const b=document.createElement('button');b.className='lucky';b.setAttribute('aria-label',rr.metal+' coin');
+  const b=document.createElement('button');b.className='lucky';b.setAttribute('aria-label',t(rr.metal+' coin','Moneda de '+rr.metal));
   b.innerHTML=`<img src="${rr.img}" alt="" draggable="false">`;
   playAppear(rr);
   // bonus coins fall from the top of the scene to the floor; rarer coins fall faster
@@ -669,11 +698,12 @@ function grab(px,py,rr){
   if(!reduce)burst(px,py,rr.color,rr.id==='jackpot'?24:12);
   if(rr.id==='find'){
     const v=Math.max(10,(rate()+helperRate())*60,tapValue()*30)*fx('findMult',1,mul);earn(v);
-    toast('Bronze coin! +'+fmt(v),rr.color);floatText(px,py,'+'+fmt(v),true);scheduleLucky();
+    toast(t('Bronze coin! +','¡Moneda de Bronce! +')+fmt(v),rr.color);floatText(px,py,'+'+fmt(v),true);scheduleLucky();
   }else{
     const dur=rr.dur*bonusDur();
     T.bonus=rr;T.bonusEnd=now()+dur;T.bonusLen=dur;T.ticks=0;
-    toast(rr.metal+' coin: '+rr.name.replace(/!?$/,'!')+(rr.prod?` Income ×${rr.prod} for ${Math.round(dur)}s`:` Taps ×${rr.tap} for ${Math.round(dur)}s`),rr.color);
+    toast(t(rr.metal+' coin: '+rr.name.replace(/!?$/,'!')+(rr.prod?` Income ×${rr.prod} for ${Math.round(dur)}s`:` Taps ×${rr.tap} for ${Math.round(dur)}s`),
+      'Moneda de '+rr.metal+': '+rr.name+(rr.prod?` Ingresos ×${rr.prod} por ${Math.round(dur)}s`:` Toques ×${rr.tap} por ${Math.round(dur)}s`)),rr.color);
     $('bonusbar').classList.add('on');$('bonusName').textContent=rr.name;$('bonusFill').style.background=rr.color;
   }
   save();
@@ -731,7 +761,7 @@ function offline(){
   if(away<30)return;
   const before=S.piggy;
   S.piggy=Math.min(Math.max(piggyMax(),S.piggy),S.piggy+(baseRate()+helperRate())*PIGGY_RATE*away);
-  if(S.piggy>before)setTimeout(()=>toast(`Your ${HOMES[homeIdx()].piggy.toLowerCase()} has ${fmt(S.piggy)}. Tap it!`),400);
+  if(S.piggy>before)setTimeout(()=>toast(t(`Your ${HOMES[homeIdx()].piggy.toLowerCase()} has ${fmt(S.piggy)}. Tap it!`,`Tu ${HOMES[homeIdx()].piggy.toLowerCase()} tiene ${fmt(S.piggy)}. ¡Tocá para cobrar!`)),400);
   drawPiggy();
 }
 function drawPiggy(){
@@ -741,20 +771,21 @@ function drawPiggy(){
 }
 function collectPiggy(){
   const name=HOMES[homeIdx()].piggy;
-  if(S.piggy<=0){toast(`The ${name.toLowerCase()} fills while you are away`);return}
+  if(S.piggy<=0){toast(t(`The ${name.toLowerCase()} fills while you are away`,`Tu ${name.toLowerCase()} se llena mientras no estás`));return}
   audioInit();const v=S.piggy;S.piggy=0;earn(v);drawPiggy();
   const r=scene.getBoundingClientRect(),b=$('piggy').getBoundingClientRect();
   if(!reduce){burst(b.left-r.left+b.width/2,b.top-r.top+b.height/3,'#F5C542',18);floatText(b.left-r.left+b.width/2,b.top-r.top,'+'+fmt(v),true)}
-  play('find');buzz([30,30,60]);toast(name+'! +'+fmt(v));save();
+  play('find');buzz([30,30,60]);toast(t(name+'! +','¡'+name+'! +')+fmt(v));save();
 }
 function showStats(){
-  const first=id=>S.ms[id]!==undefined?mmss(S.ms[id]):'not yet';
-  $('stats').innerHTML=`Active play time: <b>${mmss(S.play)}</b><br>Studio: <b>${first('home-studioapt')}</b> · Suburban: <b>${first('home-suburban')}</b> · Penthouse: <b>${first('home-penthouse')}</b> · Mansion: <b>${first('home-mansion')}</b><br>First Car Wash: <b>${first('carwash-1')}</b> · $1M earned: <b>${first('$1000000')}</b><br>Upgrades: <b>${S.ups.length}/${UPS.length}</b> · Heirs: <b>${S.heirs}</b><br>Trophies: <b>${(S.streak.trophies||[]).length}/3</b> (daily streak of 15, 30 and 100 days)<br>Lifetime earned: <b>${fmt(S.alltime)}</b>`;
+  const first=id=>S.ms[id]!==undefined?mmss(S.ms[id]):t('not yet','todavía no');
+  $('stats').innerHTML=L()==='es'?`Tiempo de juego activo: <b>${mmss(S.play)}</b><br>Monoambiente: <b>${first('home-studioapt')}</b> · Afueras: <b>${first('home-suburban')}</b> · Penthouse: <b>${first('home-penthouse')}</b> · Mansión: <b>${first('home-mansion')}</b><br>Primer Lavadero: <b>${first('carwash-1')}</b> · $1M ganado: <b>${first('$1000000')}</b><br>Mejoras: <b>${S.ups.length}/${UPS.length}</b> · Herederos: <b>${S.heirs}</b><br>Trofeos: <b>${(S.streak.trophies||[]).length}/3</b> (racha diaria de 15, 30 y 100 días)<br>Ganado en toda tu vida: <b>${fmt(S.alltime)}</b>`:`Active play time: <b>${mmss(S.play)}</b><br>Studio: <b>${first('home-studioapt')}</b> · Suburban: <b>${first('home-suburban')}</b> · Penthouse: <b>${first('home-penthouse')}</b> · Mansion: <b>${first('home-mansion')}</b><br>First Car Wash: <b>${first('carwash-1')}</b> · $1M earned: <b>${first('$1000000')}</b><br>Upgrades: <b>${S.ups.length}/${UPS.length}</b> · Heirs: <b>${S.heirs}</b><br>Trophies: <b>${(S.streak.trophies||[]).length}/3</b> (daily streak of 15, 30 and 100 days)<br>Lifetime earned: <b>${fmt(S.alltime)}</b>`;
 }
 // ---------- daily reward and streak ----------
 const CAL=[{h:.5,label:'30m'},{h:1,label:'1h'},{h:1.5,label:'1.5h'},{h:2,label:'2h'},{h:3,label:'3h'},{h:4,label:'4h'},{coin:2,label:'Gold'}];
-const MILES={3:{h:2,text:'2 hours of income'},5:{coin:1,text:'a Silver coin'},10:{text:'a coin skin (coming soon)'},15:{coin:2,trophy:'bronze',text:'a Gold coin and a bronze trophy'},
-  30:{coin:3,trophy:'silver',text:'a Diamond coin and a silver trophy'},50:{text:'the title "Hustler" (coming soon)'},100:{trophy:'gold',text:'a gold trophy'},365:{text:'the title "Tycoon" (coming soon)'}};
+const MILES={3:{h:2,text:'2 hours of income',es:'2 horas de ingresos'},5:{coin:1,text:'a Silver coin',es:'una moneda de Plata'},10:{text:'a coin skin (coming soon)',es:'un diseño de moneda (próximamente)'},15:{coin:2,trophy:'bronze',text:'a Gold coin and a bronze trophy',es:'una moneda de Oro y un trofeo de bronce'},
+  30:{coin:3,trophy:'silver',text:'a Diamond coin and a silver trophy',es:'una moneda de Diamante y un trofeo de plata'},50:{text:'the title "Hustler" (coming soon)',es:'el título "Laburante" (próximamente)'},100:{trophy:'gold',text:'a gold trophy',es:'un trofeo de oro'},365:{text:'the title "Tycoon" (coming soon)',es:'el título "Magnate" (próximamente)'}};
+const mileText=m=>t(m.text,m.es);
 const dayNum=()=>{const d=new Date(Date.now()+(S.dayOffset||0)*864e5);return Math.floor(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/864e5)};
 function checkDaily(){
   const st=S.streak,today=dayNum();
@@ -769,13 +800,14 @@ function checkDaily(){
 function incomeHours(h){return Math.max(h*3600*(baseRate()+helperRate()),h*100*C.costMultiplier)}
 function showDaily(){
   const st=S.streak,ci=(st.count-1)%7;
-  $('streakBig').textContent=`🔥 ${st.count}-day streak`+(st.usedGrace?' (grace day used)':'');st.usedGrace=false;
-  $('cal').innerHTML=CAL.map((c,i)=>`<div class="${i<ci?'done':i===ci?'today':''}">Day ${i+1}<b>${c.coin?'🪙':c.label}</b>${c.coin?'Gold':''}</div>`).join('');
+  $('streakBig').textContent=t(`🔥 ${st.count}-day streak`,`🔥 Racha de ${st.count} día${st.count>1?'s':''}`)+(st.usedGrace?t(' (grace day used)',' (usaste el día de gracia)'):'');st.usedGrace=false;
+  $('cal').innerHTML=CAL.map((c,i)=>`<div class="${i<ci?'done':i===ci?'today':''}">${t('Day','Día')} ${i+1}<b>${c.coin?'🪙':c.label}</b>${c.coin?t('Gold','Oro'):''}</div>`).join('');
   const m=MILES[st.count];
   const next=Object.keys(MILES).map(Number).find(n=>n>st.count);
-  $('mile').textContent=m?`Streak milestone! You also get ${m.text}.`:next?`${next-st.count} more day${next-st.count>1?'s':''} to unlock ${MILES[next].text}.`:'';
+  $('mile').textContent=L()==='es'?(m?`¡Hito de racha! También ganás ${mileText(m)}.`:next?`${next-st.count>1?'Faltan':'Falta'} ${next-st.count} día${next-st.count>1?'s':''} para desbloquear ${mileText(MILES[next])}.`:'')
+    :m?`Streak milestone! You also get ${m.text}.`:next?`${next-st.count} more day${next-st.count>1?'s':''} to unlock ${MILES[next].text}.`:'';
   $('trophyRow').innerHTML=trophyRow();
-  $('claim').textContent='Claim '+(CAL[ci].coin?'Gold coin':fmt(incomeHours(CAL[ci].h)));
+  $('claim').textContent=t('Claim ','Cobrar ')+(CAL[ci].coin?t('Gold coin','moneda de Oro'):fmt(incomeHours(CAL[ci].h)));
   $('daily').classList.add('on');
 }
 $('claim').onclick=()=>{
@@ -784,20 +816,21 @@ $('claim').onclick=()=>{
   if(c.coin!==undefined)S.queue.push(c.coin);else v+=incomeHours(c.h);
   if(m){if(m.h)v+=incomeHours(m.h);if(m.coin!==undefined)S.queue.push(m.coin);}
   awardTrophies();
-  if(v>0){earn(v);toast('Daily reward! +'+fmt(v))}
+  if(v>0){earn(v);toast(t('Daily reward! +','¡Premio diario! +')+fmt(v))}
   st.claimed=true;play('find');buzz(30);$('daily').classList.remove('on');save();
 };
 const TROPHIES=['bronze','silver','gold'];
 const TROPHY_DAYS={bronze:15,silver:30,gold:100};
+const TROPHY_ES={bronze:'bronce',silver:'plata',gold:'oro'};
 // trophies come from the daily streak: 15, 30 and 100 days in a row
 function awardTrophies(){
   const st=S.streak;st.trophies=st.trophies||[];let got=false;
-  TROPHIES.forEach(k=>{if(st.count>=TROPHY_DAYS[k]&&!st.trophies.includes(k)){st.trophies.push(k);got=true;toast(`New ${k} trophy! It is now on display at home`,'#F5C542')}});
+  TROPHIES.forEach(k=>{if(st.count>=TROPHY_DAYS[k]&&!st.trophies.includes(k)){st.trophies.push(k);got=true;toast(t(`New ${k} trophy! It is now on display at home`,`¡Nuevo trofeo de ${TROPHY_ES[k]}! Ya está en exhibición en tu casa`),'#F5C542')}});
   if(got)drawTrophies();
 }
 function trophyRow(){
   const own=S.streak.trophies||[];
-  return TROPHIES.map(k=>`<div class="${own.includes(k)?'':'locked'}"><img src="a/trophy-${k}.svg" alt="${k} trophy">${TROPHY_DAYS[k]} days</div>`).join('');
+  return TROPHIES.map(k=>`<div class="${own.includes(k)?'':'locked'}"><img src="a/trophy-${k}.svg" alt="${t(k+' trophy','trofeo de '+TROPHY_ES[k])}">${TROPHY_DAYS[k]} ${t('days','días')}</div>`).join('');
 }
 function drawTrophies(){
   document.querySelectorAll('.trophy').forEach(e=>e.remove());
@@ -810,7 +843,7 @@ function drawTrophies(){
 // ---------- settings panel ----------
 function syncSettings(){
   const s=S.settings;$('volS').value=s.sound;$('volM').value=s.music;
-  [['swS','soundOn'],['swM','musicOn'],['swV','vib']].forEach(([id,k])=>{$(id).setAttribute('aria-pressed',s[k]);$(id).textContent=s[k]?'On':'Off'});
+  [['swS','soundOn'],['swM','musicOn'],['swV','vib']].forEach(([id,k])=>{$(id).setAttribute('aria-pressed',s[k]);$(id).textContent=s[k]?t('On','Sí'):t('Off','No')});
   applyVolumes();
 }
 $('gear').onclick=()=>{audioInit();showStats();$('saveOut').value=encode();$('saveMsg').textContent='';$('overlay').classList.add('on')};
@@ -822,9 +855,18 @@ $('volM').oninput=e=>{S.settings.music=+e.target.value;applyVolumes()};
 [['swS','soundOn'],['swM','musicOn'],['swV','vib']].forEach(([id,k])=>$(id).onclick=()=>{S.settings[k]=!S.settings[k];syncSettings();save()});
 $('copySave').onclick=async()=>{
   const code=encode();$('saveOut').value=code;
-  try{await navigator.clipboard.writeText(code);$('saveMsg').textContent='Copied! Paste it somewhere safe.'}
-  catch(e){$('saveOut').select();$('saveMsg').textContent='Select the code above and copy it.'}
+  try{await navigator.clipboard.writeText(code);$('saveMsg').textContent=t('Copied! Paste it somewhere safe.','¡Copiado! Pegalo en algún lugar seguro.')}
+  catch(e){$('saveOut').select();$('saveMsg').textContent=t('Select the code above and copy it.','Seleccioná el código de arriba y copialo.')}
 };
+function setLang(l){
+  S.settings.lang=l;applyLang();applyHome(homeIdx(),false);sig='';renderList();syncSettings();showStats();
+  if(T.bonus)$('bonusName').textContent=T.bonus.name;
+  if($('heirPanel').classList.contains('on'))showHeir();
+  if($('daily').classList.contains('on'))showDaily();
+  save();
+}
+$('langEn').onclick=()=>setLang('en');
+$('langEs').onclick=()=>setLang('es');
 // tester JSON: pasting a {...} object in the load box patches the game state and runs test actions
 const METAL={bronze:0,silver:1,gold:2,diamond:3};
 function applyTester(o){
@@ -866,13 +908,13 @@ $('loadSave').onclick=()=>{
     return;
   }
   const s=decode($('saveIn').value);
-  if(!s){$('saveMsg').style.color='#B4362B';$('saveMsg').textContent='That code does not look right. Check it was copied whole.';return}
-  S=s;S.lastSeen=Date.now();resetRuntime();save();$('saveIn').value='';$('saveMsg').style.color='';$('saveMsg').textContent='Loaded! Net worth '+fmt(S.money)+'.';
+  if(!s){$('saveMsg').style.color='#B4362B';$('saveMsg').textContent=t('That code does not look right. Check it was copied whole.','Ese código no parece correcto. Fijate que esté copiado completo.');return}
+  S=s;S.lastSeen=Date.now();resetRuntime();save();$('saveIn').value='';$('saveMsg').style.color='';$('saveMsg').textContent=t('Loaded! Net worth ','¡Cargado! Patrimonio ')+fmt(S.money)+'.';
 };
 let resetArmed=false;
 $('resetSave').onclick=()=>{
-  if(!resetArmed){resetArmed=true;$('resetSave').textContent='Tap again to erase everything';setTimeout(()=>{resetArmed=false;$('resetSave').textContent='Reset progress'},3000);return}
-  const st=S.settings;S=fresh();S.settings=st;resetRuntime();save();$('saveMsg').textContent='Progress erased.';resetArmed=false;$('resetSave').textContent='Reset progress';
+  if(!resetArmed){resetArmed=true;$('resetSave').textContent=t('Tap again to erase everything','Tocá de nuevo para borrar todo');setTimeout(()=>{resetArmed=false;$('resetSave').textContent=t('Reset progress','Borrar progreso')},3000);return}
+  const st=S.settings;S=fresh();S.settings=st;resetRuntime();save();$('saveMsg').textContent=t('Progress erased.','Progreso borrado.');resetArmed=false;$('resetSave').textContent=t('Reset progress','Borrar progreso');
 };
 function resetRuntime(){
   hands.forEach(h=>h.remove());hands=[];layoutHands();
@@ -915,7 +957,7 @@ function loop(ms){
   saveAcc+=dt;if(saveAcc>5){saveAcc=0;save()}
   requestAnimationFrame(loop);
 }
-load();syncSettings();offline();layoutHands();applyHome(homeIdx(),false);drawPiggy();drawTrophies();setTimeout(checkDaily,600);
+load();applyLang();syncSettings();offline();layoutHands();applyHome(homeIdx(),false);drawPiggy();drawTrophies();setTimeout(checkDaily,600);
 $('piggy').addEventListener('click',collectPiggy);
 T.nextLucky=now()+60;
 maybeRerender();requestAnimationFrame(loop);
