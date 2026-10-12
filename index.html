@@ -1,0 +1,881 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#FFF6E5"><link rel="apple-touch-icon" href="icon-192.png">
+<title>Penny Up Main Screen</title>
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+/* Layout: a single phone screen (stats bar, tappable scene, tabbed shop) centred on a quiet backdrop */
+:root{
+  --ink:#2B2340; --cream:#FFF6E5; --penny:#D9822B; --penny-dk:#A85A1C; --penny-lt:#F2B263;
+  --gold:#F5C542; --cash:#3DBE8B; --cash-dk:#24946A; --coral:#FF6B5E; --sky:#8FD3F4; --wood:#C98A5A;
+  --muted:#6B5F7E; --page:#EFE4D0; --note:#6B5F7E;
+  --display:"Fredoka","Arial Rounded MT Bold","Nunito",system-ui,sans-serif;
+  --body:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--page:#1C1726;--note:#B7ABC8;color-scheme:dark}}
+:root[data-theme="dark"]{--page:#1C1726;--note:#B7ABC8;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--page);font-family:var(--body);color:var(--ink);display:grid;place-items:center;padding:16px;gap:12px}
+.note{font-size:13px;color:var(--note);max-width:420px;text-align:center;margin:0}
+.phone{width:min(400px,100%);height:min(820px,calc(100vh - 80px));min-height:600px;background:var(--cream);border:3px solid var(--ink);border-radius:36px;overflow:hidden;display:grid;grid-template-rows:auto minmax(0,1fr) minmax(0,42%);position:relative;box-shadow:0 18px 40px rgba(43,35,64,.25);user-select:none;-webkit-user-select:none;touch-action:manipulation}
+/* stats */
+.stats{padding:12px 56px 8px;background:var(--cream);border-bottom:3px solid var(--ink);display:grid;justify-items:center;gap:1px;z-index:2;position:relative}
+.stats .label{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--penny-dk)}
+.money{font-family:var(--display);font-weight:700;font-size:36px;line-height:1.05;font-variant-numeric:tabular-nums;white-space:nowrap}
+.rates{display:flex;gap:14px;font-weight:800;font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.rate{color:var(--cash-dk)}
+.ptap{color:var(--penny-dk)}
+.home{display:flex;gap:7px;align-items:center;font-size:12px;font-weight:800;color:var(--muted);margin-top:3px;white-space:nowrap}
+.home b{font-family:var(--display);font-weight:600;font-size:13px;color:var(--ink)}
+.home .hbar{width:70px;height:8px;border:2px solid var(--ink);border-radius:6px;background:#fff;overflow:hidden;flex:none}
+.home .hbar i{display:block;height:100%;width:0;background:var(--penny)}
+.gear{position:absolute;right:12px;top:12px;width:38px;height:38px;border-radius:12px;border:2.5px solid var(--ink);background:#fff;display:grid;place-items:center;cursor:pointer;padding:0}
+.gear svg{width:22px;height:22px}
+.gear:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.heir{left:12px;right:auto;background:var(--gold);display:none}
+.heir.on{display:grid}
+.heir.ready{animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 5px rgba(245,197,66,.45)}}
+/* scene */
+.scene{position:relative;overflow:hidden;display:grid;place-items:center}
+.scene svg.bg{position:absolute;inset:0;width:100%;height:100%}
+.props{position:absolute;inset:0;pointer-events:none}
+.prop{position:absolute;height:auto;pointer-events:none}
+.coin-shadow{position:absolute;left:50%;bottom:16%;width:44%;height:5%;transform:translateX(-50%);background:#2B2340;opacity:.16;border-radius:50%}
+.coin-wrap{position:relative;z-index:1;width:min(200px,52vw);aspect-ratio:1}
+.ring{position:absolute;inset:-14px;width:calc(100% + 28px);height:calc(100% + 28px);transform:rotate(-90deg);pointer-events:none}
+.ring .track{fill:none;stroke:rgba(43,35,64,.12);stroke-width:7}
+.ring .fill{fill:none;stroke:var(--gold);stroke-width:7;stroke-linecap:round;transition:stroke .2s}
+.coin-wrap.frenzy .ring .fill{stroke:var(--coral)}
+.coin-wrap.frenzy .coin{filter:drop-shadow(0 0 18px rgba(255,107,94,.85))}
+.coin{position:absolute;inset:0;width:100%;height:100%;border:0;padding:0;background:none;cursor:pointer;border-radius:50%;transition:transform .18s cubic-bezier(.3,1.6,.5,1);filter:drop-shadow(0 8px 0 rgba(43,35,64,.18))}
+.coin:focus-visible{outline:4px solid var(--gold);outline-offset:6px}
+.coin.press{transform:scale(.9,.86);transition:transform .05s ease-out}
+.coin img{width:100%;height:100%;object-fit:contain;display:block;animation:bob 3s ease-in-out infinite;-webkit-user-drag:none}
+@keyframes bob{50%{transform:translateY(-6px) rotate(-2deg)}}
+.hand{position:absolute;left:50%;top:50%;width:44px;height:44px;pointer-events:none;z-index:2}
+.hand img{width:100%;height:100%;object-fit:contain;display:block}
+.float{position:absolute;font-family:var(--display);font-weight:700;font-size:22px;color:var(--cash-dk);pointer-events:none;-webkit-text-stroke:5px var(--cream);paint-order:stroke fill;white-space:nowrap;z-index:5}
+.float.crit{font-size:30px;color:var(--penny-dk)}
+.spark{position:absolute;width:14px;height:14px;border-radius:50%;background:var(--penny);border:2.5px solid var(--ink);pointer-events:none;z-index:4}
+.rain{position:absolute;top:-24px;width:18px;height:18px;border-radius:50%;background:var(--gold);border:2.5px solid var(--ink);pointer-events:none;z-index:0}
+.piggy{position:absolute;right:23%;bottom:4%;width:21%;min-width:64px;border:0;background:none;padding:0;cursor:pointer;z-index:2;display:grid;justify-items:center;gap:2px}
+.piggy img{width:100%;height:auto;display:block;filter:drop-shadow(0 4px 0 rgba(43,35,64,.18));-webkit-user-drag:none}
+.piggy.full img{animation:wiggle 1.6s ease-in-out infinite}
+@keyframes wiggle{0%,70%,100%{transform:rotate(0)}78%{transform:rotate(-6deg)}86%{transform:rotate(6deg)}94%{transform:rotate(-3deg)}}
+.piggy .pbar{width:80%;height:7px;border:2px solid var(--ink);border-radius:6px;background:#fff;overflow:hidden}
+.piggy .pbar i{display:block;height:100%;width:0;background:var(--gold)}
+.piggy .pamt{position:absolute;top:-16px;font-family:var(--display);font-weight:700;font-size:13px;color:var(--cash-dk);-webkit-text-stroke:4px var(--cream);paint-order:stroke fill;white-space:nowrap}
+.piggy:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+.lucky{position:absolute;width:64px;height:64px;border:0;background:none;padding:0;cursor:pointer;z-index:6}
+.lucky img{width:100%;height:100%;display:block;pointer-events:none;-webkit-user-drag:none}
+.toast{position:absolute;top:10px;left:50%;transform:translateX(-50%);background:var(--gold);border:3px solid var(--ink);border-radius:14px;padding:6px 14px;font-family:var(--display);font-weight:600;font-size:15px;white-space:nowrap;z-index:7;max-width:92%;overflow:hidden;text-overflow:ellipsis}
+.bonusbar{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);width:min(260px,80%);background:#fff;border:2.5px solid var(--ink);border-radius:12px;padding:4px 10px 6px;z-index:6;display:none}
+.bonusbar.on{display:block}
+.bonusbar .t{display:flex;justify-content:space-between;font-family:var(--display);font-weight:600;font-size:14px}
+.bonusbar .bar{height:8px;border-radius:6px;background:#EFE4D0;margin-top:3px;overflow:hidden}
+.bonusbar .bar i{display:block;height:100%;background:var(--gold);border-radius:6px}
+/* shop */
+.shop{background:#FFFDF8;border-top:3px solid var(--ink);display:grid;grid-template-rows:auto 1fr;min-height:0}
+.tabs{display:flex;gap:6px;padding:8px 12px 4px}
+.tab{flex:1;font-family:var(--display);font-weight:600;font-size:15px;border:2.5px solid var(--ink);border-radius:12px;background:var(--cream);padding:5px 8px;cursor:pointer;color:var(--ink);display:flex;justify-content:center;gap:6px;align-items:center}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--cream)}
+.tab .badge{background:var(--coral);color:#fff;border-radius:10px;font-size:12px;padding:0 6px;min-width:18px}
+.tab .badge:empty{display:none}
+.tab:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.list{overflow-y:auto;padding:6px 12px 14px;display:grid;gap:8px;align-content:start}
+.row{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:10px;align-items:center;background:var(--cream);border:2.5px solid var(--ink);border-radius:16px;padding:6px 8px;transition:opacity .4s}
+.row .icon{width:52px;height:52px;border-radius:12px;background:#fff;display:grid;place-items:center;overflow:hidden}
+.row .icon img,.row .icon svg{width:100%;height:100%;object-fit:contain}
+.row .icon .q{font-family:var(--display);font-weight:700;font-size:24px;color:#C9BBA8}
+.row .name{font-family:var(--display);font-weight:600;font-size:16px;line-height:1.15}
+.row .meta{font-size:12px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums;line-height:1.25}
+.row .owned{font-family:var(--display);font-weight:600;color:var(--penny-dk)}
+.row.locked .name{color:#9C8F84}
+.row.gone{opacity:0}
+.row.bump{animation:bump .35s}
+@keyframes bump{40%{transform:scale(1.04)}}
+/* buy button doubles as a progress bar: it fills with your money and turns green when you can pay */
+.buy{--p:0%;font-family:var(--display);font-weight:600;font-size:15px;color:#fff;background:var(--cash);border:2.5px solid var(--ink);border-radius:12px;padding:6px 10px;min-width:84px;box-shadow:0 4px 0 var(--ink);cursor:pointer;font-variant-numeric:tabular-nums;transition:transform .08s}
+.buy:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
+.buy:disabled{background:linear-gradient(90deg,#A9E2C8 var(--p),#E6DCCD var(--p));color:var(--muted);cursor:default}
+.buy.ready{animation:ready 1.4s ease-in-out infinite}
+@keyframes ready{50%{box-shadow:0 4px 0 var(--ink),0 0 0 4px rgba(61,190,139,.35)}}
+.buy.owned,.buy.owned:disabled{background:var(--ink);color:var(--cream);animation:none}
+.buy:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.empty{font-size:13px;color:var(--muted);text-align:center;padding:14px 8px}
+/* settings */
+.overlay{position:absolute;inset:0;background:rgba(43,35,64,.45);z-index:20;display:none;align-items:flex-end}
+.overlay.on{display:flex}
+.panel{background:var(--cream);border-top:3px solid var(--ink);border-radius:24px 24px 0 0;width:100%;max-height:88%;overflow-y:auto;padding:16px 18px 22px}
+.panel h3{margin:0 0 10px;font-family:var(--display);font-weight:600;font-size:20px;display:flex;justify-content:space-between;align-items:center}
+.panel h4{margin:16px 0 6px;font-family:var(--display);font-weight:600;font-size:16px}
+.close{font-family:var(--display);font-size:15px;border:2.5px solid var(--ink);border-radius:10px;background:#fff;padding:3px 10px;cursor:pointer;color:var(--ink)}
+.set{display:grid;grid-template-columns:70px 1fr auto;gap:10px;align-items:center;margin:8px 0;font-weight:800;font-size:14px}
+.set input[type=range]{width:100%;accent-color:var(--penny)}
+.sw{font-family:var(--display);font-weight:600;font-size:13px;border:2.5px solid var(--ink);border-radius:10px;padding:3px 8px;min-width:56px;cursor:pointer;background:var(--cash);color:#fff}
+.sw[aria-pressed="false"]{background:#CFC4B4;color:var(--muted)}
+.panel p{font-size:13px;color:var(--muted);margin:4px 0 8px;line-height:1.35}
+.panel textarea{width:100%;height:64px;font:12px/1.3 ui-monospace,Menlo,monospace;border:2px solid var(--ink);border-radius:10px;padding:6px;resize:none;background:#fff;color:var(--ink)}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.btn{font-family:var(--display);font-weight:600;font-size:14px;border:2.5px solid var(--ink);border-radius:10px;padding:5px 12px;cursor:pointer;background:var(--gold);color:var(--ink)}
+.btn.warn{background:#fff;color:#B4362B}
+.btn:disabled{background:#CFC4B4;color:var(--muted);cursor:default}
+.daily .panel{border-radius:24px 24px 0 0;text-align:center}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin:10px 0}
+.cal div{border:2.5px solid var(--ink);border-radius:10px;background:#fff;padding:5px 2px;font-size:11px;font-weight:800;color:var(--muted);display:grid;gap:2px;justify-items:center}
+.cal div b{font-family:var(--display);font-size:13px;color:var(--ink)}
+.cal div.done{background:#E3F6EC}
+.cal div.today{background:var(--gold);transform:translateY(-3px);box-shadow:0 3px 0 var(--ink)}
+.streakbig{font-family:var(--display);font-weight:700;font-size:30px;margin:2px 0}
+.mile{font-size:13px;font-weight:800;color:var(--penny-dk);margin:4px 0 12px}
+.claim{font-family:var(--display);font-weight:600;font-size:18px;color:#fff;background:var(--cash);border:2.5px solid var(--ink);border-radius:14px;padding:8px 28px;box-shadow:0 4px 0 var(--ink);cursor:pointer}
+.trophy{position:absolute;top:31%;width:11%;min-width:34px;pointer-events:none;z-index:1}
+.trophy img{width:100%;display:block}
+.heirs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 12px;text-align:center}
+.heirs div{border:2.5px solid var(--ink);border-radius:12px;background:#fff;padding:8px 4px;font-size:12px;font-weight:800;color:var(--muted)}
+.heirs b{display:block;font-family:var(--display);font-size:24px;color:var(--ink)}
+.msg{font-size:13px;font-weight:800;color:var(--cash-dk);min-height:18px;margin-top:4px}
+@media (prefers-reduced-motion:reduce){.coin img,.piggy.full img,.buy.ready,.heir.ready{animation:none}.row.bump{animation:none}}
+</style>
+<style>/* Android tester build: the phone frame fills the real screen */
+body{padding:0;display:block;background:var(--cream);overscroll-behavior:none;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+.note{display:none}
+.phone{width:100%;height:100vh;height:100dvh;min-height:0;border:0;border-radius:0;box-shadow:none}
+</style>
+
+<div class="phone" id="phone">
+  <header class="stats">
+    <div class="label">Net worth</div>
+    <div class="money" id="money">$0.00</div>
+    <div class="rates"><span class="rate" id="rate">+$0.00 / sec</span><span class="ptap" id="ptap">$0.25 / tap</span></div>
+    <div class="home" id="home"><b id="homeName">Rented Room</b><span class="hbar"><i id="homeFill"></i></span><span id="homeNext"></span></div>
+    <button class="gear heir" id="heirBtn" aria-label="Inheritance"><svg viewBox="0 0 24 24" fill="#FFF6E5" stroke="#2B2340" stroke-width="2" stroke-linejoin="round"><path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z"/></svg></button>
+    <button class="gear" id="gear" aria-label="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="#2B2340" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></button>
+  </header>
+
+  <main class="scene" id="scene">
+    <svg class="bg" id="bg" viewBox="0 0 400 420" preserveAspectRatio="none" aria-hidden="true"></svg>
+    <div class="props" id="props"></div>
+    <button class="piggy" id="piggy" aria-label="Piggy bank: tap to collect what you earned while away"><img id="piggyImg" src="a/piggy-bank.svg" alt="" draggable="false"><span class="pbar"><i id="piggyFill"></i></span><span class="pamt" id="piggyAmt"></span></button>
+    <div class="coin-shadow"></div>
+    <div class="coin-wrap" id="coinWrap">
+      <svg class="ring" viewBox="0 0 100 100" aria-hidden="true"><circle class="track" cx="50" cy="50" r="46"/><circle class="fill" id="ringFill" cx="50" cy="50" r="46" pathLength="100" stroke-dasharray="0 100"/></svg>
+      <button class="coin" id="coin" aria-label="Tap the coin to earn money"><img id="coinImg" src="coin.svg" alt="" draggable="false"></button>
+    </div>
+    <div class="bonusbar" id="bonusbar" aria-live="polite"><div class="t"><span id="bonusName"></span><span id="bonusLeft"></span></div><div class="bar"><i id="bonusFill"></i></div></div>
+  </main>
+
+  <section class="shop" aria-label="Shop">
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" id="tabBiz" aria-selected="true">Businesses <span class="badge" id="ownedBadge" style="background:var(--penny)"></span></button>
+      <button class="tab" role="tab" id="tabUp" aria-selected="false">Upgrades <span class="badge" id="upBadge"></span></button>
+    </div>
+    <div class="list" id="list"></div>
+  </section>
+
+  <div class="overlay daily" id="daily">
+    <div class="panel" role="dialog" aria-label="Daily reward">
+      <h3 style="justify-content:center">Daily reward</h3>
+      <div class="streakbig" id="streakBig"></div>
+      <div class="cal" id="cal"></div>
+      <div class="mile" id="mile"></div>
+      <button class="claim" id="claim">Claim</button>
+    </div>
+  </div>
+  <div class="overlay" id="heirPanel">
+    <div class="panel" role="dialog" aria-label="Inheritance">
+      <h3>Inheritance <button class="close" id="closeHeir">Close</button></h3>
+      <p>Pass your fortune on to your heirs. You start again in the Rented Room, but every heir makes all your income and taps 5% bigger, forever. Your streak, trophies and settings stay.</p>
+      <div class="heirs"><div>Heirs now<b id="heirNow">0</b><span id="heirNowPct"></span></div><div>Heirs if you pass it on<b id="heirNew">0</b><span id="heirNewPct"></span></div></div>
+      <p id="heirHint"></p>
+      <div class="btns"><button class="btn" id="doHeir">Pass it on</button></div>
+    </div>
+  </div>
+  <div class="overlay" id="overlay">
+    <div class="panel" role="dialog" aria-label="Settings">
+      <h3>Settings <button class="close" id="closeSet">Done</button></h3>
+      <div class="set"><span>Sound</span><input type="range" id="volS" min="0" max="100" aria-label="Sound volume"><button class="sw" id="swS" aria-pressed="true">On</button></div>
+      <div class="set"><span>Music</span><input type="range" id="volM" min="0" max="100" aria-label="Music volume"><button class="sw" id="swM" aria-pressed="true">On</button></div>
+      <div class="set"><span>Vibration</span><span></span><button class="sw" id="swV" aria-pressed="true">On</button></div>
+      <h4>Tester stats</h4>
+      <p id="stats"></p>
+      <h4>Tester save</h4>
+      <p>Progress saves automatically on this device. To keep it safe or move it to another device, copy the save code and paste it somewhere (Notes, WhatsApp). To restore, paste a code and press Load.</p>
+      <textarea id="saveOut" readonly aria-label="Your save code"></textarea>
+      <div class="btns"><button class="btn" id="copySave">Copy save code</button></div>
+      <textarea id="saveIn" placeholder="Paste a save code here" aria-label="Save code to load" style="margin-top:10px"></textarea>
+      <div class="btns"><button class="btn" id="loadSave">Load</button><button class="btn warn" id="resetSave">Reset progress</button></div>
+      <div class="msg" id="saveMsg" aria-live="polite"></div>
+    </div>
+  </div>
+</div>
+
+<script>/* Android tester build: first launch starts from Lautaro's playtest state (2026-10-11 screenshots) */
+try{if(!localStorage.getItem('p2e-save-v1')&&!localStorage.getItem('pu-seeded')){var s0={"v":2,"money":15919.28,"total":100000,"alltime":100000,"heirs":0,"owned":{"lemonade":17,"dogs":12,"truck":3,"store":1,"carwash":0,"coffee":0,"gym":0,"restaurant":0,"realestate":0,"factory":0,"startup":0,"bank":0,"airline":0,"studio":0,"space":0},"helpers":16,"ups":["grip1","lemonade-1","lemonade-2","dogs-1","grip2","helper1"],"pity":0,"play":0,"ms":{},"piggy":0,"dayOffset":0,"queue":[],"streak":{"last":null,"count":0,"best":0,"grace":null,"claimed":false},"settings":{"sound":80,"music":50,"soundOn":true,"musicOn":true,"vib":true},"lastSeen":1791762217547};s0.lastSeen=Date.now();localStorage.setItem('p2e-save-v1',JSON.stringify(s0));localStorage.setItem('pu-seeded','1')}}catch(e){}
+</script>
+<script>
+// ---------- data (generated from design/content.json: do not edit by hand) ----------
+const C=/*CONTENT*/{"version":1,"costMultiplier":3,"growth":1.15,"businesses":[{"id":"lemonade","name":"Lemonade Stand","baseCost":45,"baseRate":0.1,"home":"room"},{"id":"dogs","name":"Dog Walking","baseCost":300,"baseRate":1,"home":"room"},{"id":"truck","name":"Food Truck","baseCost":3300,"baseRate":8,"home":"room"},{"id":"store","name":"Corner Store","baseCost":36000.0,"baseRate":47,"home":"studioapt"},{"id":"carwash","name":"Car Wash","baseCost":390000.0,"baseRate":260,"home":"studioapt"},{"id":"coffee","name":"Coffee Shop","baseCost":4200000.0,"baseRate":1400,"home":"suburban"},{"id":"gym","name":"Gym","baseCost":60000000.0,"baseRate":7800,"home":"suburban"},{"id":"restaurant","name":"Restaurant","baseCost":990000000.0,"baseRate":44000.0,"home":"suburban"},{"id":"realestate","name":"Real Estate","baseCost":15300000000.0,"baseRate":260000.0,"home":"penthouse"},{"id":"factory","name":"Factory","baseCost":225000000000.0,"baseRate":1600000.0,"home":"penthouse"},{"id":"startup","name":"Tech Startup","baseCost":3000000000000.0,"baseRate":10000000.0,"home":"mansion"},{"id":"bank","name":"Bank","baseCost":42000000000000.0,"baseRate":65000000.0,"home":"mansion"},{"id":"airline","name":"Airline","baseCost":510000000000000.0,"baseRate":430000000.0,"home":"island"},{"id":"studio","name":"Movie Studio","baseCost":6300000000000000.0,"baseRate":2900000000.0,"home":"island"},{"id":"space","name":"Space Company","baseCost":7.8e+16,"baseRate":21000000000.0,"home":"island"}],"homes":[{"id":"room","name":"Rented Room","threshold":0,"incomeMult":1,"coin":"Penny","piggy":"Piggy Bank"},{"id":"studioapt","name":"Studio Apartment","threshold":10000.0,"incomeMult":1.1,"coin":"Nickel","piggy":"Piggy Bank"},{"id":"suburban","name":"Suburban House","threshold":1000000.0,"incomeMult":1.25,"coin":"Dime","piggy":"Cash Register"},{"id":"penthouse","name":"Downtown Penthouse","threshold":1000000000.0,"incomeMult":1.5,"coin":"Quarter","piggy":"Cash Register"},{"id":"mansion","name":"Hillside Mansion","threshold":1000000000000.0,"incomeMult":2,"coin":"Silver Dollar","piggy":"Safe"},{"id":"island","name":"Private Island","threshold":1000000000000000.0,"incomeMult":3,"coin":"Gold Coin","piggy":"Treasure Chest"},{"id":"station","name":"Orbital Station","threshold":1e+21,"incomeMult":5,"coin":"Diamond Coin","piggy":"Treasure Chest"}],"helper":{"baseCost":150,"interval":3,"note":"Helper taps get the flat tap value x helperValue plus helperHustle x $/s; no Hustle, no Frenzy"},"crit":{"baseChance":0.03,"baseMult":10},"bonusCoins":[{"metal":"Bronze","chance":0.6,"effect":"Lucky Find: 60s of income"},{"metal":"Silver","chance":0.28,"effect":"Sale: income x7 for 30s"},{"metal":"Gold","chance":0.1,"effect":"Golden Touch: taps x50 for 10s"},{"metal":"Diamond","chance":0.02,"effect":"Jackpot: taps x777 for 7s"}],"piggy":{"rate":0.5,"capHours":8},"inheritance":{"unlockHome":"mansion","divisor":100000000000.0,"perHeir":0.05},"upgrades":[{"id":"lemonade-1","name":"Fresh Lemons","type":"business","cost":450,"req":{"owned":["lemonade",1]},"effect":{"bizMult":["lemonade",2]},"desc":"Lemonade Stand earns x2"},{"id":"lemonade-2","name":"Pink Lemonade","type":"business","cost":2250,"req":{"owned":["lemonade",10]},"effect":{"bizMult":["lemonade",2]},"desc":"Lemonade Stand earns x2"},{"id":"lemonade-3","name":"Ice Cubes","type":"business","cost":22500,"req":{"owned":["lemonade",25]},"effect":{"bizMult":["lemonade",2]},"desc":"Lemonade Stand earns x2"},{"id":"lemonade-4","name":"Bendy Straws","type":"business","cost":2250000.0,"req":{"owned":["lemonade",50]},"effect":{"bizMult":["lemonade",2]},"desc":"Lemonade Stand earns x2"},{"id":"lemonade-5","name":"Organic Lemons","type":"business","cost":225000000.0,"req":{"owned":["lemonade",100]},"effect":{"bizMult":["lemonade",2]},"desc":"Lemonade Stand earns x2"},{"id":"lemonade-6","name":"Lemonade Franchise","type":"business","cost":22500000000.0,"req":{"owned":["lemonade",150]},"effect":{"bizMult":["lemonade",2]},"desc":"Lemonade Stand earns x2"},{"id":"dogs-1","name":"Longer Leashes","type":"business","cost":3000,"req":{"owned":["dogs",1]},"effect":{"bizMult":["dogs",2]},"desc":"Dog Walking earns x2"},{"id":"dogs-2","name":"Doggy Treats","type":"business","cost":15000,"req":{"owned":["dogs",10]},"effect":{"bizMult":["dogs",2]},"desc":"Dog Walking earns x2"},{"id":"dogs-3","name":"Doggy Daycare","type":"business","cost":150000,"req":{"owned":["dogs",25]},"effect":{"bizMult":["dogs",2]},"desc":"Dog Walking earns x2"},{"id":"dogs-4","name":"Dog Spa","type":"business","cost":15000000.0,"req":{"owned":["dogs",50]},"effect":{"bizMult":["dogs",2]},"desc":"Dog Walking earns x2"},{"id":"dogs-5","name":"Pet Hotel","type":"business","cost":1500000000.0,"req":{"owned":["dogs",100]},"effect":{"bizMult":["dogs",2]},"desc":"Dog Walking earns x2"},{"id":"dogs-6","name":"Pawsome App","type":"business","cost":150000000000.0,"req":{"owned":["dogs",150]},"effect":{"bizMult":["dogs",2]},"desc":"Dog Walking earns x2"},{"id":"truck-1","name":"Secret Sauce","type":"business","cost":33000,"req":{"owned":["truck",1]},"effect":{"bizMult":["truck",2]},"desc":"Food Truck earns x2"},{"id":"truck-2","name":"Second Grill","type":"business","cost":165000,"req":{"owned":["truck",10]},"effect":{"bizMult":["truck",2]},"desc":"Food Truck earns x2"},{"id":"truck-3","name":"Food Festival","type":"business","cost":1650000,"req":{"owned":["truck",25]},"effect":{"bizMult":["truck",2]},"desc":"Food Truck earns x2"},{"id":"truck-4","name":"Gourmet Menu","type":"business","cost":165000000.0,"req":{"owned":["truck",50]},"effect":{"bizMult":["truck",2]},"desc":"Food Truck earns x2"},{"id":"truck-5","name":"Truck Fleet","type":"business","cost":16500000000.0,"req":{"owned":["truck",100]},"effect":{"bizMult":["truck",2]},"desc":"Food Truck earns x2"},{"id":"truck-6","name":"Viral Burger","type":"business","cost":1650000000000.0,"req":{"owned":["truck",150]},"effect":{"bizMult":["truck",2]},"desc":"Food Truck earns x2"},{"id":"store-1","name":"Late Hours","type":"business","cost":360000.0,"req":{"owned":["store",1]},"effect":{"bizMult":["store",2]},"desc":"Corner Store earns x2"},{"id":"store-2","name":"Loyalty Cards","type":"business","cost":1800000.0,"req":{"owned":["store",10]},"effect":{"bizMult":["store",2]},"desc":"Corner Store earns x2"},{"id":"store-3","name":"Self Checkout","type":"business","cost":18000000.0,"req":{"owned":["store",25]},"effect":{"bizMult":["store",2]},"desc":"Corner Store earns x2"},{"id":"store-4","name":"Fresh Bakery","type":"business","cost":1800000000.0,"req":{"owned":["store",50]},"effect":{"bizMult":["store",2]},"desc":"Corner Store earns x2"},{"id":"store-5","name":"Delivery Bikes","type":"business","cost":180000000000.0,"req":{"owned":["store",100]},"effect":{"bizMult":["store",2]},"desc":"Corner Store earns x2"},{"id":"store-6","name":"Store Chain","type":"business","cost":18000000000000.0,"req":{"owned":["store",150]},"effect":{"bizMult":["store",2]},"desc":"Corner Store earns x2"},{"id":"carwash-1","name":"Foam Cannon","type":"business","cost":3900000.0,"req":{"owned":["carwash",1]},"effect":{"bizMult":["carwash",2]},"desc":"Car Wash earns x2"},{"id":"carwash-2","name":"Wax Package","type":"business","cost":19500000.0,"req":{"owned":["carwash",10]},"effect":{"bizMult":["carwash",2]},"desc":"Car Wash earns x2"},{"id":"carwash-3","name":"Drive-Through Tunnel","type":"business","cost":195000000.0,"req":{"owned":["carwash",25]},"effect":{"bizMult":["carwash",2]},"desc":"Car Wash earns x2"},{"id":"carwash-4","name":"Interior Detailing","type":"business","cost":19500000000.0,"req":{"owned":["carwash",50]},"effect":{"bizMult":["carwash",2]},"desc":"Car Wash earns x2"},{"id":"carwash-5","name":"Monthly Pass","type":"business","cost":1950000000000.0,"req":{"owned":["carwash",100]},"effect":{"bizMult":["carwash",2]},"desc":"Car Wash earns x2"},{"id":"carwash-6","name":"Car Wash Empire","type":"business","cost":195000000000000.0,"req":{"owned":["carwash",150]},"effect":{"bizMult":["carwash",2]},"desc":"Car Wash earns x2"},{"id":"coffee-1","name":"Double Shot","type":"business","cost":42000000.0,"req":{"owned":["coffee",1]},"effect":{"bizMult":["coffee",2]},"desc":"Coffee Shop earns x2"},{"id":"coffee-2","name":"Latte Art","type":"business","cost":210000000.0,"req":{"owned":["coffee",10]},"effect":{"bizMult":["coffee",2]},"desc":"Coffee Shop earns x2"},{"id":"coffee-3","name":"Cozy Couches","type":"business","cost":2100000000.0,"req":{"owned":["coffee",25]},"effect":{"bizMult":["coffee",2]},"desc":"Coffee Shop earns x2"},{"id":"coffee-4","name":"Bean Roastery","type":"business","cost":210000000000.0,"req":{"owned":["coffee",50]},"effect":{"bizMult":["coffee",2]},"desc":"Coffee Shop earns x2"},{"id":"coffee-5","name":"Drive-Thru Window","type":"business","cost":21000000000000.0,"req":{"owned":["coffee",100]},"effect":{"bizMult":["coffee",2]},"desc":"Coffee Shop earns x2"},{"id":"coffee-6","name":"Coffee Chain","type":"business","cost":2100000000000000.0,"req":{"owned":["coffee",150]},"effect":{"bizMult":["coffee",2]},"desc":"Coffee Shop earns x2"},{"id":"gym-1","name":"New Dumbbells","type":"business","cost":600000000.0,"req":{"owned":["gym",1]},"effect":{"bizMult":["gym",2]},"desc":"Gym earns x2"},{"id":"gym-2","name":"Personal Trainers","type":"business","cost":3000000000.0,"req":{"owned":["gym",10]},"effect":{"bizMult":["gym",2]},"desc":"Gym earns x2"},{"id":"gym-3","name":"Yoga Classes","type":"business","cost":30000000000.0,"req":{"owned":["gym",25]},"effect":{"bizMult":["gym",2]},"desc":"Gym earns x2"},{"id":"gym-4","name":"Smoothie Bar","type":"business","cost":3000000000000.0,"req":{"owned":["gym",50]},"effect":{"bizMult":["gym",2]},"desc":"Gym earns x2"},{"id":"gym-5","name":"Open 24/7","type":"business","cost":300000000000000.0,"req":{"owned":["gym",100]},"effect":{"bizMult":["gym",2]},"desc":"Gym earns x2"},{"id":"gym-6","name":"Fitness App","type":"business","cost":3e+16,"req":{"owned":["gym",150]},"effect":{"bizMult":["gym",2]},"desc":"Gym earns x2"},{"id":"restaurant-1","name":"Chef's Special","type":"business","cost":9900000000.0,"req":{"owned":["restaurant",1]},"effect":{"bizMult":["restaurant",2]},"desc":"Restaurant earns x2"},{"id":"restaurant-2","name":"Wine List","type":"business","cost":49500000000.0,"req":{"owned":["restaurant",10]},"effect":{"bizMult":["restaurant",2]},"desc":"Restaurant earns x2"},{"id":"restaurant-3","name":"Michelin Star","type":"business","cost":495000000000.0,"req":{"owned":["restaurant",25]},"effect":{"bizMult":["restaurant",2]},"desc":"Restaurant earns x2"},{"id":"restaurant-4","name":"Celebrity Chef","type":"business","cost":49500000000000.0,"req":{"owned":["restaurant",50]},"effect":{"bizMult":["restaurant",2]},"desc":"Restaurant earns x2"},{"id":"restaurant-5","name":"Second Location","type":"business","cost":4950000000000000.0,"req":{"owned":["restaurant",100]},"effect":{"bizMult":["restaurant",2]},"desc":"Restaurant earns x2"},{"id":"restaurant-6","name":"Restaurant Group","type":"business","cost":4.95e+17,"req":{"owned":["restaurant",150]},"effect":{"bizMult":["restaurant",2]},"desc":"Restaurant earns x2"},{"id":"realestate-1","name":"Open Houses","type":"business","cost":153000000000.0,"req":{"owned":["realestate",1]},"effect":{"bizMult":["realestate",2]},"desc":"Real Estate earns x2"},{"id":"realestate-2","name":"House Flipping","type":"business","cost":765000000000.0,"req":{"owned":["realestate",10]},"effect":{"bizMult":["realestate",2]},"desc":"Real Estate earns x2"},{"id":"realestate-3","name":"Rental Units","type":"business","cost":7650000000000.0,"req":{"owned":["realestate",25]},"effect":{"bizMult":["realestate",2]},"desc":"Real Estate earns x2"},{"id":"realestate-4","name":"Office Tower","type":"business","cost":765000000000000.0,"req":{"owned":["realestate",50]},"effect":{"bizMult":["realestate",2]},"desc":"Real Estate earns x2"},{"id":"realestate-5","name":"City Block","type":"business","cost":7.65e+16,"req":{"owned":["realestate",100]},"effect":{"bizMult":["realestate",2]},"desc":"Real Estate earns x2"},{"id":"realestate-6","name":"Skyline","type":"business","cost":7.65e+18,"req":{"owned":["realestate",150]},"effect":{"bizMult":["realestate",2]},"desc":"Real Estate earns x2"},{"id":"factory-1","name":"Conveyor Belts","type":"business","cost":2250000000000.0,"req":{"owned":["factory",1]},"effect":{"bizMult":["factory",2]},"desc":"Factory earns x2"},{"id":"factory-2","name":"Night Crew","type":"business","cost":11250000000000.0,"req":{"owned":["factory",10]},"effect":{"bizMult":["factory",2]},"desc":"Factory earns x2"},{"id":"factory-3","name":"Robot Arms","type":"business","cost":112500000000000.0,"req":{"owned":["factory",25]},"effect":{"bizMult":["factory",2]},"desc":"Factory earns x2"},{"id":"factory-4","name":"Bigger Warehouse","type":"business","cost":1.125e+16,"req":{"owned":["factory",50]},"effect":{"bizMult":["factory",2]},"desc":"Factory earns x2"},{"id":"factory-5","name":"Global Export","type":"business","cost":1.125e+18,"req":{"owned":["factory",100]},"effect":{"bizMult":["factory",2]},"desc":"Factory earns x2"},{"id":"factory-6","name":"Smart Factory","type":"business","cost":1.125e+20,"req":{"owned":["factory",150]},"effect":{"bizMult":["factory",2]},"desc":"Factory earns x2"},{"id":"startup-1","name":"Free Snacks","type":"business","cost":30000000000000.0,"req":{"owned":["startup",1]},"effect":{"bizMult":["startup",2]},"desc":"Tech Startup earns x2"},{"id":"startup-2","name":"Seed Round","type":"business","cost":150000000000000.0,"req":{"owned":["startup",10]},"effect":{"bizMult":["startup",2]},"desc":"Tech Startup earns x2"},{"id":"startup-3","name":"Viral App","type":"business","cost":1500000000000000.0,"req":{"owned":["startup",25]},"effect":{"bizMult":["startup",2]},"desc":"Tech Startup earns x2"},{"id":"startup-4","name":"Unicorn Status","type":"business","cost":1.5e+17,"req":{"owned":["startup",50]},"effect":{"bizMult":["startup",2]},"desc":"Tech Startup earns x2"},{"id":"startup-5","name":"IPO","type":"business","cost":1.5e+19,"req":{"owned":["startup",100]},"effect":{"bizMult":["startup",2]},"desc":"Tech Startup earns x2"},{"id":"startup-6","name":"Tech Giant","type":"business","cost":1.5e+21,"req":{"owned":["startup",150]},"effect":{"bizMult":["startup",2]},"desc":"Tech Startup earns x2"},{"id":"bank-1","name":"Piggy Accounts","type":"business","cost":420000000000000.0,"req":{"owned":["bank",1]},"effect":{"bizMult":["bank",2]},"desc":"Bank earns x2"},{"id":"bank-2","name":"Credit Cards","type":"business","cost":2100000000000000.0,"req":{"owned":["bank",10]},"effect":{"bizMult":["bank",2]},"desc":"Bank earns x2"},{"id":"bank-3","name":"Golden Vault","type":"business","cost":2.1e+16,"req":{"owned":["bank",25]},"effect":{"bizMult":["bank",2]},"desc":"Bank earns x2"},{"id":"bank-4","name":"Investment Arm","type":"business","cost":2.1e+18,"req":{"owned":["bank",50]},"effect":{"bizMult":["bank",2]},"desc":"Bank earns x2"},{"id":"bank-5","name":"Private Banking","type":"business","cost":2.1e+20,"req":{"owned":["bank",100]},"effect":{"bizMult":["bank",2]},"desc":"Bank earns x2"},{"id":"bank-6","name":"Global Bank","type":"business","cost":2.1e+22,"req":{"owned":["bank",150]},"effect":{"bizMult":["bank",2]},"desc":"Bank earns x2"},{"id":"airline-1","name":"Extra Legroom","type":"business","cost":5100000000000000.0,"req":{"owned":["airline",1]},"effect":{"bizMult":["airline",2]},"desc":"Airline earns x2"},{"id":"airline-2","name":"Frequent Flyers","type":"business","cost":2.55e+16,"req":{"owned":["airline",10]},"effect":{"bizMult":["airline",2]},"desc":"Airline earns x2"},{"id":"airline-3","name":"Jumbo Jets","type":"business","cost":2.55e+17,"req":{"owned":["airline",25]},"effect":{"bizMult":["airline",2]},"desc":"Airline earns x2"},{"id":"airline-4","name":"Private Lounges","type":"business","cost":2.55e+19,"req":{"owned":["airline",50]},"effect":{"bizMult":["airline",2]},"desc":"Airline earns x2"},{"id":"airline-5","name":"New Routes","type":"business","cost":2.55e+21,"req":{"owned":["airline",100]},"effect":{"bizMult":["airline",2]},"desc":"Airline earns x2"},{"id":"airline-6","name":"Supersonic Jets","type":"business","cost":2.55e+23,"req":{"owned":["airline",150]},"effect":{"bizMult":["airline",2]},"desc":"Airline earns x2"},{"id":"studio-1","name":"Blockbuster","type":"business","cost":6.3e+16,"req":{"owned":["studio",1]},"effect":{"bizMult":["studio",2]},"desc":"Movie Studio earns x2"},{"id":"studio-2","name":"Sequels","type":"business","cost":3.15e+17,"req":{"owned":["studio",10]},"effect":{"bizMult":["studio",2]},"desc":"Movie Studio earns x2"},{"id":"studio-3","name":"Streaming Deal","type":"business","cost":3.15e+18,"req":{"owned":["studio",25]},"effect":{"bizMult":["studio",2]},"desc":"Movie Studio earns x2"},{"id":"studio-4","name":"Movie Stars","type":"business","cost":3.15e+20,"req":{"owned":["studio",50]},"effect":{"bizMult":["studio",2]},"desc":"Movie Studio earns x2"},{"id":"studio-5","name":"Theme Park","type":"business","cost":3.15e+22,"req":{"owned":["studio",100]},"effect":{"bizMult":["studio",2]},"desc":"Movie Studio earns x2"},{"id":"studio-6","name":"Award Season","type":"business","cost":3.15e+24,"req":{"owned":["studio",150]},"effect":{"bizMult":["studio",2]},"desc":"Movie Studio earns x2"},{"id":"space-1","name":"Reusable Rockets","type":"business","cost":7.8e+17,"req":{"owned":["space",1]},"effect":{"bizMult":["space",2]},"desc":"Space Company earns x2"},{"id":"space-2","name":"Satellite Network","type":"business","cost":3.9e+18,"req":{"owned":["space",10]},"effect":{"bizMult":["space",2]},"desc":"Space Company earns x2"},{"id":"space-3","name":"Space Tourism","type":"business","cost":3.9e+19,"req":{"owned":["space",25]},"effect":{"bizMult":["space",2]},"desc":"Space Company earns x2"},{"id":"space-4","name":"Moon Base","type":"business","cost":3.9e+21,"req":{"owned":["space",50]},"effect":{"bizMult":["space",2]},"desc":"Space Company earns x2"},{"id":"space-5","name":"Asteroid Mining","type":"business","cost":3.9e+23,"req":{"owned":["space",100]},"effect":{"bizMult":["space",2]},"desc":"Space Company earns x2"},{"id":"space-6","name":"Mars Colony","type":"business","cost":3.9e+25,"req":{"owned":["space",150]},"effect":{"bizMult":["space",2]},"desc":"Space Company earns x2"},{"id":"grip1","name":"Better Grip","type":"tap","cost":300,"req":{},"effect":{"tapMult":2}},{"id":"grip2","name":"Calloused Thumb","type":"tap","cost":3000.0,"req":{},"effect":{"tapMult":2}},{"id":"hustle1","name":"Side Hustle","type":"tap","cost":15000.0,"req":{},"effect":{"hustle":0.01}},{"id":"crit1","name":"Lucky Thumb","type":"tap","cost":30000.0,"req":{},"effect":{"critChance":0.02}},{"id":"grip3","name":"Pro Tapper","type":"tap","cost":75000.0,"req":{},"effect":{"tapMult":2}},{"id":"hustle2","name":"Night Shift","type":"tap","cost":225000.0,"req":{},"effect":{"hustle":0.02}},{"id":"crit2","name":"Big Tipper","type":"tap","cost":750000.0,"req":{},"effect":{"critMult":15}},{"id":"grip4","name":"Iron Finger","type":"tap","cost":1500000.0,"req":{},"effect":{"tapMult":2}},{"id":"hustle3","name":"Grindset","type":"tap","cost":3000000.0,"req":{},"effect":{"hustle":0.03}},{"id":"crit3","name":"Sharp Eye","type":"tap","cost":3000000000.0,"req":{},"effect":{"critChance":0.02}},{"id":"grip5","name":"Golden Finger","type":"tap","cost":1500000000.0,"req":{},"effect":{"tapMult":2}},{"id":"hustle4","name":"Empire Mindset","type":"tap","cost":300000000000.0,"req":{},"effect":{"hustle":0.005}},{"id":"crit4","name":"High Roller","type":"tap","cost":3000000000000.0,"req":{},"effect":{"critMult":20}},{"id":"grip6","name":"Midas Touch","type":"tap","cost":1500000000000000.0,"req":{},"effect":{"tapMult":2}},{"id":"hustle5","name":"Always Be Closing","type":"tap","cost":3e+17,"req":{},"effect":{"hustle":0.005}},{"id":"helper1","name":"Coffee Machine","type":"helper","cost":7500,"req":{"helpers":5},"effect":{"helperSpeed":2}},{"id":"helper2","name":"Team Spirit","type":"helper","cost":450000.0,"req":{"helpers":15},"effect":{"helperValue":2}},{"id":"helper3","name":"Hire Interns","type":"helper","cost":3000000.0,"req":{"helpers":25},"effect":{"helperValue":2}},{"id":"helper4","name":"Standing Desks","type":"helper","cost":30000000.0,"req":{"helpers":40},"effect":{"helperSpeed":1.5}},{"id":"helper5","name":"Hire Assistants","type":"helper","cost":300000000.0,"req":{"helpers":50},"effect":{"helperValue":2}},{"id":"helper6","name":"Bonus Checks","type":"helper","cost":30000000000.0,"req":{"helpers":75},"effect":{"helperValue":2}},{"id":"helper7","name":"Robot Helpers","type":"helper","cost":3000000000000.0,"req":{"helpers":100},"effect":{"helperHustle":0.0005}},{"id":"helper8","name":"Overtime Pay","type":"helper","cost":300000000000000.0,"req":{"helpers":150},"effect":{"helperHustle":0.0005}},{"id":"helper9","name":"Dream Team","type":"helper","cost":3e+16,"req":{"helpers":200},"effect":{"helperHustle":0.001}},{"id":"helper10","name":"Employee of the Month","type":"helper","cost":3e+18,"req":{"helpers":250},"effect":{"helperHustle":0.001}},{"id":"syn1","name":"Lemonade on the Menu","type":"synergy","cost":3300000,"req":{"owned":["truck",15],"owned2":["lemonade",15]},"effect":{"synergy":["truck","lemonade",0.01]},"desc":"Food Truck +1% per Lemonade Stand"},{"id":"syn2","name":"Dog-Friendly Cafe","type":"synergy","cost":4200000000.0,"req":{"owned":["coffee",15],"owned2":["dogs",15]},"effect":{"synergy":["coffee","dogs",0.01]},"desc":"Coffee Shop +1% per Dog Walking"},{"id":"syn3","name":"Snack Aisle","type":"synergy","cost":36000000.0,"req":{"owned":["store",15],"owned2":["truck",15]},"effect":{"synergy":["store","truck",0.01]},"desc":"Corner Store +1% per Food Truck"},{"id":"syn4","name":"Shiny Delivery Vans","type":"synergy","cost":390000000.0,"req":{"owned":["carwash",15],"owned2":["store",15]},"effect":{"synergy":["carwash","store",0.01]},"desc":"Car Wash +1% per Corner Store"},{"id":"syn5","name":"Pre-Workout Espresso","type":"synergy","cost":60000000000.0,"req":{"owned":["gym",15],"owned2":["coffee",15]},"effect":{"synergy":["gym","coffee",0.01]},"desc":"Gym +1% per Coffee Shop"},{"id":"syn6","name":"Protein Menu","type":"synergy","cost":990000000000.0,"req":{"owned":["restaurant",15],"owned2":["gym",15]},"effect":{"synergy":["restaurant","gym",0.01]},"desc":"Restaurant +1% per Gym"},{"id":"syn7","name":"Commercial Leases","type":"synergy","cost":15300000000000.0,"req":{"owned":["realestate",15],"owned2":["restaurant",15]},"effect":{"synergy":["realestate","restaurant",0.01]},"desc":"Real Estate +1% per Restaurant"},{"id":"syn8","name":"Warehouse Space","type":"synergy","cost":225000000000000.0,"req":{"owned":["factory",15],"owned2":["realestate",15]},"effect":{"synergy":["factory","realestate",0.01]},"desc":"Factory +1% per Real Estate"},{"id":"syn9","name":"Smart Manufacturing","type":"synergy","cost":3000000000000000.0,"req":{"owned":["factory",15],"owned2":["startup",15]},"effect":{"synergy":["factory","startup",0.01]},"desc":"Factory +1% per Tech Startup"},{"id":"syn10","name":"Fintech","type":"synergy","cost":4.2e+16,"req":{"owned":["bank",15],"owned2":["startup",15]},"effect":{"synergy":["bank","startup",0.01]},"desc":"Bank +1% per Tech Startup"},{"id":"syn11","name":"Business Loans","type":"synergy","cost":4.2e+16,"req":{"owned":["store",15],"owned2":["bank",15]},"effect":{"synergy":["store","bank",0.01]},"desc":"Corner Store +1% per Bank"},{"id":"syn12","name":"In-Flight Movies","type":"synergy","cost":6.3e+18,"req":{"owned":["airline",15],"owned2":["studio",15]},"effect":{"synergy":["airline","studio",0.01]},"desc":"Airline +1% per Movie Studio"},{"id":"syn13","name":"Product Placement","type":"synergy","cost":6.3e+18,"req":{"owned":["studio",15],"owned2":["truck",15]},"effect":{"synergy":["studio","truck",0.01]},"desc":"Movie Studio +1% per Food Truck"},{"id":"syn14","name":"Rocket Fuel","type":"synergy","cost":7.8e+19,"req":{"owned":["space",15],"owned2":["factory",15]},"effect":{"synergy":["space","factory",0.01]},"desc":"Space Company +1% per Factory"},{"id":"syn15","name":"Space Flights","type":"synergy","cost":7.8e+19,"req":{"owned":["airline",15],"owned2":["space",15]},"effect":{"synergy":["airline","space",0.01]},"desc":"Airline +1% per Space Company"},{"id":"glob1","name":"Bookkeeping","type":"global","cost":300000.0,"req":{},"effect":{"prodMult":1.1},"desc":"All businesses +10%"},{"id":"glob2","name":"Business Cards","type":"global","cost":30000000.0,"req":{},"effect":{"prodMult":1.1},"desc":"All businesses +10%"},{"id":"glob3","name":"Marketing Team","type":"global","cost":3000000000.0,"req":{},"effect":{"prodMult":1.15},"desc":"All businesses +15%"},{"id":"glob4","name":"Accountant","type":"global","cost":300000000000.0,"req":{},"effect":{"prodMult":1.15},"desc":"All businesses +15%"},{"id":"glob5","name":"Legal Team","type":"global","cost":30000000000000.0,"req":{},"effect":{"prodMult":1.2},"desc":"All businesses +20%"},{"id":"glob6","name":"Board of Directors","type":"global","cost":3000000000000000.0,"req":{},"effect":{"prodMult":1.2},"desc":"All businesses +20%"},{"id":"glob7","name":"Private Jet","type":"global","cost":3e+17,"req":{},"effect":{"prodMult":1.25},"desc":"All businesses +25%"},{"id":"glob8","name":"Media Empire","type":"global","cost":3e+19,"req":{},"effect":{"prodMult":1.25},"desc":"All businesses +25%"},{"id":"glob9","name":"Holding Company","type":"global","cost":3e+21,"req":{},"effect":{"prodMult":1.5},"desc":"All businesses +50%"},{"id":"glob10","name":"Global Brand","type":"global","cost":2.9999999999999997e+23,"req":{},"effect":{"prodMult":1.5},"desc":"All businesses +50%"},{"id":"luck1","name":"Four-Leaf Clover","type":"lucky","cost":150000.0,"req":{},"effect":{"coinFreq":1.25}},{"id":"luck2","name":"Rabbit's Foot","type":"lucky","cost":2400000.0,"req":{},"effect":{"rareChance":2}},{"id":"luck3","name":"Wishbone","type":"lucky","cost":300000000.0,"req":{},"effect":{"findMult":2}},{"id":"luck4","name":"Horseshoe","type":"lucky","cost":30000000000.0,"req":{},"effect":{"coinFreq":1.25}},{"id":"luck5","name":"Lucky Charm","type":"lucky","cost":3000000000000.0,"req":{},"effect":{"bonusDuration":1.5}},{"id":"luck6","name":"Golden Goose","type":"lucky","cost":300000000000000.0,"req":{},"effect":{"rareChance":2}},{"id":"frenzy1","name":"Adrenaline","type":"frenzy","cost":60000.0,"req":{},"effect":{"frenzyFill":1.5}},{"id":"frenzy2","name":"Second Wind","type":"frenzy","cost":900000.0,"req":{},"effect":{"frenzyLength":15}},{"id":"frenzy3","name":"Energy Drink","type":"frenzy","cost":3000000000.0,"req":{},"effect":{"frenzyFill":1.5}},{"id":"frenzy4","name":"Beast Mode","type":"frenzy","cost":3000000000000.0,"req":{},"effect":{"frenzyMult":10}}]}/*END*/;
+const BIZ=C.businesses.map(b=>({...b,cost:b.baseCost,rate:b.baseRate}));
+const BIZM=Object.fromEntries(BIZ.map(b=>[b.id,b]));
+const HOMES=C.homes;
+const HOMEIDX=Object.fromEntries(HOMES.map((h,i)=>[h.id,i]));
+const HELPER={cost:C.helper.baseCost,interval:C.helper.interval};
+const TAP=0.25, GROWTH=C.growth;
+const UPS=C.upgrades.map(u=>({...u,desc:upDesc(u)})).sort((a,b)=>a.cost-b.cost);
+const UPM=Object.fromEntries(UPS.map(u=>[u.id,u]));
+function upDesc(u){
+  if(u.type==='business')return `${BIZM_raw(u.effect.bizMult[0])} earns ×2`;
+  if(u.type==='synergy')return `${BIZM_raw(u.effect.synergy[0])} +1% per ${BIZM_raw(u.effect.synergy[1])}`;
+  if(u.type==='global')return u.desc;
+  const [k,v]=Object.entries(u.effect)[0];
+  return {tapMult:'Taps are worth ×2',hustle:`Each tap adds ${+(v*100).toFixed(1)}% of your $/sec`,critChance:`Critical tap chance +${v*100}%`,critMult:`Critical taps pay ×${v}`,
+    helperSpeed:`Helpers tap ×${v} faster`,helperValue:'Helper taps are worth ×2',helperHustle:`Each Helper tap adds ${+(v*100).toFixed(2)}% of your $/sec`,
+    coinFreq:'Bonus coins show up 25% more often',rareChance:'Gold and Diamond coins are twice as likely',findMult:'Bronze coins pay ×2',bonusDuration:'Bonuses last 50% longer',
+    frenzyFill:'Frenzy fills 50% faster',frenzyLength:`Frenzy lasts ${v}s`,frenzyMult:`Frenzy taps ×${v} instead of ×7`}[k]||'';
+}
+function BIZM_raw(id){return C.businesses.find(b=>b.id===id).name}
+const ICON={lemonade:'lemonade-stand',dogs:'dog-walking',truck:'food-truck',store:'corner-store',carwash:'car-wash',coffee:'coffee-shop',gym:'gym',restaurant:'restaurant',
+  realestate:'real-estate',factory:'factory',startup:'tech-startup',bank:'bank',airline:'airline',studio:'movie-studio',space:'space-company'};
+BIZ.forEach(b=>b.icon='a/'+ICON[b.id]+'.svg');
+const RARITY=[
+  {id:'find',metal:'Bronze',name:'Lucky Find',w:60,color:'#D08A4E',img:'a/bronze-bonus.svg',glow:'rgba(217,145,79,.8)'},
+  {id:'sale',metal:'Silver',name:'Sale!',w:28,dur:30,prod:7,color:'#C9D1DC',img:'a/silver-bonus.svg',glow:'rgba(221,227,234,.95)',tempo:1.15},
+  {id:'touch',metal:'Gold',name:'Golden Touch',w:10,dur:10,tap:50,color:'#F5C542',img:'a/gold-bonus.svg',glow:'rgba(245,197,66,.95)',tempo:1.35},
+  {id:'jackpot',metal:'Diamond',name:'Jackpot',w:2,dur:7,tap:777,color:'#9FE3FF',img:'a/diamond-bonus.svg',glow:'rgba(143,211,244,1)',tempo:1.5},
+];
+// ---------- the 7 homes: wall and floor drawn here, furniture from the art set ----------
+const FLOOR_WOOD=(c,line)=>`<rect y="306" width="400" height="114" fill="${c}"/><path d="M0 306H400" stroke="#2B2340" stroke-width="4"/><g stroke="${line}" stroke-width="3" opacity=".55"><path d="M0 344H400M0 382H400M70 306V344M210 306V344M330 306V344M140 344V382M280 344V382M40 382V420M190 382V420M350 382V420"/></g>`;
+const stripes=(c,w,gap,h)=>{let s='';for(let x=14;x<400;x+=gap)s+=`<rect x="${x}" width="${w}" height="${h}"/>`;return `<g fill="${c}">${s}</g>`};
+const BG={
+  room:`<rect width="400" height="420" fill="#FBEBD0"/>${stripes('#F3DDB8',18,48,310)}<rect y="296" width="400" height="14" fill="#E9CFA6"/>${FLOOR_WOOD('#C98A5A','#9A6038')}`,
+  studioapt:`<rect width="400" height="420" fill="#E6F3F8"/>${stripes('#D5EAF3',8,32,310)}<rect y="294" width="400" height="14" fill="#C4DEEA"/>${FLOOR_WOOD('#DDA676','#B07A4E')}`,
+  suburban:`<rect width="400" height="420" fill="#FFF1DC"/>${stripes('#F7E0C0',26,56,236)}<rect y="230" width="400" height="76" fill="#EFCFA8"/><rect y="226" width="400" height="8" fill="#D9AE80"/><g fill="none" stroke="#D9AE80" stroke-width="3"><rect x="14" y="246" width="76" height="46" rx="3"/><rect x="112" y="246" width="76" height="46" rx="3"/><rect x="210" y="246" width="76" height="46" rx="3"/><rect x="308" y="246" width="76" height="46" rx="3"/></g>${FLOOR_WOOD('#B97A4E','#8E5734')}`,
+  penthouse:`<rect width="400" height="420" fill="#40385F"/><g fill="#4B4370"><rect x="0" width="60" height="306"/><rect x="120" width="60" height="306"/><rect x="240" width="60" height="306"/><rect x="360" width="60" height="306"/></g><rect y="296" width="400" height="10" fill="#2B2340"/><rect y="306" width="400" height="114" fill="#E8E2F0"/><path d="M0 306H400" stroke="#2B2340" stroke-width="4"/><g fill="#F7F4FB"><path d="M30 320h60l-20 90H10z"/><path d="M230 320h50l-18 90h-50z"/></g><g stroke="#CFC6DF" stroke-width="2"><path d="M0 360H400M0 400H400"/></g>`,
+  mansion:`<rect width="400" height="420" fill="#F6E1D0"/><g fill="#EBCDB6">${Array.from({length:6},(_,r)=>Array.from({length:9},(_,c)=>`<path d="M${c*46+(r%2)*23+12} ${r*40+16}l8 10-8 10-8-10z"/>`).join('')).join('')}</g><rect y="236" width="400" height="70" fill="#E0BFA2"/><rect y="230" width="400" height="9" fill="#C99D7A"/><g fill="none" stroke="#C99D7A" stroke-width="3"><rect x="12" y="250" width="84" height="44" rx="3"/><rect x="110" y="250" width="84" height="44" rx="3"/><rect x="208" y="250" width="84" height="44" rx="3"/><rect x="306" y="250" width="84" height="44" rx="3"/></g><rect y="306" width="400" height="114" fill="#F8F0E6"/><g fill="#D8C3AE">${Array.from({length:3},(_,r)=>Array.from({length:8},(_,c)=>(c+r)%2?`<rect x="${c*50}" y="${306+r*38}" width="50" height="38"/>`:'').join('')).join('')}</g><path d="M0 306H400" stroke="#2B2340" stroke-width="4"/>`,
+  island:`<rect width="400" height="420" fill="#FFD9AE"/><rect width="400" height="110" fill="#FFC39E"/><rect y="110" width="400" height="60" fill="#FFCFA6"/><rect y="236" width="400" height="70" fill="#4FB7C9"/><g stroke="#8FD8E3" stroke-width="3" stroke-linecap="round"><path d="M30 256h40M120 270h60M250 252h50M320 284h40M70 292h50"/></g><path d="M0 236H400" stroke="#2B9AAE" stroke-width="3"/>${FLOOR_WOOD('#D39463','#9A6038').replace(/M70 306V344M210 306V344M330 306V344M140 344V382M280 344V382M40 382V420M190 382V420M350 382V420/,'M50 306V420M120 306V420M190 306V420M260 306V420M330 306V420')}`,
+  station:`<rect width="400" height="420" fill="#2F2C50"/><g stroke="#3F3B68" stroke-width="3" fill="none"><path d="M100 0V296M200 0V296M300 0V296M0 100H400M0 200H400"/></g><g fill="#56528A"><rect x="94" y="94" width="12" height="12" rx="3"/><rect x="194" y="194" width="12" height="12" rx="3"/><rect x="294" y="94" width="12" height="12" rx="3"/></g><rect y="290" width="400" height="16" fill="#8FD3F4"/><rect y="306" width="400" height="114" fill="#737896"/><path d="M0 306H400" stroke="#2B2340" stroke-width="4"/><g stroke="#5D627F" stroke-width="3"><path d="M0 350H400M0 392H400M100 306V420M200 306V420M300 306V420"/></g>`,
+};
+const SCENES={
+  room:{coin:'coin.svg',piggy:'a/piggy-bank.svg',props:[['window.svg','right:6%;top:6%;width:28%'],['poster.svg','left:6%;top:9%;width:22%;transform:rotate(-4deg)'],['mattress.svg','left:-4%;bottom:6%;width:44%'],['a/box.svg','right:2%;bottom:5%;width:22%']]},
+  studioapt:{coin:'a/coin-5.svg',piggy:'a/piggy-bank.svg',props:[['window.svg','right:6%;top:6%;width:28%'],['a/studio-bed.svg','left:-3%;bottom:3%;width:44%'],['a/studio-table-plant.svg','right:0;bottom:4%;width:23%']]},
+  suburban:{coin:'a/coin-10.svg',piggy:'a/cash-register.svg',props:[['a/suburban-frame.svg','left:6%;top:6%;width:20%'],['a/suburban-window.svg','right:4%;top:3%;width:31%'],['a/suburban-sofa.svg','left:-3%;bottom:3%;width:42%'],['a/suburban-bookshelf.svg','right:-1%;bottom:4%;width:23%']]},
+  penthouse:{coin:'a/coin-25.svg',piggy:'a/cash-register.svg',props:[['a/penthouse-window.svg','left:3%;top:2%;width:34%'],['a/suburban-frame.svg','right:7%;top:8%;width:18%'],['a/suburban-sofa.svg','left:-3%;bottom:3%;width:42%'],['a/penthouse-lamp.svg','right:0;bottom:4%;width:22%']]},
+  mansion:{coin:'a/coin-1d.svg',piggy:'a/safe.svg',props:[['a/mansion-chandelier.svg','left:5%;top:-6%;width:25%'],['a/suburban-frame.svg','right:7%;top:8%;width:18%'],['a/mansion-staircase.svg','left:-3%;bottom:3%;width:42%']]},
+  island:{coin:'a/coin-gold.svg',piggy:'a/treasure-chest.svg',props:[['a/island-palm.svg','right:-4%;bottom:8%;width:32%'],['a/island-hammock.svg','left:-3%;bottom:3%;width:44%']]},
+  station:{coin:'a/coin-diamond.svg',piggy:'a/treasure-chest.svg',props:[['a/station-porthole.svg','right:4%;top:3%;width:31%'],['a/station-armchair.svg','left:1%;bottom:3%;width:32%']]},
+};
+// ---------- state ----------
+const KEY='p2e-save-v1';
+function fresh(){return{v:2,money:0,total:0,alltime:0,heirs:0,owned:Object.fromEntries(BIZ.map(b=>[b.id,0])),helpers:0,ups:[],pity:0,play:0,ms:{},piggy:0,dayOffset:0,queue:[],streak:{last:null,count:0,best:0,grace:null,claimed:false},
+  settings:{sound:80,music:50,soundOn:true,musicOn:true,vib:true},lastSeen:Date.now()}}
+let S=fresh();
+const T={frenzyMeter:0,frenzyUntil:0,lastTap:0,bonus:null,bonusEnd:0,nextLucky:0,luckyOnScreen:false,helperAcc:0,home:-1};
+const $=id=>document.getElementById(id);
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const has=id=>S.ups.includes(id);
+const SUF=[[1e24,'Sp'],[1e21,'Sx'],[1e18,'Qi'],[1e15,'Qa'],[1e12,'T'],[1e9,'B'],[1e6,'M']];
+const fmt=v=>{
+  if(v<1e6) return '$'+v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  for(const [d,s] of SUF) if(v>=d) return '$'+(v/d).toFixed(2)+s;
+};
+const fmtShort=v=>{if(v<1e3)return '$'+Math.round(v);if(v<1e6)return '$'+(+(v/1e3).toFixed(1))+'K';for(const [d,s] of SUF)if(v>=d)return '$'+(+(v/d).toFixed(1))+s};
+// ---------- derived numbers (same rules as design/pacing_sim.py) ----------
+function fx(key,init,op){let a=init;for(const id of S.ups){const u=UPM[id];if(u&&u.effect[key]!==undefined)a=op(a,u.effect[key])}return a}
+const mul=(a,b)=>a*b,add=(a,b)=>a+b,max=(a,b)=>Math.max(a,b);
+const tapMult=()=>fx('tapMult',1,mul);
+const hustle=()=>fx('hustle',0,add);
+const critChance=()=>fx('critChance',C.crit.baseChance,add);
+const critMult=()=>fx('critMult',C.crit.baseMult,max);
+const helperSpeed=()=>fx('helperSpeed',1,mul);
+const frenzyMult=()=>fx('frenzyMult',7,max);
+const bonusDur=()=>fx('bonusDuration',1,mul);
+const heirMult=()=>1+S.heirs*C.inheritance.perHeir;
+function homeIdx(){let k=0;for(let i=0;i<HOMES.length;i++)if(S.total>=HOMES[i].threshold)k=i;return k}
+function bizMult(id){
+  let m=1;
+  for(const uid of S.ups){const e=UPM[uid]&&UPM[uid].effect;if(!e)continue;
+    if(e.bizMult&&e.bizMult[0]===id)m*=e.bizMult[1];
+    if(e.synergy&&e.synergy[0]===id)m*=1+e.synergy[2]*S.owned[e.synergy[1]];}
+  return m;
+}
+const now=()=>performance.now()/1000;
+const bonusActive=()=>T.bonus&&now()<T.bonusEnd;
+const prodBonus=()=>bonusActive()&&T.bonus.prod?T.bonus.prod:1;
+const tapBonus=()=>bonusActive()&&T.bonus.tap?T.bonus.tap:1;
+const inFrenzy=()=>now()<T.frenzyUntil;
+const globalMult=()=>fx('prodMult',1,mul)*HOMES[homeIdx()].incomeMult*heirMult();
+const baseRate=()=>BIZ.reduce((a,b)=>a+(S.owned[b.id]?b.rate*bizMult(b.id)*S.owned[b.id]:0),0)*globalMult();
+const rate=()=>baseRate()*prodBonus();
+const tapValue=()=>(TAP*tapMult()*heirMult()+rate()*hustle())*tapBonus();
+// helpers tap with the plain tap value (no Hustle, no Frenzy, no tap bonuses); late upgrades add a sliver of $/sec
+const helperTap=()=>TAP*tapMult()*fx('helperValue',1,mul)*heirMult()+baseRate()*fx('helperHustle',0,add);
+const helperRate=()=>S.helpers*helperSpeed()/HELPER.interval*helperTap()*(1+critChance()*(critMult()-1));
+const price=b=>b.cost*Math.pow(GROWTH,S.owned[b.id]);
+const helperPrice=()=>HELPER.cost*Math.pow(GROWTH,S.helpers);
+function earn(v){S.money+=v;S.total+=v;S.alltime+=v}
+// tester stats: active play time when each milestone was first reached
+function mark(k){if(S.ms[k]===undefined)S.ms[k]=Math.round(S.play)}
+function checkMilestones(){[1e3,1e4,1e5,1e6,1e7,1e8,1e9,1e12].forEach(v=>{if(S.alltime>=v)mark('$'+v)})}
+const mmss=sec=>{sec=Math.round(sec);const h=Math.floor(sec/3600),m=Math.floor(sec%3600/60),x=sec%60;return (h?h+'h ':'')+m+'m '+String(x).padStart(2,'0')+'s'};
+// ---------- audio ----------
+let ac,sfxBus,musBus;
+function audioInit(){
+  if(ac) {if(ac.state==='suspended')ac.resume();return}
+  try{ac=new (window.AudioContext||window.webkitAudioContext)();sfxBus=ac.createGain();musBus=ac.createGain();sfxBus.connect(ac.destination);musBus.connect(ac.destination);applyVolumes();startMusic()}catch(e){ac=null}
+}
+function applyVolumes(){if(!ac)return;const s=S.settings;sfxBus.gain.value=s.soundOn?(s.sound/100)*.9:0;musBus.gain.setTargetAtTime(s.musicOn?(s.music/100)*.55:0,ac.currentTime,.1)}
+function tone(f,t,dur,{type='triangle',vol=.12,bus,to,attack=.005}={}){
+  const o=ac.createOscillator(),g=ac.createGain();o.type=type;o.frequency.setValueAtTime(f,t);if(to)o.frequency.exponentialRampToValueAtTime(to,t+dur);
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+attack);g.gain.exponentialRampToValueAtTime(.0008,t+dur);
+  o.connect(g).connect(bus||sfxBus);o.start(t);o.stop(t+dur+.05);
+}
+let noiseBuf;
+function noise(t,dur,{vol=.08,hp=6000,bus}={}){
+  if(!noiseBuf){noiseBuf=ac.createBuffer(1,ac.sampleRate*.5,ac.sampleRate);const d=noiseBuf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1}
+  const s=ac.createBufferSource(),f=ac.createBiquadFilter(),g=ac.createGain();s.buffer=noiseBuf;f.type='highpass';f.frequency.value=hp;
+  g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.0008,t+dur);s.connect(f).connect(g).connect(bus||sfxBus);s.start(t);s.stop(t+dur+.02);
+}
+const sfx={
+  tap(){tone(1300+Math.random()*500,ac.currentTime,.16,{to:700})},
+  crit(){const t=ac.currentTime;[1568,2093,2637].forEach((f,i)=>tone(f,t+i*.05,.2,{vol:.1}))},
+  buy(){const t=ac.currentTime;tone(520,t,.12,{type:'sine',vol:.14,to:880})},
+  find(){const t=ac.currentTime;tone(2093,t,.12,{vol:.1});tone(2637,t+.07,.3,{vol:.1});noise(t+.02,.15,{vol:.06})},
+  sale(){const t=ac.currentTime;[1568,2093].forEach((f,i)=>{tone(f,t+i*.12,.8,{type:'sine',vol:.12});tone(f*2.01,t+i*.12,.5,{type:'sine',vol:.03})});noise(t+.25,.2,{vol:.05})},
+  touch(){const t=ac.currentTime;[523,659,784,1047].forEach((f,i)=>tone(f,t+i*.09,i===3?.7:.18,{type:'sawtooth',vol:.05}));[523,659,784].forEach(f=>tone(f*2,t+.36,.7,{vol:.05}))},
+  jackpot(){const t=ac.currentTime;[392,523,659,784,1047,1319].forEach((f,i)=>tone(f,t+i*.08,i>3?1.2:.2,{type:'sawtooth',vol:.05}));[523,659,784,1047].forEach(f=>tone(f,t+.5,1.4,{vol:.06}));for(let i=0;i<10;i++)tone(1800+Math.random()*900,t+.5+i*.07,.12,{vol:.05})},
+  endSale(){const t=ac.currentTime;tone(988,t,.25,{type:'sine',vol:.1});tone(784,t+.18,.4,{type:'sine',vol:.1})},
+  endTouch(){const t=ac.currentTime;tone(900,t,.6,{type:'sawtooth',vol:.04,to:180});noise(t,.5,{vol:.05,hp:1500})},
+  endJackpot(){const t=ac.currentTime;[523,659,784,1047].forEach(f=>tone(f,t,1.1,{vol:.07}));musicDuck(1.6)},
+  tick(){tone(1900,ac.currentTime,.04,{type:'square',vol:.04})},
+  frenzyOn(){tone(300,ac.currentTime,.5,{type:'sawtooth',vol:.05,to:1200})},
+  frenzyOff(){tone(1000,ac.currentTime,.4,{type:'sawtooth',vol:.04,to:250})},
+  appear0(){tone(1200,ac.currentTime,.12,{type:'sine',vol:.06})},
+  appear1(){const t=ac.currentTime;tone(1568,t,.15,{type:'sine',vol:.07});tone(2093,t+.08,.2,{type:'sine',vol:.06})},
+  appear2(){const t=ac.currentTime;[1047,1319,1568].forEach((f,i)=>tone(f,t+i*.07,.25,{type:'sine',vol:.07}))},
+  appear3(){const t=ac.currentTime;[1568,1976,2349,2637,3136].forEach((f,i)=>tone(f,t+i*.06,.4,{type:'sine',vol:.07}));noise(t,.4,{vol:.04,hp:7000})},
+  helper(){tone(1000+Math.random()*300,ac.currentTime,.08,{vol:.035,to:600})},
+  move(){const t=ac.currentTime;[523,659,784,1047,1319].forEach((f,i)=>tone(f,t+i*.1,i===4?.9:.25,{type:'sine',vol:.09}))},
+};
+function playAppear(rr){play('appear'+RARITY.indexOf(rr))}
+function play(name){if(ac&&S.settings.soundOn&&S.settings.sound>0)try{sfx[name]()}catch(e){}}
+// placeholder music: a chill four-chord loop; tempo rises during bonuses and Frenzy
+const CHORDS=[[53,57,60,64],[52,55,59,62],[50,53,57,60],[48,52,55,59]];
+const SCALE=[72,74,76,79,81,84];
+let step=0,nextNote=0,musTimer,duck=0;
+const mtof=m=>440*Math.pow(2,(m-69)/12);
+function tempo(){let x=1;if(bonusActive())x=Math.max(x,T.bonus.tempo||1);if(inFrenzy())x=Math.max(x,1.2);return x}
+function musicDuck(sec){duck=ac.currentTime+sec;musBus.gain.setTargetAtTime(0,ac.currentTime,.05);setTimeout(applyVolumes,sec*1000)}
+function startMusic(){nextNote=ac.currentTime+.1;musTimer=setInterval(schedule,25)}
+function schedule(){
+  if(!S.settings.musicOn||S.settings.music===0){nextNote=ac.currentTime+.05;return}
+  while(nextNote<ac.currentTime+.12){
+    const t=nextNote,sp=tempo(),s16=60/(88*sp)/4,bar=Math.floor(step/16)%4,pos=step%16,ch=CHORDS[bar];
+    if(t>duck){
+      if(pos===0||pos===6||pos===10) ch.forEach(n=>tone(mtof(n),t,s16*(pos===0?7:4),{type:'sine',vol:.035,bus:musBus,attack:.02}));
+      if(pos===0||pos===8) tone(mtof(ch[0]-12),t,s16*6,{type:'triangle',vol:.12,bus:musBus,attack:.01});
+      if(pos===0||pos===8) tone(110,t,.18,{type:'sine',vol:.25,bus:musBus,to:45});
+      if(pos===4||pos===12) noise(t,.12,{vol:.05,hp:1800,bus:musBus});
+      if(pos%4===2) noise(t,.04,{vol:.025,hp:8000,bus:musBus});
+      if(sp>1.3&&pos%2===1) noise(t,.03,{vol:.02,hp:9000,bus:musBus});
+      if(sp>1.3&&(pos===4||pos===12)) noise(t,.09,{vol:.05,hp:1200,bus:musBus});
+      if((pos===3||pos===11||pos===14)&&Math.random()<(sp>1?.85:.5)) tone(mtof(SCALE[Math.floor(Math.random()*SCALE.length)]),t,s16*3,{vol:.04,bus:musBus});
+    }
+    nextNote+=s16;step++;
+  }
+}
+function buzz(ms){if(S.settings.vib)try{navigator.vibrate&&navigator.vibrate(ms)}catch(e){}}
+// ---------- homes ----------
+function applyHome(i,announce){
+  const h=HOMES[i],sc=SCENES[h.id];T.home=i;
+  $('bg').innerHTML=BG[h.id];
+  $('props').innerHTML=sc.props.map(([src,st])=>`<img class="prop" src="${src}" alt="" style="${st}">`).join('');
+  $('coinImg').src=sc.coin;$('piggyImg').src=sc.piggy;
+  $('coin').setAttribute('aria-label',`Tap the ${h.coin} to earn money`);
+  $('piggy').setAttribute('aria-label',`${h.piggy}: tap to collect what you earned while away`);
+  drawHome();
+  if(announce){
+    mark('home-'+h.id);play('move');buzz([30,40,60]);
+    toast(`You moved to the ${h.name}! Income ×${h.incomeMult}`,'#8FD3F4');
+    if(!reduce){const r=scene.getBoundingClientRect();burst(r.width/2,r.height/2,'#F5C542',26)}
+  }
+}
+function drawHome(){
+  const i=homeIdx(),h=HOMES[i],n=HOMES[i+1];
+  $('homeName').textContent=h.name;
+  if(n){const lo=Math.max(1,h.threshold),f=Math.max(0,Math.min(1,Math.log(Math.max(1,S.total)/lo)/Math.log(n.threshold/lo)));
+    $('homeFill').style.width=(f*100)+'%';$('homeNext').textContent='Next: '+fmtShort(n.threshold);$('home').title=`${n.name} when you have earned ${fmt(n.threshold)}`}
+  else{$('homeFill').style.width='100%';$('homeNext').textContent='Top home'}
+  const avail=heirsAvail(),show=homeIdx()>=HOMEIDX[C.inheritance.unlockHome]||S.heirs>0;
+  $('heirBtn').classList.toggle('on',show);$('heirBtn').classList.toggle('ready',show&&avail>S.heirs);
+}
+// ---------- inheritance ----------
+const heirsAvail=()=>Math.floor(Math.cbrt(S.alltime/C.inheritance.divisor));
+function showHeir(){
+  const a=heirsAvail(),unlocked=homeIdx()>=HOMEIDX[C.inheritance.unlockHome];
+  $('heirNow').textContent=S.heirs;$('heirNowPct').textContent='+'+Math.round(S.heirs*C.inheritance.perHeir*100)+'%';
+  $('heirNew').textContent=Math.max(a,S.heirs);$('heirNewPct').textContent='+'+Math.round(Math.max(a,S.heirs)*C.inheritance.perHeir*100)+'%';
+  const ok=unlocked&&a>S.heirs;
+  const nextAt=C.inheritance.divisor*Math.pow(S.heirs+1,3);
+  $('heirHint').textContent=!unlocked?'Unlocks when you reach the Hillside Mansion.':ok?(a>=S.heirs*2&&S.heirs>0?'Good moment: you would double your heirs.':'Tip: waiting until you can double your heirs pays off more.'):`Your next heir comes at ${fmt(nextAt)} earned in total (you have ${fmt(S.alltime)}).`;
+  $('doHeir').disabled=!ok;$('doHeir').textContent='Pass it on';heirArmed=false;
+  $('heirPanel').classList.add('on');
+}
+let heirArmed=false;
+$('heirBtn').onclick=()=>{audioInit();showHeir()};
+$('closeHeir').onclick=()=>$('heirPanel').classList.remove('on');
+$('heirPanel').addEventListener('click',e=>{if(e.target.id==='heirPanel')$('heirPanel').classList.remove('on')});
+$('doHeir').onclick=()=>{
+  if(!heirArmed){heirArmed=true;$('doHeir').textContent='Tap again to pass it on';return}
+  inherit();$('heirPanel').classList.remove('on');
+};
+function inherit(){
+  const keep={alltime:S.alltime,heirs:Math.max(heirsAvail(),S.heirs),settings:S.settings,streak:S.streak,dayOffset:S.dayOffset,play:S.play,ms:S.ms,queue:S.queue};
+  S=Object.assign(fresh(),keep);mark('inherit-'+S.heirs);
+  resetRuntime();save();play('jackpot');toast(`${S.heirs} heirs: everything +${Math.round(S.heirs*C.inheritance.perHeir*100)}%`,'#F5C542');
+}
+// ---------- shop rendering ----------
+let tabSel='biz';
+const helperImg=()=>has('helper7')?'a/hand-4.svg':has('helper5')?'a/hand-3.svg':has('helper3')?'a/hand-2.svg':'a/hand-1.svg';
+const bizOpen=b=>HOMEIDX[b.home]<=homeIdx();
+const known=(b,i)=>i===0||S.owned[BIZ[i-1].id]>0||S.money>=b.cost*0.5;
+const helperKnown=()=>S.helpers>0||S.total>=25;
+// an upgrade shows up once you have earned a tenth of its price and meet its requirement
+const revealed=u=>S.total>=u.cost/10||S.money>=u.cost;
+function reqMet(u){
+  const r=u.req||{};
+  if(r.owned&&S.owned[r.owned[0]]<r.owned[1])return false;
+  if(r.owned2&&S.owned[r.owned2[0]]<r.owned2[1])return false;
+  if(r.helpers&&S.helpers<r.helpers)return false;
+  return true;
+}
+const upAvailable=u=>!has(u.id)&&reqMet(u)&&revealed(u);
+function upHint(u){
+  const r=u.req||{};
+  if(r.owned2)return `Own 15 ${BIZM[r.owned[0]].name} and 15 ${BIZM[r.owned2[0]].name}`;
+  if(r.owned&&S.owned[r.owned[0]]<r.owned[1])return `Own ${r.owned[1]} ${BIZM[r.owned[0]].name}`;
+  if(r.helpers&&S.helpers<r.helpers)return `Hire ${r.helpers} Helpers`;
+  return 'Keep earning to reveal';
+}
+function renderList(){
+  const list=$('list');list.innerHTML='';
+  if(tabSel==='biz'){
+    if(helperKnown()){
+      const el=row('helper',`<img src="${helperImg()}" alt="">`,`Helper <span class="owned">${S.helpers||''}</span>`,`Taps the coin for you every ${+(HELPER.interval/helperSpeed()).toFixed(2)}s`,fmt(helperPrice()),()=>buyHelper());
+      list.appendChild(el);
+    }
+    BIZ.forEach((b,i)=>{
+      if(!bizOpen(b))return;
+      const k=known(b,i);
+      const icon=k?`<img src="${b.icon}" alt="">`:`<span class="q">?</span>`;
+      list.appendChild(row(b.id,icon,`${k?b.name:'???'} <span class="owned">${S.owned[b.id]||''}</span>`,k?'+'+fmt(b.rate*bizMult(b.id)*globalMult())+' / sec each':'Keep earning to reveal',fmt(price(b)),()=>buy(b),!k));
+    });
+    const n=HOMES[homeIdx()+1];
+    if(n&&BIZ.some(b=>b.home===n.id))list.appendChild(row('next-home','<span class="q">?</span>','More businesses',`Move to the ${n.name} (earn ${fmt(n.threshold)})`,'Locked',null,true));
+  }else{
+    const avail=UPS.filter(upAvailable);
+    const next=UPS.filter(u=>!has(u.id)&&!upAvailable(u)&&(!u.req.owned||bizOpen(BIZM[u.req.owned[0]]))).slice(0,2);
+    if(!avail.length&&!next.length){list.innerHTML='<div class="empty">You bought every upgrade. Time to pass it on?</div>';return refresh()}
+    avail.forEach(u=>list.appendChild(row('up-'+u.id,upIcon(u),u.name,u.desc,fmt(u.cost),()=>buyUp(u))));
+    next.forEach(u=>list.appendChild(row('up-'+u.id,'<span class="q">?</span>',revealed(u)?u.name:'???',upHint(u),fmt(u.cost),null,true)));
+    const done=S.ups.length;if(done)list.insertAdjacentHTML('beforeend',`<div class="empty">${done} of ${UPS.length} upgrades bought</div>`);
+  }
+  refresh();
+}
+function upIcon(u){
+  const e=u.effect;
+  if(e.bizMult)return `<img src="${BIZM[e.bizMult[0]].icon}" alt="">`;
+  if(e.synergy)return `<img src="${BIZM[e.synergy[0]].icon}" alt="">`;
+  if(u.type==='helper')return `<img src="${helperImg()}" alt="">`;
+  if(e.coinFreq||e.findMult)return '<img src="a/bronze-bonus.svg" alt="">';
+  if(e.rareChance)return '<img src="a/diamond-bonus.svg" alt="">';
+  if(e.bonusDuration)return '<img src="a/silver-bonus.svg" alt="">';
+  const k=Object.keys(e)[0];
+  const c={tapMult:'#D9822B',hustle:'#3DBE8B',critChance:'#F5C542',critMult:'#F5C542',prodMult:'#8FD3F4',frenzyFill:'#FF6B5E',frenzyLength:'#FF6B5E',frenzyMult:'#FF6B5E'}[k]||'#C98A5A';
+  const g={tapMult:'×2',hustle:'%',critChance:'!',critMult:'!!',prodMult:'+%',frenzyFill:'⚡',frenzyLength:'⚡',frenzyMult:'⚡'}[k]||'★';
+  return `<svg viewBox="0 0 52 52"><circle cx="26" cy="26" r="19" fill="${c}" stroke="#2B2340" stroke-width="3"/><text x="26" y="32" text-anchor="middle" font-family="Fredoka,sans-serif" font-weight="700" font-size="17" fill="#2B2340">${g}</text></svg>`;
+}
+function row(id,icon,name,meta,cost,onBuy,locked){
+  const el=document.createElement('div');el.className='row'+(locked?' locked':'');el.id='row-'+id;
+  el.innerHTML=`<div class="icon">${icon}</div><div><div class="name">${name}</div><div class="meta">${meta}</div></div><button class="buy" ${locked?'disabled':''}>${cost}</button>`;
+  const btn=el.querySelector('button');btn.dataset.cost=onBuy?id:'';
+  if(onBuy)btn.addEventListener('click',()=>{audioInit();onBuy()});
+  return el;
+}
+function costOf(id){
+  if(id==='helper')return helperPrice();
+  if(id.startsWith('up-'))return UPM[id.slice(3)].cost;
+  return price(BIZM[id]);
+}
+function refresh(){
+  $('money').textContent=fmt(S.money);
+  $('rate').textContent='+'+fmt(rate()+helperRate())+' / sec';
+  $('ptap').textContent=fmt(tapValue()*(inFrenzy()?frenzyMult():1))+' / tap';
+  $('ownedBadge').textContent=Object.values(S.owned).reduce((a,b)=>a+b,0)||'';
+  const n=UPS.filter(u=>upAvailable(u)&&S.money>=u.cost).length;$('upBadge').textContent=n||'';
+  document.querySelectorAll('#list .row:not(.locked) .buy:not(.owned)').forEach(btn=>{
+    if(!btn.dataset.cost)return;
+    const f=Math.min(1,S.money/costOf(btn.dataset.cost));
+    btn.style.setProperty('--p',(f*100).toFixed(1)+'%');btn.disabled=f<1;btn.classList.toggle('ready',f>=1);
+  });
+}
+let sig='';
+let holdList=0;
+function maybeRerender(){
+  if(Date.now()<holdList)return;
+  const s=tabSel+'|'+homeIdx()+'|'+BIZ.filter(known).length+'|'+helperKnown()+'|'+UPS.filter(upAvailable).map(u=>u.id).join();
+  if(s!==sig){sig=s;renderList()}
+}
+function bump(id){const el=$('row-'+id);if(el&&!reduce){el.classList.add('bump')}}
+function buy(b){const p=price(b);if(S.money<p)return;S.money-=p;S.owned[b.id]++;mark(b.id+'-'+S.owned[b.id]);sig='';maybeRerender();renderList();bump(b.id);play('buy');buzz(15);save()}
+function buyHelper(){const p=helperPrice();if(S.money<p)return;S.money-=p;S.helpers++;mark('helper-'+S.helpers);renderList();bump('helper');layoutHands();play('buy');buzz(15);save()}
+function buyUp(u){
+  if(S.money<u.cost||has(u.id))return;S.money-=u.cost;S.ups.push(u.id);mark(u.id);holdList=Date.now()+1050;
+  const r=$('row-up-'+u.id);
+  if(r){const b=r.querySelector('.buy');b.classList.remove('ready');b.classList.add('owned');b.disabled=true;b.textContent='✓ Owned';setTimeout(()=>r.classList.add('gone'),700)}
+  if(u.type==='helper')layoutHands(true);
+  setTimeout(()=>{sig='';maybeRerender()},1100);
+  play('buy');buzz(20);toast(u.name+'!');save();
+}
+$('tabBiz').onclick=()=>{tabSel='biz';$('tabBiz').setAttribute('aria-selected','true');$('tabUp').setAttribute('aria-selected','false');sig='';maybeRerender()};
+$('tabUp').onclick=()=>{tabSel='up';$('tabUp').setAttribute('aria-selected','true');$('tabBiz').setAttribute('aria-selected','false');sig='';maybeRerender()};
+// ---------- tapping ----------
+const coin=$('coin'),scene=$('scene'),wrap=$('coinWrap');
+function floatText(px,py,text,crit){
+  if(reduce)return;
+  const f=document.createElement('div');f.className='float'+(crit?' crit':'');f.textContent=text;
+  f.style.left=px+'px';f.style.top=py+'px';scene.appendChild(f);
+  f.animate([{transform:'translate(-50%,-50%) scale(.6)',opacity:1},{transform:'translate(-50%,-160%) scale(1.1)',opacity:1,offset:.3},{transform:'translate(-50%,-320%) scale(1)',opacity:0}],{duration:crit?1200:900,easing:'cubic-bezier(.2,.7,.3,1)'}).onfinish=()=>f.remove();
+}
+function sparks(px,py,n){
+  if(reduce)return;
+  for(let i=0;i<n;i++){
+    const s=document.createElement('div');s.className='spark';s.style.left=px-7+'px';s.style.top=py-7+'px';scene.appendChild(s);
+    const a=-Math.PI/2+(Math.random()-.5)*2.2,d=60+Math.random()*60;
+    s.animate([{transform:'translate(0,0) scale(1)'},{transform:`translate(${Math.cos(a)*d}px,${Math.sin(a)*d}px) scale(.9)`,offset:.45},{transform:`translate(${Math.cos(a)*d*1.3}px,${Math.sin(a)*d+140}px) scale(.4)`,opacity:0}],{duration:750,easing:'ease-out'}).onfinish=()=>s.remove();
+  }
+}
+function tap(x,y){
+  audioInit();
+  const crit=Math.random()<critChance();
+  const gain=tapValue()*(inFrenzy()?frenzyMult():1)*(crit?critMult():1);
+  earn(gain);refresh();
+  play(crit?'crit':'tap');buzz(crit?25:8);
+  coin.classList.add('press');setTimeout(()=>coin.classList.remove('press'),70);
+  // frenzy meter
+  T.lastTap=now();
+  if(!inFrenzy()){
+    T.frenzyMeter=Math.min(1,T.frenzyMeter+.016*fx('frenzyFill',1,mul));
+    if(T.frenzyMeter>=1)startFrenzy();
+  }
+  const r=scene.getBoundingClientRect();
+  floatText(x-r.left,y-r.top,(crit?'CRIT! ':'')+'+'+fmt(gain),crit);
+  sparks(x-r.left,y-r.top,crit?9:5);
+}
+coin.addEventListener('pointerdown',e=>{e.preventDefault();tap(e.clientX,e.clientY)});
+coin.addEventListener('keydown',e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();const r=coin.getBoundingClientRect();tap(r.left+r.width/2,r.top+r.height/3)}});
+function startFrenzy(){
+  T.frenzyUntil=now()+fx('frenzyLength',10,max);T.frenzyLen=T.frenzyUntil-now();
+  wrap.classList.add('frenzy');play('frenzyOn');buzz(40);toast(`FRENZY! Taps ×${frenzyMult()}`);
+}
+function endFrenzy(){T.frenzyMeter=0;wrap.classList.remove('frenzy');play('frenzyOff')}
+// ---------- helpers ----------
+const ANGLES=[-150,-30,150,30,180,0];
+let hands=[];
+function layoutHands(restyle){
+  const n=Math.min(6,S.helpers),src=helperImg();
+  if(restyle)hands.forEach(h=>h.firstChild.src=src);
+  while(hands.length<n){
+    const h=document.createElement('div');h.className='hand';h.innerHTML=`<img src="${src}" alt="">`;wrap.appendChild(h);
+    const deg=ANGLES[hands.length],a=deg*Math.PI/180,c=Math.cos(a).toFixed(3),sn=Math.sin(a).toFixed(3);
+    h.style.left=`calc(50% + ${c} * (50% + 22px))`;h.style.top=`calc(50% + ${sn} * (50% + 22px))`;
+    h.style.transform=`translate(-50%,-50%) rotate(${deg-90}deg)`;
+    hands.push(h);
+  }
+}
+let lastPoke=0;
+function poke(){
+  if(!hands.length||reduce)return;
+  const t=now();if(t-lastPoke<.18)return;lastPoke=t;
+  const h=hands[Math.floor(Math.random()*hands.length)];
+  h.firstChild.animate([{transform:'translateY(0)'},{transform:'translateY(-12px)',offset:.4},{transform:'translateY(0)'}],{duration:260,easing:'ease-out'});
+  coin.classList.add('press');setTimeout(()=>coin.classList.remove('press'),60);
+  const r=scene.getBoundingClientRect(),c=coin.getBoundingClientRect();
+  if(Math.random()<.5)floatText(c.left-r.left+c.width*(.3+Math.random()*.4),c.top-r.top+c.height*.3,'+'+fmt(helperTap()));
+  play('helper');
+}
+// ---------- bonus coins ----------
+function scheduleLucky(){T.nextLucky=now()+(120+Math.random()*120)/fx('coinFreq',1,mul)}
+function pickRarity(){
+  const boost=(1+S.pity*.25)*fx('rareChance',1,mul);
+  const ws=RARITY.map(r=>r.id==='touch'||r.id==='jackpot'?r.w*boost:r.w);
+  let x=Math.random()*ws.reduce((a,b)=>a+b,0);
+  for(let i=0;i<RARITY.length;i++){x-=ws[i];if(x<=0)return RARITY[i]}
+  return RARITY[0];
+}
+function spawnLucky(forced){
+  T.luckyOnScreen=true;
+  const rr=forced||pickRarity();
+  if(!forced)S.pity=(rr.id==='touch'||rr.id==='jackpot')?0:S.pity+1;
+  const r=scene.getBoundingClientRect();
+  const b=document.createElement('button');b.className='lucky';b.setAttribute('aria-label',rr.metal+' coin');
+  b.style.filter=`drop-shadow(0 0 ${rr.id==='jackpot'?18:10}px ${rr.glow})`;
+  b.innerHTML=`<img src="${rr.img}" alt="" draggable="false">`;
+  playAppear(rr);
+  b.style.left=20+Math.random()*(r.width-84)+'px';b.style.top=20+Math.random()*(r.height-130)+'px';scene.appendChild(b);
+  if(!reduce)b.animate([{transform:'scale(0) rotate(-40deg)'},{transform:'scale(1.15) rotate(10deg)',offset:.08},{transform:'scale(1) rotate(0)',offset:.12},{transform:'scale(1) rotate(0)',offset:.9},{transform:'scale(0)'}],{duration:12000});
+  const kill=setTimeout(()=>{b.remove();T.luckyOnScreen=false;scheduleLucky()},12000);
+  b.addEventListener('pointerdown',e=>{e.preventDefault();audioInit();clearTimeout(kill);const br=b.getBoundingClientRect();b.remove();T.luckyOnScreen=false;grab(br.left+32-r.left,br.top+32-r.top,rr)});
+  if(rr.id==='jackpot'&&!reduce)b.firstChild.animate([{transform:'rotate(-8deg) scale(1)'},{transform:'rotate(8deg) scale(1.08)'},{transform:'rotate(-8deg) scale(1)'}],{duration:900,iterations:Infinity});
+}
+function grab(px,py,rr){
+  play(rr.id);buzz(rr.id==='jackpot'?[40,40,80]:30);
+  if(!reduce)burst(px,py,rr.color,rr.id==='jackpot'?24:12);
+  if(rr.id==='find'){
+    const v=Math.max(10,(rate()+helperRate())*60,tapValue()*30)*fx('findMult',1,mul);earn(v);
+    toast('Bronze coin! +'+fmt(v),rr.color);floatText(px,py,'+'+fmt(v),true);scheduleLucky();
+  }else{
+    const dur=rr.dur*bonusDur();
+    T.bonus=rr;T.bonusEnd=now()+dur;T.bonusLen=dur;T.ticks=0;
+    toast(rr.metal+' coin: '+rr.name.replace(/!?$/,'!')+(rr.prod?` Income ×${rr.prod} for ${Math.round(dur)}s`:` Taps ×${rr.tap} for ${Math.round(dur)}s`),rr.color);
+    $('bonusbar').classList.add('on');$('bonusName').textContent=rr.name;$('bonusFill').style.background=rr.color;
+  }
+  save();
+}
+function endBonus(){
+  const id=T.bonus.id;T.bonus=null;$('bonusbar').classList.remove('on');
+  play(id==='sale'?'endSale':id==='touch'?'endTouch':'endJackpot');scheduleLucky();
+}
+function burst(px,py,color,n){
+  for(let i=0;i<n;i++){
+    const s=document.createElement('div');s.className='spark';s.style.background=color;s.style.left=px-7+'px';s.style.top=py-7+'px';scene.appendChild(s);
+    const a=Math.random()*Math.PI*2,d=50+Math.random()*90;
+    s.animate([{transform:'translate(0,0) scale(1.2)'},{transform:`translate(${Math.cos(a)*d}px,${Math.sin(a)*d}px) scale(.3)`,opacity:0}],{duration:800,easing:'cubic-bezier(.1,.8,.3,1)'}).onfinish=()=>s.remove();
+  }
+}
+let lastRain=0;
+function rain(){
+  if(reduce)return;const t=now();if(t-lastRain<.12)return;lastRain=t;
+  const r=scene.getBoundingClientRect();const d=document.createElement('div');d.className='rain';d.style.left=Math.random()*(r.width-18)+'px';scene.appendChild(d);
+  d.animate([{transform:'translateY(0) rotate(0)'},{transform:`translateY(${r.height+40}px) rotate(${Math.random()*360}deg)`}],{duration:1400+Math.random()*600,easing:'cubic-bezier(.4,0,.8,.6)'}).onfinish=()=>d.remove();
+}
+let toastEl;
+function toast(text,color){
+  if(toastEl)toastEl.remove();
+  const t=document.createElement('div');t.className='toast';t.textContent=text;if(color)t.style.background=color;scene.appendChild(t);toastEl=t;
+  setTimeout(()=>{if(toastEl===t){t.remove();toastEl=null}},2600);
+}
+// ---------- save / load ----------
+function save(){S.lastSeen=Date.now();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+// saves from mockup v9 and earlier used other ids for a few upgrades
+const OLDUP={clover:'luck1',rabbit:'luck2'};
+const migrateUp=id=>{if(OLDUP[id])return OLDUP[id];const m=/^(.+)-u([01])$/.exec(id);return m?m[1]+'-'+(+m[2]+2):id};
+function sanitize(o){
+  const f=fresh();if(!o||typeof o!=='object')return null;
+  const num=(v,d)=>typeof v==='number'&&isFinite(v)&&v>=0?v:d;
+  f.money=num(o.money,0);f.total=num(o.total,f.money);f.alltime=Math.max(f.total,num(o.alltime,f.total));f.heirs=Math.floor(num(o.heirs,0));
+  f.helpers=Math.floor(num(o.helpers,0));f.pity=Math.floor(num(o.pity,0));
+  BIZ.forEach(b=>f.owned[b.id]=Math.floor(num(o.owned&&o.owned[b.id],0)));
+  f.ups=Array.isArray(o.ups)?[...new Set(o.ups.map(migrateUp).filter(id=>UPM[id]))]:[];
+  if(o.settings)Object.assign(f.settings,o.settings);
+  f.lastSeen=num(o.lastSeen,Date.now());f.play=num(o.play,0);f.piggy=num(o.piggy,0);f.dayOffset=Math.floor(num(o.dayOffset,0));if(Array.isArray(o.queue))f.queue=o.queue.filter(i=>i>=0&&i<4).slice(0,10);if(o.streak&&typeof o.streak==='object')Object.assign(f.streak,o.streak);if(o.ms&&typeof o.ms==='object')for(const k in o.ms)f.ms[k]=num(o.ms[k],0);
+  return f;
+}
+function load(){try{const raw=localStorage.getItem(KEY);if(raw){const s=sanitize(JSON.parse(raw));if(s)S=s}}catch(e){}}
+function encode(){S.lastSeen=Date.now();return 'P2E1.'+btoa(unescape(encodeURIComponent(JSON.stringify(S))))}
+function decode(code){
+  code=code.trim().replace(/\s+/g,'');if(!code.startsWith('P2E1.'))return null;
+  try{return sanitize(JSON.parse(decodeURIComponent(escape(atob(code.slice(5))))))}catch(e){return null}
+}
+// piggy bank: while away, 50% of income collects (up to 8h worth) and must be tapped to cash in
+const PIGGY_CAP=C.piggy.capHours*3600, PIGGY_RATE=C.piggy.rate;
+const piggyMax=()=>(baseRate()+helperRate())*PIGGY_RATE*PIGGY_CAP;
+function offline(){
+  const away=(Date.now()-S.lastSeen)/1000;
+  if(away<30)return;
+  const before=S.piggy;
+  S.piggy=Math.min(Math.max(piggyMax(),S.piggy),S.piggy+(baseRate()+helperRate())*PIGGY_RATE*away);
+  if(S.piggy>before)setTimeout(()=>toast(`Your ${HOMES[homeIdx()].piggy.toLowerCase()} has ${fmt(S.piggy)}. Tap it!`),400);
+  drawPiggy();
+}
+function drawPiggy(){
+  const max=piggyMax(),f=max>0?Math.min(1,S.piggy/max):0;
+  $('piggyFill').style.width=(f*100)+'%';
+  $('piggyAmt').textContent=S.piggy>0?fmt(S.piggy):'';
+  $('piggy').classList.toggle('full',S.piggy>0);
+}
+function collectPiggy(){
+  const name=HOMES[homeIdx()].piggy;
+  if(S.piggy<=0){toast(`The ${name.toLowerCase()} fills while you are away`);return}
+  audioInit();const v=S.piggy;S.piggy=0;earn(v);drawPiggy();
+  const r=scene.getBoundingClientRect(),b=$('piggy').getBoundingClientRect();
+  if(!reduce){burst(b.left-r.left+b.width/2,b.top-r.top+b.height/3,'#F5C542',18);floatText(b.left-r.left+b.width/2,b.top-r.top,'+'+fmt(v),true)}
+  play('find');buzz([30,30,60]);toast(name+'! +'+fmt(v));save();
+}
+function showStats(){
+  const first=id=>S.ms[id]!==undefined?mmss(S.ms[id]):'not yet';
+  $('stats').innerHTML=`Active play time: <b>${mmss(S.play)}</b><br>Studio: <b>${first('home-studioapt')}</b> · Suburban: <b>${first('home-suburban')}</b> · Penthouse: <b>${first('home-penthouse')}</b> · Mansion: <b>${first('home-mansion')}</b><br>First Car Wash: <b>${first('carwash-1')}</b> · $1M earned: <b>${first('$1000000')}</b><br>Upgrades: <b>${S.ups.length}/${UPS.length}</b> · Heirs: <b>${S.heirs}</b><br>Lifetime earned: <b>${fmt(S.alltime)}</b>`;
+}
+// ---------- daily reward and streak ----------
+const CAL=[{h:.5,label:'30m'},{h:1,label:'1h'},{h:1.5,label:'1.5h'},{h:2,label:'2h'},{h:3,label:'3h'},{h:4,label:'4h'},{coin:2,label:'Gold'}];
+const MILES={3:{h:2,text:'2 hours of income'},5:{coin:1,text:'a Silver coin'},10:{text:'a coin skin (coming soon)'},15:{coin:2,trophy:'bronze',text:'a Gold coin and a bronze trophy'},
+  30:{coin:3,trophy:'silver',text:'a Diamond coin and a silver trophy'},50:{text:'the title "Hustler" (coming soon)'},100:{trophy:'gold',text:'a gold trophy'},365:{text:'the title "Tycoon" (coming soon)'}};
+const dayNum=()=>{const d=new Date(Date.now()+(S.dayOffset||0)*864e5);return Math.floor(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/864e5)};
+function checkDaily(){
+  const st=S.streak,today=dayNum();
+  if(st.last!==null&&today<=st.last)return;
+  const gap=st.last===null?null:today-st.last;
+  if(gap===1)st.count++;
+  else if(gap===2&&(st.grace===null||today-st.grace>=7)){st.count++;st.grace=today;st.usedGrace=true}
+  else st.count=1;
+  st.best=Math.max(st.best||0,st.count);st.last=today;st.claimed=false;
+  showDaily();save();
+}
+function incomeHours(h){return Math.max(h*3600*(baseRate()+helperRate()),h*100*C.costMultiplier)}
+function showDaily(){
+  const st=S.streak,ci=(st.count-1)%7;
+  $('streakBig').textContent=`🔥 ${st.count}-day streak`+(st.usedGrace?' (grace day used)':'');st.usedGrace=false;
+  $('cal').innerHTML=CAL.map((c,i)=>`<div class="${i<ci?'done':i===ci?'today':''}">Day ${i+1}<b>${c.coin?'🪙':c.label}</b>${c.coin?'Gold':''}</div>`).join('');
+  const m=MILES[st.count];
+  const next=Object.keys(MILES).map(Number).find(n=>n>st.count);
+  $('mile').textContent=m?`Streak milestone! You also get ${m.text}.`:next?`${next-st.count} more day${next-st.count>1?'s':''} to unlock ${MILES[next].text}.`:'';
+  $('claim').textContent='Claim '+(CAL[ci].coin?'Gold coin':fmt(incomeHours(CAL[ci].h)));
+  $('daily').classList.add('on');
+}
+$('claim').onclick=()=>{
+  audioInit();const st=S.streak;if(st.claimed){$('daily').classList.remove('on');return}
+  const c=CAL[(st.count-1)%7],m=MILES[st.count];let v=0;
+  if(c.coin!==undefined)S.queue.push(c.coin);else v+=incomeHours(c.h);
+  if(m){if(m.h)v+=incomeHours(m.h);if(m.coin!==undefined)S.queue.push(m.coin);if(m.trophy&&!(st.trophies||[]).includes(m.trophy)){st.trophies=(st.trophies||[]).concat(m.trophy);drawTrophies()}}
+  if(v>0){earn(v);toast('Daily reward! +'+fmt(v))}
+  st.claimed=true;play('find');buzz(30);$('daily').classList.remove('on');save();
+};
+const TROPHIES=['bronze','silver','gold'];
+function drawTrophies(){
+  document.querySelectorAll('.trophy').forEach(e=>e.remove());
+  (S.streak.trophies||[]).forEach((k,i)=>{
+    const d=document.createElement('div');d.className='trophy';d.style.right=(6+i*10)+'%';
+    d.innerHTML=`<img src="a/trophy-${k}.svg" alt="">`;
+    scene.appendChild(d);
+  });
+}
+// ---------- settings panel ----------
+function syncSettings(){
+  const s=S.settings;$('volS').value=s.sound;$('volM').value=s.music;
+  [['swS','soundOn'],['swM','musicOn'],['swV','vib']].forEach(([id,k])=>{$(id).setAttribute('aria-pressed',s[k]);$(id).textContent=s[k]?'On':'Off'});
+  applyVolumes();
+}
+$('gear').onclick=()=>{audioInit();showStats();$('saveOut').value=encode();$('saveMsg').textContent='';$('overlay').classList.add('on')};
+$('closeSet').onclick=()=>{$('overlay').classList.remove('on');save()};
+$('overlay').addEventListener('click',e=>{if(e.target.id==='overlay'){$('overlay').classList.remove('on');save()}});
+$('volS').oninput=e=>{S.settings.sound=+e.target.value;applyVolumes()};
+$('volS').onchange=()=>play('tap');
+$('volM').oninput=e=>{S.settings.music=+e.target.value;applyVolumes()};
+[['swS','soundOn'],['swM','musicOn'],['swV','vib']].forEach(([id,k])=>$(id).onclick=()=>{S.settings[k]=!S.settings[k];syncSettings();save()});
+$('copySave').onclick=async()=>{
+  const code=encode();$('saveOut').value=code;
+  try{await navigator.clipboard.writeText(code);$('saveMsg').textContent='Copied! Paste it somewhere safe.'}
+  catch(e){$('saveOut').select();$('saveMsg').textContent='Select the code above and copy it.'}
+};
+// tester JSON: pasting a {...} object in the load box patches the game state and runs test actions
+const METAL={bronze:0,silver:1,gold:2,diamond:3};
+function applyTester(o){
+  const n=v=>typeof v==='number'&&isFinite(v)&&v>=0;
+  const done=[];
+  if(o.reset){const st=S.settings;S=fresh();S.settings=st;done.push('reset')}
+  if(o.home!==undefined){const i=typeof o.home==='number'?o.home:HOMEIDX[o.home];if(HOMES[i]){S.total=Math.max(S.total,HOMES[i].threshold);S.alltime=Math.max(S.alltime,S.total);done.push('home')}}
+  for(const k of ['money','total','alltime','helpers','heirs','piggy','pity','play'])if(n(o[k])){S[k]=['helpers','pity','heirs'].includes(k)?Math.floor(o[k]):o[k];done.push(k)}
+  if(n(o.money)&&!n(o.total))S.total=Math.max(S.total,S.money);
+  S.alltime=Math.max(S.alltime,S.total);
+  const openBiz=BIZ.filter(bizOpen);
+  if(o.owned==='all'||n(o.owned)){openBiz.forEach(b=>S.owned[b.id]=o.owned==='all'?25:Math.floor(o.owned));done.push('owned')}
+  else if(o.owned&&typeof o.owned==='object'){for(const k in o.owned)if(k in S.owned&&n(o.owned[k]))S.owned[k]=Math.floor(o.owned[k]);done.push('owned')}
+  if(o.ups==='all'){S.ups=UPS.map(u=>u.id);done.push('ups')}
+  else if(o.ups==='none'){S.ups=[];done.push('ups')}
+  else if(Array.isArray(o.ups)){S.ups=[...new Set(S.ups.concat(o.ups.map(migrateUp).filter(id=>UPM[id])))];done.push('ups')}
+  if(n(o.piggyHours)){S.piggy=(baseRate()+helperRate())*PIGGY_RATE*Math.min(C.piggy.capHours,o.piggyHours)*3600;done.push('piggy')}
+  if(n(o.awayHours)){S.lastSeen=Date.now()-o.awayHours*3600e3;offline();done.push('away')}
+  if(o.streak&&typeof o.streak==='object'){const st=S.streak;
+    if(n(o.streak.count)){st.count=Math.floor(o.streak.count);st.best=Math.max(st.best||0,st.count)}
+    if(o.streak.grace==='reset')st.grace=null;
+    if(Array.isArray(o.streak.trophies))st.trophies=o.streak.trophies.filter(t=>TROPHIES.includes(t));
+    done.push('streak')}
+  if(n(o.skipDays)&&o.skipDays>0){S.dayOffset=(S.dayOffset||0)+Math.floor(o.skipDays);done.push('days')}
+  if(o.daily===true){S.streak.last=dayNum()-1;done.push('daily')}
+  if(o.coin){[].concat(o.coin).forEach(c=>{if(c in METAL)S.queue.push(METAL[c])});done.push('coin')}
+  if(n(o.nextCoinIn)){T.nextLucky=now()+o.nextCoinIn;done.push('nextCoinIn')}
+  S.lastSeen=Date.now();resetRuntime();
+  if(o.frenzy===true){T.lastTap=now();startFrenzy();done.push('frenzy')}
+  if(o.skipDays||o.daily)checkDaily();
+  save();return done;
+}
+$('loadSave').onclick=()=>{
+  const raw=$('saveIn').value.trim();
+  if(raw.startsWith('{')){
+    let o;try{o=JSON.parse(raw)}catch(e){$('saveMsg').style.color='#B4362B';$('saveMsg').textContent='JSON error: '+e.message;return}
+    const done=applyTester(o);$('saveMsg').style.color='';$('saveMsg').textContent='OK: '+(done.join(', ')||'nothing changed');
+    if(o.close!==false&&(o.skipDays||o.daily||o.coin||o.frenzy))$('overlay').classList.remove('on');
+    return;
+  }
+  const s=decode($('saveIn').value);
+  if(!s){$('saveMsg').style.color='#B4362B';$('saveMsg').textContent='That code does not look right. Check it was copied whole.';return}
+  S=s;S.lastSeen=Date.now();resetRuntime();save();$('saveIn').value='';$('saveMsg').style.color='';$('saveMsg').textContent='Loaded! Net worth '+fmt(S.money)+'.';
+};
+let resetArmed=false;
+$('resetSave').onclick=()=>{
+  if(!resetArmed){resetArmed=true;$('resetSave').textContent='Tap again to erase everything';setTimeout(()=>{resetArmed=false;$('resetSave').textContent='Reset progress'},3000);return}
+  const st=S.settings;S=fresh();S.settings=st;resetRuntime();save();$('saveMsg').textContent='Progress erased.';resetArmed=false;$('resetSave').textContent='Reset progress';
+};
+function resetRuntime(){
+  hands.forEach(h=>h.remove());hands=[];layoutHands();
+  applyHome(homeIdx(),false);
+  drawPiggy();drawTrophies();T.bonus=null;$('bonusbar').classList.remove('on');T.frenzyUntil=0;T.frenzyMeter=0;wrap.classList.remove('frenzy');
+  syncSettings();sig='';maybeRerender();renderList();
+}
+document.addEventListener('visibilitychange',()=>{if(document.hidden)save();else{offline();refresh();checkDaily()}});
+addEventListener('pagehide',save);
+// ---------- main loop ----------
+let last=performance.now(),saveAcc=0,slowAcc=0;
+function loop(ms){
+  const dt=Math.min(1,(ms-last)/1000);last=ms;const t=now();
+  if(!document.hidden)S.play+=dt;
+  const inc=rate()*dt+helperRate()*dt;if(inc>0)earn(inc);
+  if(S.helpers>0){T.helperAcc+=dt*Math.min(6,S.helpers)/(HELPER.interval/helperSpeed());if(T.helperAcc>=1){T.helperAcc=0;poke()}}
+  // frenzy meter decay and ring
+  if(inFrenzy()){
+    const left=(T.frenzyUntil-t)/T.frenzyLen;$('ringFill').setAttribute('stroke-dasharray',`${left*100} 100`);rain();
+  }else{
+    if(wrap.classList.contains('frenzy'))endFrenzy();
+    if(t-T.lastTap>.6)T.frenzyMeter=Math.max(0,T.frenzyMeter-dt*.12);
+    $('ringFill').setAttribute('stroke-dasharray',`${T.frenzyMeter*100} 100`);
+  }
+  // bonus timer
+  if(T.bonus){
+    const left=T.bonusEnd-t;
+    if(left<=0)endBonus();
+    else{
+      $('bonusLeft').textContent=Math.ceil(left)+'s';$('bonusFill').style.width=(left/T.bonusLen*100)+'%';
+      const marks=[3,2,1.4,.9,.5,.2];if(T.ticks<marks.length&&left<=marks[T.ticks]){T.ticks++;play('tick')}
+      if(T.bonus&&T.bonus.id==='jackpot')rain();
+    }
+  }else if(!T.luckyOnScreen&&S.queue.length&&!$('daily').classList.contains('on'))spawnLucky(RARITY[S.queue.shift()]||RARITY[0]);
+  else if(!T.luckyOnScreen&&t>=T.nextLucky)spawnLucky();
+  refresh();
+  slowAcc+=dt;if(slowAcc>.5){slowAcc=0;
+    const h=homeIdx();if(h!==T.home){applyHome(h,T.home>=0&&h>T.home);sig=''}
+    maybeRerender();checkMilestones();drawPiggy();drawHome()}
+  saveAcc+=dt;if(saveAcc>5){saveAcc=0;save()}
+  requestAnimationFrame(loop);
+}
+load();syncSettings();offline();layoutHands();applyHome(homeIdx(),false);drawPiggy();drawTrophies();setTimeout(checkDaily,600);
+$('piggy').addEventListener('click',collectPiggy);
+T.nextLucky=now()+60;
+maybeRerender();requestAnimationFrame(loop);
+</script>
+
+<script>/* Tester build: autosave every 10 s on top of the save on leaving the app */
+setInterval(function(){try{save()}catch(e){}},10000);
+</script>
+<script>if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js');</script>
+</body></html>
