@@ -638,6 +638,7 @@ function pickRarity(){
   for(let i=0;i<RARITY.length;i++){x-=ws[i];if(x<=0)return RARITY[i]}
   return RARITY[0];
 }
+const FALL_MS={find:5500,sale:5000,touch:4500,jackpot:3800};
 function spawnLucky(forced){
   T.luckyOnScreen=true;
   const rr=forced||pickRarity();
@@ -647,9 +648,12 @@ function spawnLucky(forced){
   b.style.filter=`drop-shadow(0 0 ${rr.id==='jackpot'?18:10}px ${rr.glow})`;
   b.innerHTML=`<img src="${rr.img}" alt="" draggable="false">`;
   playAppear(rr);
-  b.style.left=20+Math.random()*(r.width-84)+'px';b.style.top=20+Math.random()*(r.height-130)+'px';scene.appendChild(b);
-  if(!reduce)b.animate([{transform:'scale(0) rotate(-40deg)'},{transform:'scale(1.15) rotate(10deg)',offset:.08},{transform:'scale(1) rotate(0)',offset:.12},{transform:'scale(1) rotate(0)',offset:.9},{transform:'scale(0)'}],{duration:12000});
-  const kill=setTimeout(()=>{b.remove();T.luckyOnScreen=false;scheduleLucky()},12000);
+  // bonus coins fall from the top of the scene to the floor; rarer coins fall faster
+  const fall=FALL_MS[rr.id]||5500,drop=r.height+70,sway=(Math.random()<.5?-1:1)*(10+Math.random()*16);
+  b.style.left=20+Math.random()*(r.width-84)+'px';b.style.top='-70px';scene.appendChild(b);
+  b.animate(reduce?[{transform:'translateY(0)'},{transform:`translateY(${drop}px)`}]
+    :[0,.25,.5,.75,1].map((o,i)=>({offset:o,transform:`translate(${i%2?sway:0}px,${drop*o}px) rotate(${i%2?sway/2:0}deg)`})),{duration:fall,easing:'linear',fill:'forwards'});
+  const kill=setTimeout(()=>{b.remove();T.luckyOnScreen=false;scheduleLucky()},fall);
   b.addEventListener('pointerdown',e=>{e.preventDefault();audioInit();clearTimeout(kill);const br=b.getBoundingClientRect();b.remove();T.luckyOnScreen=false;grab(br.left+32-r.left,br.top+32-r.top,rr)});
   if(rr.id==='jackpot'&&!reduce)b.firstChild.animate([{transform:'rotate(-8deg) scale(1)'},{transform:'rotate(8deg) scale(1.08)'},{transform:'rotate(-8deg) scale(1)'}],{duration:900,iterations:Infinity});
 }
