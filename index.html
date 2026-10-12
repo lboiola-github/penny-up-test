@@ -394,7 +394,7 @@ function noise(t,dur,{vol=.08,hp=6000,bus}={}){
   g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.0008,t+dur);s.connect(f).connect(g).connect(bus||sfxBus);s.start(t);s.stop(t+dur+.02);
 }
 const sfx={
-  tap(){tone(1300+Math.random()*500,ac.currentTime,.16,{to:700})},
+  tap(){const t=ac.currentTime;tone(640+Math.random()*80,t,.05,{type:'sine',vol:.08,to:420,attack:.002});noise(t,.012,{vol:.012,hp:3500})},
   crit(){const t=ac.currentTime;[1568,2093,2637].forEach((f,i)=>tone(f,t+i*.05,.2,{vol:.1}))},
   buy(){const t=ac.currentTime;tone(520,t,.12,{type:'sine',vol:.14,to:880})},
   find(){const t=ac.currentTime;tone(2093,t,.12,{vol:.1});tone(2637,t+.07,.3,{vol:.1});noise(t+.02,.15,{vol:.06})},
