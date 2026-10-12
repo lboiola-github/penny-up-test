@@ -25,9 +25,9 @@ body{margin:0;background:var(--page);font-family:var(--body);color:var(--ink);di
 .rates{display:flex;gap:14px;font-weight:800;font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap}
 .rate{color:var(--cash-dk)}
 .ptap{color:var(--penny-dk)}
-.home{display:flex;gap:7px;align-items:center;font-size:12px;font-weight:800;color:var(--muted);margin-top:3px;white-space:nowrap}
+.home{display:flex;gap:7px;align-items:center;font-size:12px;font-weight:800;color:var(--muted);margin-top:3px;white-space:nowrap;cursor:pointer}
 .home b{font-family:var(--display);font-weight:600;font-size:13px;color:var(--ink)}
-.home .hbar{width:70px;height:8px;border:2px solid var(--ink);border-radius:6px;background:#fff;overflow:hidden;flex:none}
+.home .hbar{width:52px;height:8px;border:2px solid var(--ink);border-radius:6px;background:#fff;overflow:hidden;flex:none}
 .home .hbar i{display:block;height:100%;width:0;background:var(--penny)}
 .gear{position:absolute;right:12px;top:12px;width:38px;height:38px;border-radius:12px;border:2.5px solid var(--ink);background:#fff;display:grid;place-items:center;cursor:pointer;padding:0}
 .gear svg{width:22px;height:22px}
@@ -54,6 +54,10 @@ body{margin:0;background:var(--page);font-family:var(--body);color:var(--ink);di
 .coin img{width:100%;height:100%;object-fit:contain;display:block;animation:bob 3s ease-in-out infinite;-webkit-user-drag:none}
 @keyframes bob{50%{transform:translateY(-6px) rotate(-2deg)}}
 .hand{position:absolute;left:50%;top:50%;width:44px;height:44px;pointer-events:none;z-index:2}
+@media (prefers-reduced-motion:reduce){.hring{animation:none}}
+.hring{position:absolute;inset:0;pointer-events:none;z-index:2;animation:spin 120s linear infinite}
+.hring.r1{animation-duration:160s;animation-direction:reverse}.hring.r2{animation-duration:200s}
+@keyframes spin{to{transform:rotate(360deg)}}
 .hand img{width:100%;height:100%;object-fit:contain;display:block}
 .float{position:absolute;font-family:var(--display);font-weight:700;font-size:22px;color:var(--cash-dk);pointer-events:none;-webkit-text-stroke:5px var(--cream);paint-order:stroke fill;white-space:nowrap;z-index:5}
 .float.crit{font-size:30px;color:var(--penny-dk)}
@@ -70,6 +74,7 @@ body{margin:0;background:var(--page);font-family:var(--body);color:var(--ink);di
 .lucky{position:absolute;width:64px;height:64px;border:0;background:none;padding:0;cursor:pointer;z-index:6}
 .lucky img{width:100%;height:100%;display:block;pointer-events:none;-webkit-user-drag:none}
 .toast{position:absolute;top:10px;left:50%;transform:translateX(-50%);background:var(--gold);border:3px solid var(--ink);border-radius:14px;padding:6px 14px;font-family:var(--display);font-weight:600;font-size:15px;white-space:nowrap;z-index:7;max-width:92%;overflow:hidden;text-overflow:ellipsis}
+.toast.wrap{white-space:normal;width:88%;text-align:center;font-size:14px;line-height:1.3}
 .bonusbar{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);width:min(260px,80%);background:#fff;border:2.5px solid var(--ink);border-radius:12px;padding:4px 10px 6px;z-index:6;display:none}
 .bonusbar.on{display:block}
 .bonusbar .t{display:flex;justify-content:space-between;font-family:var(--display);font-weight:600;font-size:14px}
@@ -90,7 +95,8 @@ body{margin:0;background:var(--page);font-family:var(--body);color:var(--ink);di
 .row .icon .q{font-family:var(--display);font-weight:700;font-size:24px;color:#C9BBA8}
 .row .name{font-family:var(--display);font-weight:600;font-size:16px;line-height:1.15}
 .row .meta{font-size:12px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums;line-height:1.25}
-.row .owned{font-family:var(--display);font-weight:600;color:var(--penny-dk)}
+.row .owned{font-family:var(--display);font-weight:700;font-size:24px;line-height:1;vertical-align:-3px;margin-left:3px;color:var(--penny-dk)}
+.row .share{color:var(--cash-dk);white-space:nowrap}
 .row.locked .name{color:#9C8F84}
 .row.gone{opacity:0}
 .row.bump{animation:bump .35s}
@@ -454,7 +460,7 @@ function drawHome(){
   const i=homeIdx(),h=HOMES[i],n=HOMES[i+1];
   $('homeName').textContent=h.name;
   if(n){const lo=Math.max(1,h.threshold),f=Math.max(0,Math.min(1,Math.log(Math.max(1,S.total)/lo)/Math.log(n.threshold/lo)));
-    $('homeFill').style.width=(f*100)+'%';$('homeNext').textContent=t('Next: ','Próxima: ')+fmtShort(n.threshold);$('home').title=t(`${n.name} when you have earned ${fmt(n.threshold)}`,`${n.name} cuando hayas ganado ${fmt(n.threshold)}`)}
+    $('homeFill').style.width=(f*100)+'%';$('homeNext').textContent=fmtShort(S.total)+' / '+fmtShort(n.threshold);$('home').title=t(`${n.name} when you have earned ${fmt(n.threshold)}`,`${n.name} cuando hayas ganado ${fmt(n.threshold)}`)}
   else{$('homeFill').style.width='100%';$('homeNext').textContent=t('Top home','Mejor casa')}
   const avail=heirsAvail(),show=homeIdx()>=HOMEIDX[C.inheritance.unlockHome]||S.heirs>0;
   $('heirBtn').classList.toggle('on',show);$('heirBtn').classList.toggle('ready',show&&avail>S.heirs);
@@ -523,14 +529,14 @@ function renderList(){
   const list=$('list');list.innerHTML='';
   if(tabSel==='biz'){
     if(helperKnown()){
-      const el=row('helper',`<img src="${helperImg()}" alt="">`,`${t('Helper','Ayudante')} <span class="owned">${S.helpers||''}</span>`,t(`Taps the coin for you every ${+(HELPER.interval/helperSpeed()).toFixed(2)}s`,`Toca la moneda por vos cada ${+(HELPER.interval/helperSpeed()).toFixed(2)}s`),fmt(helperPrice()),()=>buyHelper());
+      const el=row('helper',`<img src="${helperImg()}" alt="">`,`${t('Helper','Ayudante')} <span class="owned">${S.helpers||''}</span>`,t(`Taps the coin for you every ${+(HELPER.interval/helperSpeed()).toFixed(2)}s`,`Toca la moneda por vos cada ${+(HELPER.interval/helperSpeed()).toFixed(2)}s`)+' <span class="share" data-share="helper"></span>',fmt(helperPrice()),()=>buyHelper());
       list.appendChild(el);
     }
     BIZ.forEach((b,i)=>{
       if(!bizOpen(b))return;
       const k=known(b,i);
       const icon=k?`<img src="${b.icon}" alt="">`:`<span class="q">?</span>`;
-      list.appendChild(row(b.id,icon,`${k?b.name:'???'} <span class="owned">${S.owned[b.id]||''}</span>`,k?'+'+fmt(b.rate*bizMult(b.id)*globalMult())+t(' / sec each',' / seg c/u'):t('Keep earning to reveal','Seguí ganando para descubrirlo'),fmt(price(b)),()=>buy(b),!k));
+      list.appendChild(row(b.id,icon,`${k?b.name:'???'} <span class="owned">${S.owned[b.id]||''}</span>`,k?'+'+fmt(b.rate*bizMult(b.id)*globalMult())+t(' / sec each',' / seg c/u')+` <span class="share" data-share="${b.id}"></span>`:t('Keep earning to reveal','Seguí ganando para descubrirlo'),fmt(price(b)),()=>buy(b),!k));
     });
     const n=HOMES[homeIdx()+1];
     if(n&&BIZ.some(b=>b.home===n.id))list.appendChild(row('next-home','<span class="q">?</span>',t('More businesses','Más negocios'),t(`Move to the ${n.name} (earn ${fmt(n.threshold)})`,`Mudate a: ${n.name} (ganá ${fmt(n.threshold)})`),t('Locked','Bloqueado'),null,true));
@@ -542,7 +548,7 @@ function renderList(){
     next.forEach(u=>list.appendChild(row('up-'+u.id,'<span class="q">?</span>',revealed(u)?u.name:'???',upHint(u),fmt(u.cost),null,true)));
     const done=S.ups.length;if(done)list.insertAdjacentHTML('beforeend',`<div class="empty">${t(`${done} of ${UPS.length} upgrades bought`,`${done} de ${UPS.length} mejoras compradas`)}</div>`);
   }
-  refresh();
+  refresh();updateShares();
 }
 function upIcon(u){
   const e=u.effect;
@@ -563,6 +569,15 @@ function row(id,icon,name,meta,cost,onBuy,locked){
   const btn=el.querySelector('button');btn.dataset.cost=onBuy?id:'';
   if(onBuy)btn.addEventListener('click',()=>{audioInit();onBuy()});
   return el;
+}
+// share of total income each business (or the Helpers) brings in
+function updateShares(){
+  const tot=rate()+helperRate();
+  document.querySelectorAll('#list [data-share]').forEach(e=>{
+    const id=e.dataset.share,v=id==='helper'?helperRate():BIZM[id].rate*bizMult(id)*S.owned[id]*globalMult()*prodBonus();
+    const p=tot>0?v/tot*100:0;
+    e.textContent=v>0?' · '+(p<1?'<1':Math.round(p))+t('% of income','% de tus ingresos'):'';
+  });
 }
 function costOf(id){
   if(id==='helper')return helperPrice();
@@ -642,18 +657,29 @@ function startFrenzy(){
 }
 function endFrenzy(){T.frenzyMeter=0;wrap.classList.remove('frenzy');play('frenzyOff')}
 // ---------- helpers ----------
-const ANGLES=[-150,-30,150,30,180,0];
-let hands=[];
+// Helpers orbit the coin in rings, inner ring first, like Cookie Clicker's cursor rings (it draws every
+// cursor, 50 per ring). A phone has less room: 3 rings of 12 + 18 + 24 = 54 hands, smaller further out.
+const RINGS=[{n:12,gap:20,size:38},{n:18,gap:42,size:29},{n:24,gap:62,size:23}];
+const HAND_MAX=RINGS.reduce((a,r)=>a+r.n,0);
+let hands=[],hrings=[];
 function layoutHands(restyle){
-  const n=Math.min(6,S.helpers),src=helperImg();
+  const n=Math.min(HAND_MAX,S.helpers),src=helperImg();
+  if(!hrings.length)hrings=RINGS.map((_,i)=>{const d=document.createElement('div');d.className='hring r'+i;wrap.appendChild(d);return d});
   if(restyle)hands.forEach(h=>h.firstChild.src=src);
-  while(hands.length<n){
-    const h=document.createElement('div');h.className='hand';h.innerHTML=`<img src="${src}" alt="">`;wrap.appendChild(h);
-    const deg=ANGLES[hands.length],a=deg*Math.PI/180,c=Math.cos(a).toFixed(3),sn=Math.sin(a).toFixed(3);
-    h.style.left=`calc(50% + ${c} * (50% + 22px))`;h.style.top=`calc(50% + ${sn} * (50% + 22px))`;
-    h.style.transform=`translate(-50%,-50%) rotate(${deg-90}deg)`;
-    hands.push(h);
-  }
+  while(hands.length<n){const h=document.createElement('div');h.className='hand';h.innerHTML=`<img src="${src}" alt="">`;hands.push(h)}
+  // spread each ring's hands evenly around it
+  let k=0;
+  RINGS.forEach((R,ri)=>{
+    const m=Math.max(0,Math.min(R.n,n-k));
+    for(let j=0;j<m;j++){
+      const h=hands[k+j],deg=-90+(j+(ri%2?.5:0))*360/m,a=deg*Math.PI/180,c=Math.cos(a).toFixed(3),sn=Math.sin(a).toFixed(3);
+      if(h.parentNode!==hrings[ri])hrings[ri].appendChild(h);
+      h.style.width=h.style.height=R.size+'px';
+      h.style.left=`calc(50% + ${c} * (50% + ${R.gap}px))`;h.style.top=`calc(50% + ${sn} * (50% + ${R.gap}px))`;
+      h.style.transform=`translate(-50%,-50%) rotate(${deg-90}deg)`;
+    }
+    k+=m;
+  });
 }
 let lastPoke=0;
 function poke(){
@@ -726,10 +752,10 @@ function rain(){
   d.animate([{transform:'translateY(0) rotate(0)'},{transform:`translateY(${r.height+40}px) rotate(${Math.random()*360}deg)`}],{duration:1400+Math.random()*600,easing:'cubic-bezier(.4,0,.8,.6)'}).onfinish=()=>d.remove();
 }
 let toastEl;
-function toast(text,color){
+function toast(text,color,long){
   if(toastEl)toastEl.remove();
-  const t=document.createElement('div');t.className='toast';t.textContent=text;if(color)t.style.background=color;scene.appendChild(t);toastEl=t;
-  setTimeout(()=>{if(toastEl===t){t.remove();toastEl=null}},2600);
+  const t=document.createElement('div');t.className='toast'+(long?' wrap':'');t.textContent=text;if(color)t.style.background=color;scene.appendChild(t);toastEl=t;
+  setTimeout(()=>{if(toastEl===t){t.remove();toastEl=null}},long?6000:2600);
 }
 // ---------- save / load ----------
 function save(){S.lastSeen=Date.now();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
@@ -930,7 +956,7 @@ function loop(ms){
   const dt=Math.min(1,(ms-last)/1000);last=ms;const t=now();
   if(!document.hidden)S.play+=dt;
   const inc=rate()*dt+helperRate()*dt;if(inc>0)earn(inc);
-  if(S.helpers>0){T.helperAcc+=dt*Math.min(6,S.helpers)/(HELPER.interval/helperSpeed());if(T.helperAcc>=1){T.helperAcc=0;poke()}}
+  if(S.helpers>0){T.helperAcc+=dt*Math.min(12,S.helpers)/(HELPER.interval/helperSpeed());if(T.helperAcc>=1){T.helperAcc=0;poke()}}
   // frenzy meter decay and ring
   if(inFrenzy()){
     const left=(T.frenzyUntil-t)/T.frenzyLen;$('ringFill').setAttribute('stroke-dasharray',`${left*100} 100`);rain();
@@ -953,12 +979,18 @@ function loop(ms){
   refresh();
   slowAcc+=dt;if(slowAcc>.5){slowAcc=0;
     const h=homeIdx();if(h!==T.home){applyHome(h,T.home>=0&&h>T.home);sig=''}
-    maybeRerender();checkMilestones();drawPiggy();drawHome()}
+    maybeRerender();checkMilestones();drawPiggy();drawHome();updateShares()}
   saveAcc+=dt;if(saveAcc>5){saveAcc=0;save()}
   requestAnimationFrame(loop);
 }
 load();applyLang();syncSettings();offline();layoutHands();applyHome(homeIdx(),false);drawPiggy();drawTrophies();setTimeout(checkDaily,600);
 $('piggy').addEventListener('click',collectPiggy);
+// the next home unlocks from money EARNED in this life (spent money counts too), not money in hand
+$('home').addEventListener('click',()=>{
+  const n=HOMES[homeIdx()+1];if(!n){toast(t('You live in the top home!','¡Ya vivís en la mejor casa!'));return}
+  toast(t(`Next: ${n.name}. You move when you have earned ${fmt(n.threshold)} in total. Money you spend counts too. Earned so far: ${fmt(S.total)}.`,
+    `Próxima: ${n.name}. Te mudás cuando hayas ganado ${fmt(n.threshold)} en total. La plata que gastás también cuenta. Llevás ganado: ${fmt(S.total)}.`),'#FFF6E5',true);
+});
 T.nextLucky=now()+60;
 maybeRerender();requestAnimationFrame(loop);
 </script>
