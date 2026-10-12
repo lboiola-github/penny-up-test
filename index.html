@@ -17,16 +17,17 @@
 html,body{height:100%}
 body{margin:0;background:var(--page);font-family:var(--body);color:var(--ink);display:grid;place-items:center;padding:16px;gap:12px}
 .note{font-size:13px;color:var(--note);max-width:420px;text-align:center;margin:0}
-.phone{width:min(400px,100%);height:min(820px,calc(100vh - 80px));min-height:600px;background:var(--cream);border:3px solid var(--ink);border-radius:36px;overflow:hidden;display:grid;grid-template-rows:auto minmax(0,1fr) minmax(0,42%);position:relative;box-shadow:0 18px 40px rgba(43,35,64,.25);user-select:none;-webkit-user-select:none;touch-action:manipulation}
+.phone{width:min(400px,100%);height:min(820px,calc(100vh - 80px));min-height:600px;background:var(--cream);border:3px solid var(--ink);border-radius:36px;overflow:hidden;display:grid;grid-template-rows:auto minmax(0,1fr) minmax(0,42%);grid-template-columns:minmax(0,1fr);position:relative;box-shadow:0 18px 40px rgba(43,35,64,.25);user-select:none;-webkit-user-select:none;touch-action:manipulation}
 /* stats */
-.stats{padding:12px 56px 8px;background:var(--cream);border-bottom:3px solid var(--ink);display:grid;justify-items:center;gap:1px;z-index:2;position:relative}
+.stats{padding:12px 56px 8px;background:var(--cream);border-bottom:3px solid var(--ink);display:grid;justify-items:center;gap:1px;z-index:2;position:relative;min-width:0}
 .stats .label{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--penny-dk)}
 .money{font-family:var(--display);font-weight:700;font-size:36px;line-height:1.05;font-variant-numeric:tabular-nums;white-space:nowrap}
 .rates{display:flex;gap:14px;font-weight:800;font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap}
 .rate{color:var(--cash-dk)}
 .ptap{color:var(--penny-dk)}
 .home{display:flex;gap:7px;align-items:center;font-size:12px;font-weight:800;color:var(--muted);margin-top:3px;white-space:nowrap;cursor:pointer}
-.home b{font-family:var(--display);font-weight:600;font-size:13px;color:var(--ink)}
+.home{max-width:100%;min-width:0}
+.home b{font-family:var(--display);font-weight:600;font-size:13px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;min-width:0}
 .home .hbar{width:52px;height:8px;border:2px solid var(--ink);border-radius:6px;background:#fff;overflow:hidden;flex:none}
 .home .hbar i{display:block;height:100%;width:0;background:var(--penny)}
 .gear{position:absolute;right:12px;top:12px;width:38px;height:38px;border-radius:12px;border:2.5px solid var(--ink);background:#fff;display:grid;place-items:center;cursor:pointer;padding:0}
@@ -888,7 +889,7 @@ function setLang(l){
   S.settings.lang=l;applyLang();applyHome(homeIdx(),false);sig='';renderList();syncSettings();showStats();
   if(T.bonus)$('bonusName').textContent=T.bonus.name;
   if($('heirPanel').classList.contains('on'))showHeir();
-  if($('daily').classList.contains('on'))showDaily();
+  if($('daily').classList.contains('on')&&S.streak.count>0)showDaily();
   save();
 }
 $('langEn').onclick=()=>setLang('en');
@@ -998,5 +999,5 @@ maybeRerender();requestAnimationFrame(loop);
 <script>/* Tester build: autosave every 10 s on top of the save on leaving the app */
 setInterval(function(){try{save()}catch(e){}},10000);
 </script>
-<script>if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js');</script>
+<script>if('serviceWorker' in navigator){const hadSW=!!navigator.serviceWorker.controller;navigator.serviceWorker.register('sw.js').then(r=>r.update());let reloaded=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(hadSW&&!reloaded){reloaded=true;location.reload()}})}</script>
 </body></html>
