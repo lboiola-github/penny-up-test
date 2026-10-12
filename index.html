@@ -149,6 +149,13 @@ body{margin:0;background:var(--page);font-family:var(--body);color:var(--ink);di
 .trophyrow img{width:38px;height:38px}
 .trophyrow .locked img{filter:grayscale(1);opacity:.35}
 .msg{font-size:13px;font-weight:800;color:var(--cash-dk);min-height:18px;margin-top:4px}
+/* layering: the room steps back, what you can tap pops (approved proposal v5) */
+.scene svg.bg,.props{filter:saturate(.7) contrast(.7)}
+.veil{position:absolute;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 60% 55% at 50% 48%,rgba(255,246,229,0) 40%,rgba(43,35,64,.22) 100%)}
+.coin-wrap::before{content:"";position:absolute;inset:-2.5%;border-radius:50%;background:radial-gradient(circle,rgba(255,226,140,.95) 0%,rgba(255,214,110,.55) 55%,rgba(255,214,110,0) 72%);z-index:-1}
+.piggy img{filter:drop-shadow(3px 0 0 #fff) drop-shadow(-3px 0 0 #fff) drop-shadow(0 3px 0 #fff) drop-shadow(0 -3px 0 #fff) drop-shadow(0 5px 0 rgba(43,35,64,.3))}
+.piggy::before{content:"";position:absolute;left:-18%;right:-18%;bottom:-6%;height:46%;border-radius:50%;background:radial-gradient(ellipse,rgba(255,226,140,.9),rgba(255,226,140,0) 70%);z-index:-1}
+.lucky img{filter:drop-shadow(0 0 .8px #fff) drop-shadow(0 0 .8px #fff) drop-shadow(0 0 4px rgba(255,244,200,.55))}
 @media (prefers-reduced-motion:reduce){.coin img,.piggy.full img,.buy.ready,.heir.ready{animation:none}.row.bump{animation:none}}
 </style>
 <style>/* Android tester build: the phone frame fills the real screen */
@@ -170,6 +177,7 @@ body{padding:0;display:block;background:var(--cream);overscroll-behavior:none;-w
   <main class="scene" id="scene">
     <svg class="bg" id="bg" viewBox="0 0 400 420" preserveAspectRatio="none" aria-hidden="true"></svg>
     <div class="props" id="props"></div>
+    <div class="veil" aria-hidden="true"></div>
     <button class="piggy" id="piggy" aria-label="Piggy bank: tap to collect what you earned while away"><img id="piggyImg" src="a/piggy-bank.svg" alt="" draggable="false"><span class="pamt" id="piggyAmt"></span></button>
     <div class="coin-shadow"></div>
     <div class="coin-wrap" id="coinWrap">
@@ -645,7 +653,6 @@ function spawnLucky(forced){
   if(!forced)S.pity=(rr.id==='touch'||rr.id==='jackpot')?0:S.pity+1;
   const r=scene.getBoundingClientRect();
   const b=document.createElement('button');b.className='lucky';b.setAttribute('aria-label',rr.metal+' coin');
-  b.style.filter=`drop-shadow(0 0 ${rr.id==='jackpot'?18:10}px ${rr.glow})`;
   b.innerHTML=`<img src="${rr.img}" alt="" draggable="false">`;
   playAppear(rr);
   // bonus coins fall from the top of the scene to the floor; rarer coins fall faster
