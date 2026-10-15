@@ -1,0 +1,7 @@
+node_modules/
+android/app/build/
+android/.gradle/
+ios/App/build/
+ios/DerivedData/
+*.keystore
+*.jks

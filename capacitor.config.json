@@ -1,0 +1,12 @@
+{
+  "appId": "com.pennyup.game",
+  "appName": "Penny Up",
+  "webDir": "www",
+  "backgroundColor": "#FFF6E5",
+  "android": { "allowMixedContent": false },
+  "ios": { "contentInset": "never", "scrollEnabled": false },
+  "plugins": {
+    "SplashScreen": { "launchAutoHide": false, "launchShowDuration": 3000, "backgroundColor": "#FFF6E5", "showSpinner": false },
+    "StatusBar": { "overlaysWebView": true, "style": "LIGHT" }
+  }
+}
