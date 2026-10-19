@@ -193,8 +193,16 @@ html,body,.phone{touch-action:manipulation}
 /* longer progress bar to the next home, on its own line */
 .home{flex-wrap:wrap;justify-content:center;row-gap:3px}
 .home .hbar{order:3;flex:0 0 100%;width:auto;max-width:min(240px,100%);height:10px}
-/* lighter animation work while tapping (Samsung A16 felt slow while the Frenzy ring was filling) */
-.coin,.coin img{will-change:transform}
+/* lighter drawing while tapping (Samsung A16 felt slow while the Frenzy ring was filling): the coin, its glow
+   and the ring each sit on their own layer, so redrawing the ring does not redraw the coin */
+.coin,.coin img,.ring,.coin-wrap::before{will-change:transform}
+.coin{filter:none}.coin img{filter:drop-shadow(0 8px 0 rgba(43,35,64,.18))}
+/* light effects: picked automatically on slow phones, or by hand in Settings */
+.phone.lite .coin img{animation:none;filter:none}
+.phone.lite .spark,.phone.lite .rain{display:none}
+.phone.lite .coin-wrap.frenzy .coin{filter:none}
+.phone.lite .scene svg.bg,.phone.lite .props{filter:none!important}
+.phone.lite .fx{animation:none!important}
 /* a different look for each active bonus */
 .fx{position:absolute;inset:0;pointer-events:none;z-index:3;opacity:0;will-change:opacity}
 .phone.b-sale .fx{opacity:1;background:radial-gradient(ellipse at 50% 50%,rgba(61,190,139,0) 42%,rgba(61,190,139,.5) 100%);animation:fxp 1.3s ease-in-out infinite}
@@ -235,7 +243,7 @@ html,body,.phone{touch-action:manipulation}
     <div class="coin-shadow"></div>
     <div class="coin-wrap" id="coinWrap">
       <svg class="ring" viewBox="0 0 100 100" aria-hidden="true"><circle class="track" cx="50" cy="50" r="46"/><circle class="fill" id="ringFill" cx="50" cy="50" r="46" pathLength="100" stroke-dasharray="0 100"/></svg>
-      <button class="coin" id="coin" aria-label="Tap the coin to earn money"><img id="coinImg" src="coin.svg" alt="" draggable="false"></button>
+      <button class="coin" id="coin" aria-label="Tap the coin to earn money"><img id="coinImg" src="coin.png" alt="" draggable="false"></button>
     </div>
     <div class="bonusbar" id="bonusbar" aria-live="polite"><div class="t"><span id="bonusName"></span><span id="bonusLeft"></span></div><div class="bar"><i id="bonusFill"></i></div></div>
   </main>
@@ -284,6 +292,7 @@ html,body,.phone{touch-action:manipulation}
       <div class="set"><span data-es="Sonido">Sound</span><input type="range" id="volS" min="0" max="100" aria-label="Sound volume" data-es-aria="Volumen del sonido"><button class="sw" id="swS" aria-pressed="true">On</button></div>
       <div class="set"><span data-es="Música">Music</span><input type="range" id="volM" min="0" max="100" aria-label="Music volume" data-es-aria="Volumen de la música"><button class="sw" id="swM" aria-pressed="true">On</button></div>
       <div class="set"><span data-es="Vibración">Vibration</span><span></span><button class="sw" id="swV" aria-pressed="true">On</button></div>
+      <div class="set"><span data-es="Efectos">Effects</span><span data-es="Livianos: para celulares lentos" style="font-weight:700;font-size:12px;color:var(--muted)">Light: for slower phones</span><button class="sw" id="swL" aria-pressed="false">Full</button></div>
       <div class="set" id="notifRow"><span data-es="Avisos">Alerts</span><span data-es="Cuando tu alcancía se llena" style="font-weight:700;font-size:12px;color:var(--muted)">When your piggy bank is full</span><button class="sw" id="swN" aria-pressed="true">On</button></div>
       <h4 data-es="Estadísticas">Stats</h4>
       <p id="stats"></p>
@@ -343,18 +352,18 @@ const BG={
   station:`<rect width="400" height="420" fill="#2F2C50"/><g stroke="#3F3B68" stroke-width="3" fill="none"><path d="M100 0V296M200 0V296M300 0V296M0 100H400M0 200H400"/></g><g fill="#56528A"><rect x="94" y="94" width="12" height="12" rx="3"/><rect x="194" y="194" width="12" height="12" rx="3"/><rect x="294" y="94" width="12" height="12" rx="3"/></g><rect y="290" width="400" height="16" fill="#8FD3F4"/><rect y="306" width="400" height="114" fill="#737896"/><path d="M0 306H400" stroke="#2B2340" stroke-width="4"/><g stroke="#5D627F" stroke-width="3"><path d="M0 350H400M0 392H400M100 306V420M200 306V420M300 306V420"/></g>`,
 };
 const SCENES={
-  room:{coin:'coin.svg',piggy:'a/piggy-bank.svg',props:[['window.svg','right:6%;top:6%;width:28%'],['poster.svg','left:6%;top:9%;width:22%;transform:rotate(-4deg)'],['mattress.svg','left:-4%;bottom:6%;width:44%'],['a/box.svg','right:3%;bottom:17%;width:20%']]},
-  studioapt:{coin:'a/coin-5.svg',piggy:'a/piggy-bank.svg',props:[['window.svg','right:6%;top:6%;width:28%'],['a/studio-bed.svg','left:-3%;bottom:3%;width:44%'],['a/studio-table-plant.svg','right:1%;bottom:16%;width:22%']]},
-  suburban:{coin:'a/coin-10.svg',piggy:'a/cash-register.svg',props:[['a/suburban-frame.svg','left:6%;top:6%;width:20%'],['a/suburban-window.svg','right:4%;top:3%;width:31%'],['a/suburban-sofa.svg','left:-3%;bottom:3%;width:42%'],['a/suburban-bookshelf.svg','right:-19%;bottom:16%;width:50%']]},
-  penthouse:{coin:'a/coin-25.svg',piggy:'a/cash-register.svg',props:[['a/penthouse-window.svg','right:3%;top:2%;width:34%'],['a/suburban-frame.svg','left:8%;top:8%;width:18%'],['a/penthouse-lamp.svg','left:-14%;bottom:13%;width:51%'],['a/suburban-sofa.svg','left:-3%;bottom:3%;width:42%']]},
-  mansion:{coin:'a/coin-1d.svg',piggy:'a/safe.svg',props:[['a/mansion-chandelier.svg','left:5%;top:-6%;width:25%'],['a/suburban-frame.svg','right:7%;top:8%;width:18%'],['a/mansion-staircase.svg','left:-3%;bottom:3%;width:42%']]},
-  island:{coin:'a/coin-gold.svg',piggy:'a/treasure-chest.svg',props:[['a/island-palm.svg','right:-8%;bottom:19%;width:30%'],['a/island-hammock.svg','left:-3%;bottom:3%;width:44%']]},
-  station:{coin:'a/coin-diamond.svg',piggy:'a/treasure-chest.svg',props:[['a/station-porthole.svg','right:4%;top:3%;width:31%'],['a/station-armchair.svg','left:1%;bottom:3%;width:32%']]},
+  room:{coin:'coin.png',piggy:'a/piggy-bank.svg',props:[['window.svg','right:6%;top:6%;width:28%'],['poster.svg','left:6%;top:9%;width:22%;transform:rotate(-4deg)'],['mattress.svg','left:-4%;bottom:6%;width:44%'],['a/box.svg','right:3%;bottom:17%;width:20%']]},
+  studioapt:{coin:'a/coin-5.png',piggy:'a/piggy-bank.svg',props:[['window.svg','right:6%;top:6%;width:28%'],['a/studio-bed.svg','left:-3%;bottom:3%;width:44%'],['a/studio-table-plant.svg','right:1%;bottom:16%;width:22%']]},
+  suburban:{coin:'a/coin-10.png',piggy:'a/cash-register.svg',props:[['a/suburban-frame.svg','left:6%;top:6%;width:20%'],['a/suburban-window.svg','right:4%;top:3%;width:31%'],['a/suburban-sofa.svg','left:-3%;bottom:3%;width:42%'],['a/suburban-bookshelf.svg','right:-19%;bottom:16%;width:50%']]},
+  penthouse:{coin:'a/coin-25.png',piggy:'a/cash-register.svg',props:[['a/penthouse-window.svg','right:3%;top:2%;width:34%'],['a/suburban-frame.svg','left:8%;top:8%;width:18%'],['a/penthouse-lamp.svg','left:-14%;bottom:13%;width:51%'],['a/suburban-sofa.svg','left:-3%;bottom:3%;width:42%']]},
+  mansion:{coin:'a/coin-1d.png',piggy:'a/safe.svg',props:[['a/mansion-chandelier.svg','left:5%;top:-6%;width:25%'],['a/suburban-frame.svg','right:7%;top:8%;width:18%'],['a/mansion-staircase.svg','left:-3%;bottom:3%;width:42%']]},
+  island:{coin:'a/coin-gold.png',piggy:'a/treasure-chest.svg',props:[['a/island-palm.svg','right:-8%;bottom:19%;width:30%'],['a/island-hammock.svg','left:-3%;bottom:3%;width:44%']]},
+  station:{coin:'a/coin-diamond.png',piggy:'a/treasure-chest.svg',props:[['a/station-porthole.svg','right:4%;top:3%;width:31%'],['a/station-armchair.svg','left:1%;bottom:3%;width:32%']]},
 };
 // ---------- state ----------
 const KEY='p2e-save-v1';
 function fresh(){return{v:2,money:0,total:0,alltime:0,heirs:0,owned:Object.fromEntries(BIZ.map(b=>[b.id,0])),helpers:0,ups:[],pity:0,play:0,ms:{},piggy:0,dayOffset:0,queue:[],streak:{last:null,count:0,best:0,grace:null,claimed:false},inherits:0,trophies:[],welcomed:false,notifAsked:false,maxSeen:0,skew:0,
-  settings:{sound:80,music:50,soundOn:true,musicOn:true,vib:true,notif:true,lang:/^es/i.test(navigator.language||'')?'es':'en'},lastSeen:Date.now()}}
+  settings:{sound:80,music:50,soundOn:true,musicOn:true,vib:true,notif:true,lite:null,lang:/^es/i.test(navigator.language||'')?'es':'en'},lastSeen:Date.now()}}
 let S=fresh();
 // ---------- language: English / Spanish, saved in settings ----------
 const L=()=>S.settings.lang==='es'?'es':'en';
@@ -380,7 +389,8 @@ const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const has=id=>S.ups.includes(id);
 // money is shown with words people know ("1,5 millones", "2.3 billion") instead of "Qa", "Sx"...
 const LOC=()=>L()==='es'?'es-AR':'en-US';
-const dec=(v,d)=>v.toLocaleString(LOC(),{minimumFractionDigits:d,maximumFractionDigits:d});
+const NF={};
+const dec=(v,d)=>{const k=LOC()+d;return (NF[k]||(NF[k]=new Intl.NumberFormat(LOC(),{minimumFractionDigits:d,maximumFractionDigits:d}))).format(v)};
 const UNITS={en:[[1e3,'thousand'],[1e6,'million'],[1e9,'billion'],[1e12,'trillion'],[1e15,'quadrillion'],[1e18,'quintillion'],[1e21,'sextillion'],[1e24,'septillion'],[1e27,'octillion'],[1e30,'nonillion']],
   es:[[1e3,'mil'],[1e6,'millones'],[1e9,'mil millones'],[1e12,'billones'],[1e15,'mil billones'],[1e18,'trillones'],[1e21,'mil trillones'],[1e24,'cuatrillones'],[1e27,'mil cuatrillones'],[1e30,'quintillones']]};
 // compact: 3 significant digits and a word ("$4,56 billones")
@@ -391,7 +401,14 @@ const fmt=v=>{
   const U=UNITS[L()];let u=U[1];for(const x of U)if(x[0]>=1e6&&v>=x[0])u=x;
   const m=v/u[0];return '$'+dec(m,m<10?2:m<100?1:0)+' '+u[1];
 };
-const fmtShort=fmt;
+const SING={millones:'millón',billones:'billón',trillones:'trillón',cuatrillones:'cuatrillón',quintillones:'quintillón'};
+// short version for tight spots: "$45.000", "$1 millón", "$2,5 mil millones"
+const fmtShort=v=>{
+  if(!(v>0))return '$0';
+  if(v<1e6)return '$'+dec(Math.floor(v),0);
+  const U=UNITS[L()];let u=U[1];for(const x of U)if(x[0]>=1e6&&v>=x[0])u=x;
+  const m=Math.floor(v/u[0]*10)/10,w=m===1&&SING[u[1]]||u[1];return '$'+dec(m,m%1?1:0)+' '+w;
+};
 // the big counter: at least six digits so it always feels like a lot ("$123.456 millones")
 function fmtBig(v){
   if(!(v>0))return ['$'+dec(0,2),''];
@@ -401,7 +418,12 @@ function fmtBig(v){
   return ['$'+dec(Math.floor(v/u[0]),0),u[1]];
 }
 // ---------- derived numbers (same rules as design/pacing_sim.py) ----------
-function fx(key,init,op){let a=init;for(const id of S.ups){const u=UPM[id];if(u&&u.effect[key]!==undefined)a=op(a,u.effect[key])}return a}
+let DV=0,fxCache={},fxVer=-1;
+const changed=()=>{DV++};
+function fx(key,init,op){
+  if(fxVer!==DV){fxVer=DV;fxCache={}}
+  const k=key+init;if(k in fxCache)return fxCache[k];
+  let a=init;for(const id of S.ups){const u=UPM[id];if(u&&u.effect[key]!==undefined)a=op(a,u.effect[key])}return fxCache[k]=a}
 const mul=(a,b)=>a*b,add=(a,b)=>a+b,max=(a,b)=>Math.max(a,b);
 const tapMult=()=>fx('tapMult',1,mul);
 const hustle=()=>fx('hustle',0,add);
@@ -425,7 +447,8 @@ const prodBonus=()=>bonusActive()&&T.bonus.prod?T.bonus.prod:1;
 const tapBonus=()=>bonusActive()&&T.bonus.tap?T.bonus.tap:1;
 const inFrenzy=()=>now()<T.frenzyUntil;
 const globalMult=()=>fx('prodMult',1,mul)*HOMES[homeIdx()].incomeMult*heirMult();
-const baseRate=()=>BIZ.reduce((a,b)=>a+(S.owned[b.id]?b.rate*bizMult(b.id)*S.owned[b.id]:0),0)*globalMult();
+let brVer=-1,brVal=0;
+const baseRate=()=>{if(brVer!==DV){brVer=DV;brVal=BIZ.reduce((a,b)=>a+(S.owned[b.id]?b.rate*bizMult(b.id)*S.owned[b.id]:0),0)*globalMult()}return brVal};
 const rate=()=>baseRate()*prodBonus();
 const tapValue=()=>(TAP*tapMult()*heirMult()+rate()*hustle())*tapBonus();
 // helpers tap with the plain tap value (no Hustle, no Frenzy, no tap bonuses); late upgrades add a sliver of $/sec
@@ -523,8 +546,8 @@ function applyHome(i,announce){
 function drawHome(){
   const i=homeIdx(),h=HOMES[i],n=HOMES[i+1];
   $('homeName').textContent=h.name;
-  if(n){const f=Math.max(0,Math.min(1,(S.total-h.threshold)/(n.threshold-h.threshold)));
-    $('homeFill').style.width=(f*100)+'%';$('homeNext').textContent=Math.floor(f*100)+'%';$('home').title=t(`${n.name} when you have earned ${fmt(n.threshold)}`,`${n.name} cuando hayas ganado ${fmt(n.threshold)}`)}
+  if(n){const lo=Math.max(1,h.threshold),f=Math.max(0,Math.min(1,Math.log(Math.max(1,S.total)/lo)/Math.log(n.threshold/lo)));
+    $('homeFill').style.width=(f*100)+'%';$('homeNext').textContent=fmtShort(S.total)+' / '+fmtShort(n.threshold);$('home').title=t(`${n.name} when you have earned ${fmt(n.threshold)}`,`${n.name} cuando hayas ganado ${fmt(n.threshold)}`)}
   else{$('homeFill').style.width='100%';$('homeNext').textContent=t('Top home','Mejor casa')}
   const avail=heirsAvail(),show=homeIdx()>=HOMEIDX[C.inheritance.unlockHome]||S.heirs>0;
   for(let k=1;k<=3;k++)$('phone').classList.toggle('lux'+k,Math.min(3,S.inherits||0)===k);
@@ -653,14 +676,16 @@ function costOf(id){
 }
 const shown={};
 function setText(id,v){if(shown[id]!==v){shown[id]=v;$(id).textContent=v}}
-let lastBtns=0;
+let lastBtns=0,lastLabels=0;
 function refresh(force){
   const [big,word]=fmtBig(S.money),m=big+'|'+word;
   if(shown.money!==m){shown.money=m;const el=$('money');el.textContent=big;if(word){const w=document.createElement('small');w.textContent=word;el.appendChild(w)}
     const n=big.length+word.length*.42,fs=(n<=10?36:n<=12?32:n<=14?28:24)+'px';if(el.style.fontSize!==fs){el.style.fontSize=fs;sceneBox=coinBox=null}}
-  setText('rate','+'+fmt(rate()+helperRate())+t(' / sec',' / seg'));
-  setText('ptap',fmt(tapValue()*(inFrenzy()?frenzyMult():1))+t(' / tap',' / toque'));
-  const ms=performance.now();if(!force&&ms-lastBtns<200)return;lastBtns=ms;
+  const ms=performance.now();
+  if(force||ms-lastLabels>100){lastLabels=ms;
+    setText('rate','+'+fmt(rate()+helperRate())+t(' / sec',' / seg'));
+    setText('ptap',fmt(tapValue()*(inFrenzy()?frenzyMult():1))+t(' / tap',' / toque'))}
+  if(!force&&ms-lastBtns<200)return;lastBtns=ms;
   setText('ownedBadge',String(Object.values(S.owned).reduce((a,b)=>a+b,0)||''));
   const n=UPS.filter(u=>upAvailable(u)&&S.money>=u.cost).length;setText('upBadge',String(n||''));
   document.querySelectorAll('#list .row:not(.locked) .buy:not(.owned)').forEach(btn=>{
@@ -677,10 +702,10 @@ function maybeRerender(){
   if(s!==sig){sig=s;renderList()}
 }
 function bump(id){const el=$('row-'+id);if(el&&!reduce){el.classList.add('bump')}}
-function buy(b){const p=price(b);if(S.money<p)return;S.money-=p;S.owned[b.id]++;if(!S.notifAsked)setTimeout(askNotif,1200);mark(b.id+'-'+S.owned[b.id]);sig='';maybeRerender();renderList();bump(b.id);play('buy');buzz(15);save()}
-function buyHelper(){const p=helperPrice();if(S.money<p)return;S.money-=p;S.helpers++;mark('helper-'+S.helpers);renderList();bump('helper');layoutHands();play('buy');buzz(15);save()}
+function buy(b){const p=price(b);if(S.money<p)return;S.money-=p;S.owned[b.id]++;changed();if(!S.notifAsked)setTimeout(askNotif,1200);mark(b.id+'-'+S.owned[b.id]);sig='';maybeRerender();renderList();bump(b.id);play('buy');buzz(15);save()}
+function buyHelper(){const p=helperPrice();if(S.money<p)return;S.money-=p;S.helpers++;changed();mark('helper-'+S.helpers);renderList();bump('helper');layoutHands();play('buy');buzz(15);save()}
 function buyUp(u){
-  if(S.money<u.cost||has(u.id))return;S.money-=u.cost;S.ups.push(u.id);mark(u.id);holdList=Date.now()+1050;
+  if(S.money<u.cost||has(u.id))return;S.money-=u.cost;S.ups.push(u.id);changed();mark(u.id);holdList=Date.now()+1050;
   const r=$('row-up-'+u.id);
   if(r){const b=r.querySelector('.buy');b.classList.remove('ready');b.classList.add('owned');b.disabled=true;b.textContent=t('✓ Owned','✓ Comprada');setTimeout(()=>r.classList.add('gone'),700)}
   if(u.type==='helper')layoutHands(true);
@@ -698,13 +723,13 @@ const CR=()=>coinBox||(coinBox=coin.getBoundingClientRect());
 addEventListener('resize',()=>{sceneBox=coinBox=null});
 let fxCount=0;
 function floatText(px,py,text,crit){
-  if(reduce||(fxCount>14&&!crit))return;fxCount++;
+  if(reduce||(fxCount>(S.settings.lite?4:14)&&!crit))return;fxCount++;
   const f=document.createElement('div');f.className='float'+(crit?' crit':'');f.textContent=text;
   f.style.left=px+'px';f.style.top=py+'px';scene.appendChild(f);
   f.animate([{transform:'translate(-50%,-50%) scale(.6)',opacity:1},{transform:'translate(-50%,-160%) scale(1.1)',opacity:1,offset:.3},{transform:'translate(-50%,-320%) scale(1)',opacity:0}],{duration:crit?1920:1440,easing:'cubic-bezier(.2,.7,.3,1)'}).onfinish=()=>{f.remove();fxCount--};
 }
 function sparks(px,py,n){
-  if(reduce||fxCount>30)return;
+  if(reduce||fxCount>30||S.settings.lite)return;
   for(let i=0;i<n;i++){
     fxCount++;const s=document.createElement('div');s.className='spark';s.style.left=px-7+'px';s.style.top=py-7+'px';scene.appendChild(s);
     const a=-Math.PI/2+(Math.random()-.5)*2.2,d=60+Math.random()*60;
@@ -781,7 +806,7 @@ function pickRarity(){
   for(let i=0;i<RARITY.length;i++){x-=ws[i];if(x<=0)return RARITY[i]}
   return RARITY[0];
 }
-const FALL_MS={find:3900,sale:3500,touch:3100,jackpot:2700};
+const FALL_MS={find:3120,sale:2800,touch:2480,jackpot:2160};
 function spawnLucky(forced){
   T.luckyOnScreen=true;
   const rr=forced||pickRarity();
@@ -791,7 +816,7 @@ function spawnLucky(forced){
   b.innerHTML=`<img src="${rr.img}" alt="" draggable="false">`;
   playAppear(rr);
   // bonus coins fall from the top of the scene to the floor; rarer coins fall faster
-  const fall=FALL_MS[rr.id]||3900,drop=r.height+70,sway=(Math.random()<.5?-1:1)*(10+Math.random()*16);
+  const fall=FALL_MS[rr.id]||3120,drop=r.height+70,sway=(Math.random()<.5?-1:1)*(10+Math.random()*16);
   b.style.left=20+Math.random()*(r.width-84)+'px';b.style.top='-70px';scene.appendChild(b);
   b.animate(reduce?[{transform:'translateY(0)'},{transform:`translateY(${drop}px)`}]
     :[0,.25,.5,.75,1].map((o,i)=>({offset:o,transform:`translate(${i%2?sway:0}px,${drop*o}px) rotate(${i%2?sway/2:0}deg)`})),{duration:fall,easing:'linear',fill:'forwards'});
@@ -965,6 +990,7 @@ function syncSettings(){
   const s=S.settings;$('volS').value=s.sound;$('volM').value=s.music;
   [['swS','soundOn'],['swM','musicOn'],['swV','vib'],['swN','notif']].forEach(([id,k])=>{$(id).setAttribute('aria-pressed',s[k]);$(id).textContent=s[k]?t('On','Sí'):t('Off','No')});
   $('notifRow').hidden=!window.PennyNative;
+  const lite=!!S.settings.lite;$('swL').setAttribute('aria-pressed',lite);$('swL').textContent=lite?t('Light','Livianos'):t('Full','Completos');$('phone').classList.toggle('lite',lite);
   applyVolumes();
 }
 $('gear').onclick=()=>{audioInit();showStats();$('saveMsg').textContent='';$('overlay').classList.add('on')};
@@ -973,6 +999,7 @@ $('overlay').addEventListener('click',e=>{if(e.target.id==='overlay'){$('overlay
 $('volS').oninput=e=>{S.settings.sound=+e.target.value;applyVolumes()};
 $('volS').onchange=()=>play('tap');
 $('volM').oninput=e=>{S.settings.music=+e.target.value;applyVolumes()};
+$('swL').onclick=()=>{S.settings.lite=!S.settings.lite;syncSettings();save()};
 [['swS','soundOn'],['swM','musicOn'],['swV','vib'],['swN','notif']].forEach(([id,k])=>$(id).onclick=()=>{S.settings[k]=!S.settings[k];syncSettings();save();if(k==='notif'&&S.settings.notif)askNotif(true)});
 function setLang(l){
   S.settings.lang=l;applyLang();applyHome(homeIdx(),false);sig='';renderList();syncSettings();showStats();
@@ -989,6 +1016,7 @@ $('resetSave').onclick=()=>{
   const st=S.settings;S=fresh();S.settings=st;resetRuntime();save();$('saveMsg').textContent=t('Progress erased.','Progreso borrado.');resetArmed=false;$('resetSave').textContent=t('Reset progress','Borrar progreso');
 };
 function resetRuntime(){
+  changed();
   hands.forEach(h=>h.remove());hands=[];layoutHands();
   applyHome(homeIdx(),false);
   drawPiggy();drawTrophies();T.bonus=null;$('bonusbar').classList.remove('on');$('phone').classList.remove('b-sale','b-touch','b-jackpot');T.frenzyUntil=0;T.frenzyMeter=0;wrap.classList.remove('frenzy');
@@ -1032,8 +1060,11 @@ function cancelNotif(){if(window.PennyNative)PennyNative.cancel()}
 let ringShown=-1;
 function ring(f){const v=Math.round(f*200)/2;if(v!==ringShown){ringShown=v;$('ringFill').setAttribute('stroke-dasharray',`${v} 100`)}}
 let last=performance.now(),saveAcc=0,slowAcc=0;
+let slowFrames=0,tapFrames=0;
 function loop(ms){
   const dt=Math.min(1,(ms-last)/1000);last=ms;const t=now();
+  if(S.settings.lite===null&&!document.hidden&&t-T.lastTap<.5){tapFrames++;if(dt>.034)slowFrames++;
+    if(tapFrames>=180&&slowFrames/tapFrames>.4){S.settings.lite=true;syncSettings();save()}else if(tapFrames>=600)S.settings.lite=false}
   if(!document.hidden)S.play+=dt;
   const inc=rate()*dt+helperRate()*dt;if(inc>0)earn(inc);
   if(S.helpers>0){T.helperAcc+=dt*Math.min(12,S.helpers)/(HELPER.interval/helperSpeed());if(T.helperAcc>=1){T.helperAcc=0;poke()}}
@@ -1058,12 +1089,12 @@ function loop(ms){
   else if(!T.luckyOnScreen&&t>=T.nextLucky)spawnLucky();
   refresh();
   slowAcc+=dt;if(slowAcc>.5){slowAcc=0;
-    const h=homeIdx();if(h!==T.home){applyHome(h,T.home>=0&&h>T.home);sig=''}
+    const h=homeIdx();if(h!==T.home){changed();applyHome(h,T.home>=0&&h>T.home);sig=''}
     maybeRerender();checkMilestones();drawPiggy();drawHome();updateShares()}
   saveAcc+=dt;if(saveAcc>5){saveAcc=0;save()}
   requestAnimationFrame(loop);
 }
-load();applyLang();syncSettings();offline();layoutHands();applyHome(homeIdx(),false);drawPiggy();drawTrophies();cancelNotif();
+load();changed();applyLang();syncSettings();offline();layoutHands();applyHome(homeIdx(),false);drawPiggy();drawTrophies();cancelNotif();
 if(!S.welcomed)$('welcome').classList.add('on');
 setTimeout(checkDaily,600);
 if(!S.notifAsked&&rate()>0)setTimeout(askNotif,8000);
