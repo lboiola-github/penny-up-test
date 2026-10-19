@@ -272,6 +272,13 @@ html,body,.phone{touch-action:manipulation}
       <button class="claim" id="welcomeGo" data-es="¡A jugar!">Let's play!</button>
     </div>
   </div>
+  <div class="overlay welcome" id="resetAsk" style="z-index:30">
+    <div class="panel" role="alertdialog" aria-label="Erase progress" data-es-aria="Borrar progreso" style="text-align:center">
+      <h3 style="justify-content:center" data-es="¿Borrar todo el progreso?">Erase all progress?</h3>
+      <p data-es="Se borra todo y empezás de cero: plata, negocios, mejoras, casas, herederos, trofeos y racha. No se puede deshacer.">Everything is erased and you start from zero: money, businesses, upgrades, homes, heirs, trophies and streak. This cannot be undone.</p>
+      <div class="btns" style="justify-content:center"><button class="btn" id="resetNo" data-es="Cancelar">Cancel</button><button class="btn warn" id="resetYes" data-es="Sí, borrar todo">Yes, erase everything</button></div>
+    </div>
+  </div>
   <div class="overlay" id="heirPanel">
     <div class="panel" role="dialog" aria-label="Inheritance" data-es-aria="Herencia">
       <h3><span data-es="Herencia">Inheritance</span> <button class="close" id="closeHeir" data-es="Cerrar">Close</button></h3>
@@ -1011,9 +1018,15 @@ function setLang(l){
 $('langEn').onclick=()=>setLang('en');
 $('langEs').onclick=()=>setLang('es');
 let resetArmed=false;
+// erasing progress asks twice: tap the button again, then confirm in a separate window
 $('resetSave').onclick=()=>{
   if(!resetArmed){resetArmed=true;$('resetSave').textContent=t('Tap again to erase everything','Tocá de nuevo para borrar todo');setTimeout(()=>{resetArmed=false;$('resetSave').textContent=t('Reset progress','Borrar progreso')},3000);return}
-  const st=S.settings;S=fresh();S.settings=st;resetRuntime();save();$('saveMsg').textContent=t('Progress erased.','Progreso borrado.');resetArmed=false;$('resetSave').textContent=t('Reset progress','Borrar progreso');
+  resetArmed=false;$('resetSave').textContent=t('Reset progress','Borrar progreso');$('resetAsk').classList.add('on');
+};
+$('resetNo').onclick=()=>$('resetAsk').classList.remove('on');
+$('resetYes').onclick=()=>{
+  const st=S.settings;S=fresh();S.settings=st;S.welcomed=true;resetRuntime();save();
+  $('resetAsk').classList.remove('on');$('overlay').classList.remove('on');toast(t('Progress erased. Fresh start!','Progreso borrado. ¡A empezar de nuevo!'));
 };
 function resetRuntime(){
   changed();
