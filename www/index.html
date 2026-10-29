@@ -140,8 +140,6 @@ body{margin:0;background:var(--page);font-family:var(--body);color:var(--ink);di
 .streakbig{font-family:var(--display);font-weight:700;font-size:30px;margin:2px 0}
 .mile{font-size:13px;font-weight:800;color:var(--penny-dk);margin:4px 0 12px}
 .claim{font-family:var(--display);font-weight:600;font-size:18px;color:#fff;background:var(--cash);border:2.5px solid var(--ink);border-radius:14px;padding:8px 28px;box-shadow:0 4px 0 var(--ink);cursor:pointer}
-.trophy{position:absolute;top:31%;width:11%;min-width:34px;pointer-events:none;z-index:1}
-.trophy img{width:100%;display:block}
 .heirs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 12px;text-align:center}
 .heirs div{border:2.5px solid var(--ink);border-radius:12px;background:#fff;padding:8px 4px;font-size:12px;font-weight:800;color:var(--muted)}
 .heirs b{display:block;font-family:var(--display);font-size:24px;color:var(--ink)}
@@ -165,6 +163,7 @@ body{margin:0;background:var(--page);font-family:var(--body);color:var(--ink);di
 .veil{position:absolute;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 60% 55% at 50% 48%,rgba(255,246,229,0) 40%,rgba(43,35,64,.22) 100%)}
 .coin-wrap::before{content:"";position:absolute;inset:-2.5%;border-radius:50%;background:radial-gradient(circle,rgba(255,226,140,.95) 0%,rgba(255,214,110,.55) 55%,rgba(255,214,110,0) 72%);z-index:-1}
 .piggy:not(.on) img{filter:saturate(.7) contrast(.7)}
+.piggy:not(.on){z-index:0}
 .piggy.on img{filter:drop-shadow(3px 0 0 #fff) drop-shadow(-3px 0 0 #fff) drop-shadow(0 3px 0 #fff) drop-shadow(0 -3px 0 #fff) drop-shadow(0 5px 0 rgba(43,35,64,.3))}
 .piggy.on::before{content:"";position:absolute;left:-18%;right:-18%;bottom:-6%;height:46%;border-radius:50%;background:radial-gradient(ellipse,rgba(255,226,140,.9),rgba(255,226,140,0) 70%);z-index:-1}
 .lucky img{filter:drop-shadow(0 0 .8px #fff) drop-shadow(0 0 .8px #fff) drop-shadow(0 0 4px rgba(255,244,200,.55))}
@@ -192,7 +191,9 @@ html,body,.phone{touch-action:manipulation}
 .buy{max-width:122px;line-height:1.1}
 /* longer progress bar to the next home, on its own line */
 .home{flex-wrap:wrap;justify-content:center;row-gap:3px}
-.home .hbar{order:3;flex:0 0 100%;width:auto;max-width:min(240px,100%);height:10px}
+.home .hbar{order:3;flex:0 0 100%;width:auto;max-width:min(240px,100%);height:10px;display:flex;gap:4px;border:0;background:none;overflow:visible}
+.home .hbar>span{flex:1;border:2px solid var(--ink);border-radius:6px;background:#fff;overflow:hidden}
+.home .hbar>span i{display:block;height:100%;width:0;background:var(--penny)}
 /* lighter drawing while tapping (Samsung A16 felt slow while the Frenzy ring was filling): the coin, its glow
    and the ring each sit on their own layer, so redrawing the ring does not redraw the coin */
 .coin,.coin img,.ring,.coin-wrap::before{will-change:transform}
@@ -223,15 +224,82 @@ html,body,.phone{touch-action:manipulation}
 .phone.lux3 .coin-wrap::before{inset:-7%}
 @media (prefers-reduced-motion:reduce){.fx,.rate{animation:none!important}}
 </style>
+<style>/* 1.1: new heir alert, My city, Penny Stock Market, Rush hour */
+.heir.pop{animation:heirpop 1.3s cubic-bezier(.3,1.6,.5,1) 2;z-index:9}
+@keyframes heirpop{0%,100%{transform:scale(1)}30%{transform:scale(1.4) rotate(-8deg);box-shadow:0 0 0 6px rgba(245,197,66,.55),0 0 26px 10px rgba(245,197,66,.8)}}
+.hrays{position:absolute;width:150px;height:150px;border-radius:50%;pointer-events:none;z-index:8;background:repeating-conic-gradient(rgba(245,197,66,.9) 0 10deg,rgba(245,197,66,0) 10deg 30deg);-webkit-mask:radial-gradient(circle,#000 30%,transparent 70%);mask:radial-gradient(circle,#000 30%,transparent 70%)}
+.hcoin{position:absolute;width:22px;height:22px;border-radius:50%;background:var(--gold);border:2.5px solid var(--ink);pointer-events:none;z-index:8}
+.heirnote{position:absolute;left:50%;top:40%;transform:translate(-50%,-50%);width:84%;background:var(--gold);border:3px solid var(--ink);border-radius:16px;padding:14px 12px;text-align:center;font-family:var(--display);font-weight:700;font-size:22px;z-index:25;box-shadow:0 6px 0 var(--ink);pointer-events:none}
+.gear.city,.gear.stock{top:58px;display:none}.gear.city.on,.gear.stock.on{display:grid}
+.gear.city{background:#B9DE8F}.gear.stock{left:12px;right:auto;background:#CDEBDD}
+.gear.new{animation:pulse 1.4s ease-in-out infinite}
+.full{position:absolute;inset:0;z-index:22;background:var(--cream);display:none;flex-direction:column;padding-top:var(--st);padding-bottom:var(--sb)}
+.full.on{display:flex}
+.ftop{position:relative;padding:12px 54px 9px;border-bottom:3px solid var(--ink);text-align:center;background:var(--cream)}
+.ftop h3{margin:0;font-family:var(--display);font-weight:600;font-size:21px}
+.ftop small{display:block;font-weight:800;font-size:12px;color:var(--muted)}
+.fx2{position:absolute;top:10px;width:36px;height:36px;border:2.5px solid var(--ink);border-radius:11px;background:#fff;display:grid;place-items:center;cursor:pointer;padding:0;color:var(--ink);font:700 18px var(--display)}
+.fx2.r{right:10px}.fx2.l{left:10px}.fx2 svg{width:22px;height:22px}
+.fbody{flex:1;overflow-y:auto;min-height:0}
+#cityMap{background:linear-gradient(#BFE6F5,#DFF1D2 30%);min-height:100%}
+#cityMap svg{display:block}
+.scart{display:flex;justify-content:space-around;padding:7px 8px;background:#fff;border-bottom:3px solid var(--ink);font-weight:800;font-size:11px;color:var(--muted);text-align:center}
+.scart b{display:block;font-family:var(--display);font-size:15px;color:var(--ink)}
+.g{color:var(--cash-dk)!important}.r{color:#D9473B!important}
+.sticker{background:var(--ink);color:var(--cream);font-weight:800;font-size:12px;padding:5px 0;white-space:nowrap;overflow:hidden}
+.sticker span{display:inline-block;padding-left:100%;animation:ticker 32s linear infinite}
+.sticker i{color:var(--gold);font-style:normal}.sticker em{color:#B7ABC8;font-style:normal;font-weight:700}
+@keyframes ticker{to{transform:translateX(-100%)}}
+.slist{padding:7px 10px;display:grid;gap:7px}
+.sco{display:grid;grid-template-columns:38px minmax(0,1fr) auto 70px;gap:6px;align-items:center;background:#fff;border:2.5px solid var(--ink);border-radius:14px;padding:6px 8px;text-align:left;cursor:pointer;color:var(--ink);font:inherit}
+.sco img{width:38px;height:38px}.sco b{display:block;font-family:var(--display);font-weight:600;font-size:14px;line-height:1.15}
+.sco small{display:block;font-size:11px;font-weight:800;color:var(--muted)}
+.spr{text-align:right;font-family:var(--display);font-weight:700;font-size:13px;line-height:1.2}.spr small{font-family:var(--display);font-size:12px}
+.snote{font-size:12px;font-weight:700;color:var(--muted);text-align:center;margin:6px 12px 12px}
+.sdet{padding:9px 12px}
+.sprice{display:flex;justify-content:space-between;align-items:flex-end;font-family:var(--display);font-weight:700}
+.sprice small{display:block;font-family:var(--body);font-weight:800;font-size:12px;color:var(--muted)}.sprice b{font-size:24px}
+.schips{display:flex;gap:6px;margin:7px 0}
+.schips button{flex:1;border:2.5px solid var(--ink);border-radius:10px;padding:3px 0;font:600 14px var(--display);background:#fff;color:var(--ink);cursor:pointer}
+.schips button[aria-pressed="true"]{background:var(--ink);color:var(--cream)}
+.schart{background:#fff;border:2.5px solid var(--ink);border-radius:14px;padding:6px;margin-bottom:7px}
+.schart svg{display:block}
+.sax{display:flex;justify-content:space-between;font-size:11px;font-weight:800;color:var(--muted);margin-top:3px}
+.shold{background:#fff;border:2.5px solid var(--ink);border-radius:14px;padding:7px 10px;font-weight:800;font-size:12.5px;color:var(--muted);margin-bottom:7px}.shold b{color:var(--ink)}
+.sline{letter-spacing:-1px;color:var(--ink)}
+.sbtns{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:7px}
+.sbuy,.ssell{border:2.5px solid var(--ink);border-radius:12px;padding:7px 0;font:600 14px var(--display);background:var(--cash);color:#fff;box-shadow:0 3px 0 var(--ink);cursor:pointer}
+.ssell{background:var(--coral)}
+.sbuy:disabled,.ssell:disabled{background:#E6DCCD;color:var(--muted);cursor:default}
+.sbuy:active:not(:disabled),.ssell:active:not(:disabled){transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
+.sord{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:6px;align-items:center;background:#fff;border:2.5px solid var(--ink);border-radius:14px;padding:6px 8px;margin-bottom:7px;font-weight:800;font-size:12px;color:var(--muted)}
+.sstep{display:flex;align-items:center;gap:4px}
+.sstep button{width:28px;height:28px;border:2.5px solid var(--ink);border-radius:8px;background:var(--cream);font:700 16px var(--display);cursor:pointer;color:var(--ink);padding:0}
+.sstep b{font-family:var(--display);color:var(--ink);font-size:13px;min-width:64px;text-align:center}
+.peakoffer{position:absolute;left:50%;top:12px;transform:translateX(-50%);width:88%;z-index:7;background:var(--gold);border:2.5px solid var(--ink);border-radius:14px;padding:7px 10px;display:grid;grid-template-columns:1fr auto;align-items:center;text-align:left;font:600 15px var(--display);color:var(--ink);box-shadow:0 3px 0 var(--ink);cursor:pointer;animation:pulse 1.2s ease-in-out infinite}
+.peakoffer small{grid-column:1/-1;font:800 11px var(--body);color:var(--penny-dk)}
+.peakoffer span{grid-row:2;grid-column:2;background:var(--ink);color:var(--cream);border-radius:10px;padding:4px 12px}
+.full.dark{background:#2B2340;color:var(--cream)}.full.dark .ftop{background:#2B2340;border-color:var(--cream)}.full.dark .ftop small{color:#B7ABC8}
+.pk{flex:1;display:flex;flex-direction:column;gap:12px;padding:14px}
+.pkrow{display:flex;justify-content:space-between;font:600 16px var(--display)}.pkrow b{font-size:24px;color:var(--gold)}
+.pkchart{background:#3A3157;border:2.5px solid var(--cream);border-radius:14px;padding:6px}
+#peakPrice{font:700 28px var(--display);text-align:center}
+.pkbtns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pkbtns button{border:3px solid var(--cream);border-radius:16px;padding:16px 0;font:700 24px var(--display);color:#fff;background:var(--cash);cursor:pointer}
+.pkbtns #peakSell{background:var(--coral)}.pkbtns button:disabled{opacity:.35;cursor:default}
+.pkhint{text-align:center;font-weight:800;font-size:12.5px;color:#B7ABC8}
+</style>
 
 <div class="phone" id="phone">
   <header class="stats">
     <div class="label" data-es="Patrimonio">Net worth</div>
     <div class="money" id="money">$0.00</div>
     <div class="rates"><span class="rate" id="rate">+$0.00 / sec</span><span class="ptap" id="ptap">$0.25 / tap</span></div>
-    <div class="home" id="home"><b id="homeName">Rented Room</b><span class="hbar"><i id="homeFill"></i></span><span id="homeNext"></span></div>
+    <div class="home" id="home"><b id="homeName">Rented Room</b><span class="hbar" id="hbar"></span><span id="homeNext"></span></div>
     <button class="gear heir" id="heirBtn" aria-label="Inheritance" data-es-aria="Herencia"><svg viewBox="0 0 24 24" fill="#FFF6E5" stroke="#2B2340" stroke-width="2" stroke-linejoin="round"><path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z"/></svg></button>
     <button class="gear" id="gear" aria-label="Settings" data-es-aria="Ajustes"><svg viewBox="0 0 24 24" fill="none" stroke="#2B2340" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></button>
+    <button class="gear stock" id="stockBtn" aria-label="Penny Stock Market" data-es-aria="Bolsa de Penny"><svg viewBox="0 0 24 24" fill="none" stroke="#2B2340" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18M4 16l5-5 4 3 7-8"/><path d="M15 6h5v5"/></svg></button>
+    <button class="gear city" id="cityBtn" aria-label="My city" data-es-aria="Mi ciudad"><svg viewBox="0 0 24 24" fill="none" stroke="#2B2340" stroke-width="2" stroke-linejoin="round"><path d="M3 21V10l5-3v14M8 21V4l7 3v14M15 21v-9l6 2v7M2 21h20"/></svg></button>
   </header>
 
   <main class="scene" id="scene">
@@ -301,6 +369,7 @@ html,body,.phone{touch-action:manipulation}
       <div class="set"><span data-es="Vibración">Vibration</span><span></span><button class="sw" id="swV" aria-pressed="true">On</button></div>
       <div class="set"><span data-es="Efectos">Effects</span><span data-es="Livianos: para celulares lentos" style="font-weight:700;font-size:12px;color:var(--muted)">Light: for slower phones</span><button class="sw" id="swL" aria-pressed="false">Full</button></div>
       <div class="set" id="notifRow"><span data-es="Avisos">Alerts</span><span data-es="Cuando tu alcancía se llena" style="font-weight:700;font-size:12px;color:var(--muted)">When your piggy bank is full</span><button class="sw" id="swN" aria-pressed="true">On</button></div>
+      <div class="set" id="notifBRow"><span data-es="Avisos">Alerts</span><span data-es="Cuando se cumple una orden de la Bolsa" style="font-weight:700;font-size:12px;color:var(--muted)">When a Stock Market order goes through</span><button class="sw" id="swNB" aria-pressed="true">On</button></div>
       <h4 data-es="Estadísticas">Stats</h4>
       <p id="stats"></p>
       <h4 data-es="Guardado">Save</h4>
@@ -309,8 +378,40 @@ html,body,.phone{touch-action:manipulation}
       <div class="msg" id="saveMsg" aria-live="polite"></div>
     </div>
   </div>
+  <div class="full" id="city">
+    <div class="ftop"><h3 data-es="Mi ciudad">My city</h3><small id="citySub"></small><button class="fx2 r" id="cityClose" aria-label="Close" data-es-aria="Cerrar">✕</button></div>
+    <div class="fbody" id="cityMap"></div>
+  </div>
+  <div class="full" id="stock">
+    <div class="ftop"><button class="fx2 l" id="stockBack" aria-label="Back" data-es-aria="Volver" hidden><svg viewBox="0 0 24 24"><path d="M15 4 7 12l8 8" fill="none" stroke="#2B2340" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h3 id="stockTitle"></h3><small id="stockSub"></small><button class="fx2 r" id="stockClose" aria-label="Close" data-es-aria="Cerrar">✕</button></div>
+    <div class="fbody" id="stockBody"></div>
+  </div>
+  <div class="full dark" id="peak">
+    <div class="ftop"><h3 data-es="¡Hora pico!">Rush hour!</h3><small id="peakName"></small></div>
+    <div class="pk"><div class="pkrow"><span><span data-es="Ganancia">Profit</span> <b id="peakGain">+$0</b></span><span><span data-es="Quedan">Time</span> <b id="peakLeft">0:30</b></span></div>
+      <div class="pkchart" id="peakChart"></div><div id="peakPrice"></div>
+      <div class="pkbtns"><button id="peakBuy" data-es="COMPRAR">BUY</button><button id="peakSell" data-es="VENDER">SELL</button></div>
+      <div class="pkhint" id="peakOps"></div><div class="pkhint" data-es="Comprá barato y vendé caro: 3 acciones prestadas, 30 segundos.">Buy low, sell high: 3 borrowed shares, 30 seconds.</div></div>
+  </div>
+  <div class="overlay welcome" id="stockHello" style="z-index:30">
+    <div class="panel" role="dialog" aria-label="Penny Stock Market" data-es-aria="Bolsa de Penny" style="text-align:center">
+      <h3 style="justify-content:center" data-es="¡Abriste tu cuenta en la Bolsa!">You opened a Stock Market account!</h3>
+      <p data-es="Seis empresas cotizan todo el día, también con el juego cerrado. Comprá acciones cuando te parezca un buen momento y vendelas cuando suban. Lo que ganes es plata de verdad: cuenta para tu casa y tus herederos.">Six companies trade all day, even with the game closed. Buy shares when it feels like a good moment and sell them when they go up. What you make is real money: it counts for your home and your heirs.</p>
+      <button class="claim" id="stockHelloGo" data-es="Ver la Bolsa">See the market</button>
+    </div>
+  </div>
+  <div class="overlay welcome" id="stockAsk" style="z-index:30">
+    <div class="panel" role="dialog" aria-label="Alerts" data-es-aria="Avisos" style="text-align:center">
+      <div style="font-size:40px">🔔</div>
+      <h3 style="justify-content:center" data-es="¿Te avisamos cuando se cumpla?">Want an alert when it goes through?</h3>
+      <p data-es="Tu orden puede cumplirse mientras no jugás. Te mandamos un aviso corto, nunca de noche, y como mucho 2 por día.">Your order can go through while you are away. We send a short alert, never at night, and at most 2 a day.</p>
+      <button class="claim" id="stockAskYes" data-es="Sí, avisame">Yes, let me know</button>
+      <div class="btns" style="justify-content:center"><button class="btn" id="stockAskNo" style="background:#fff" data-es="Ahora no">Not now</button></div>
+    </div>
+  </div>
 </div>
 
+<script src="rumors.js"></script>
 <script>
 // ---------- data (generated from design/content.json: do not edit by hand) ----------
 const C=/*CONTENT*/{"version":1,"costMultiplier":3,"growth":1.15,"businesses":[{"id":"lemonade","name":"Lemonade Stand","baseCost":45,"baseRate":0.1,"home":"room"},{"id":"dogs","name":"Dog Walking","baseCost":300,"baseRate":1,"home":"room"},{"id":"truck","name":"Food Truck","baseCost":3300,"baseRate":8,"home":"room"},{"id":"store","name":"Corner Store","baseCost":36000.0,"baseRate":47,"home":"studioapt"},{"id":"carwash","name":"Car Wash","baseCost":390000.0,"baseRate":260,"home":"studioapt"},{"id":"coffee","name":"Coffee Shop","baseCost":4200000.0,"baseRate":1400,"home":"suburban"},{"id":"gym","name":"Gym","baseCost":60000000.0,"baseRate":7800,"home":"suburban"},{"id":"restaurant","name":"Restaurant","baseCost":990000000.0,"baseRate":44000.0,"home":"suburban"},{"id":"realestate","name":"Real Estate","baseCost":15300000000.0,"baseRate":260000.0,"home":"penthouse"},{"id":"factory","name":"Factory","baseCost":225000000000.0,"baseRate":1600000.0,"home":"penthouse"},{"id":"startup","name":"Tech Startup","baseCost":3000000000000.0,"baseRate":10000000.0,"home":"mansion"},{"id":"bank","name":"Bank","baseCost":42000000000000.0,"baseRate":65000000.0,"home":"mansion"},{"id":"airline","name":"Airline","baseCost":510000000000000.0,"baseRate":430000000.0,"home":"island"},{"id":"studio","name":"Movie Studio","baseCost":6300000000000000.0,"baseRate":2900000000.0,"home":"island"},{"id":"space","name":"Space Company","baseCost":7.8e+16,"baseRate":21000000000.0,"home":"island"}],"homes":[{"id":"room","name":"Rented Room","threshold":0,"incomeMult":1,"coin":"Penny","piggy":"Piggy Bank"},{"id":"studioapt","name":"Studio Apartment","threshold":10000.0,"incomeMult":1.1,"coin":"Nickel","piggy":"Piggy Bank"},{"id":"suburban","name":"Suburban House","threshold":1000000.0,"incomeMult":1.25,"coin":"Dime","piggy":"Cash Register"},{"id":"penthouse","name":"Downtown Penthouse","threshold":1000000000.0,"incomeMult":1.5,"coin":"Quarter","piggy":"Cash Register"},{"id":"mansion","name":"Hillside Mansion","threshold":1000000000000.0,"incomeMult":2,"coin":"Silver Dollar","piggy":"Safe"},{"id":"island","name":"Private Island","threshold":1000000000000000.0,"incomeMult":3,"coin":"Gold Coin","piggy":"Treasure Chest"},{"id":"station","name":"Orbital Station","threshold":1e+21,"incomeMult":5,"coin":"Diamond Coin","piggy":"Treasure Chest"}],"helper":{"baseCost":150,"interval":3,"note":"Helper taps get the flat tap value x helperValue plus helperHustle x $/s; no Hustle, no Frenzy"},"crit":{"baseChance":0.03,"baseMult":10},"bonusCoins":[{"metal":"Bronze","chance":0.6,"effect":"Lucky Find: 60s of income"},{"metal":"Silver","chance":0.28,"effect":"Sale: income x7 for 30s"},{"metal":"Gold","chance":0.1,"effect":"Golden Touch: taps x50 for 10s"},{"metal":"Diamond","chance":0.02,"effect":"Jackpot: taps x777 for 7s"}],"piggy":{"rate":0.2,"capHours":6},"inheritance":{"unlockHome":"mansion","divisor":100000000000.0,"perHeir":0.05},"upgrades":[{"id":"lemonade-1","name":"Fresh Lemons","type":"business","cost":450,"req":{"owned":["lemonade",1]},"effect":{"bizMult":["lemonade",2]},"desc":"Lemonade Stand earns x2"},{"id":"lemonade-2","name":"Pink Lemonade","type":"business","cost":2250,"req":{"owned":["lemonade",10]},"effect":{"bizMult":["lemonade",2]},"desc":"Lemonade Stand earns x2"},{"id":"lemonade-3","name":"Ice Cubes","type":"business","cost":22500,"req":{"owned":["lemonade",25]},"effect":{"bizMult":["lemonade",2]},"desc":"Lemonade Stand earns x2"},{"id":"lemonade-4","name":"Bendy Straws","type":"business","cost":2250000.0,"req":{"owned":["lemonade",50]},"effect":{"bizMult":["lemonade",2]},"desc":"Lemonade Stand earns x2"},{"id":"lemonade-5","name":"Organic Lemons","type":"business","cost":225000000.0,"req":{"owned":["lemonade",100]},"effect":{"bizMult":["lemonade",2]},"desc":"Lemonade Stand earns x2"},{"id":"lemonade-6","name":"Lemonade Franchise","type":"business","cost":22500000000.0,"req":{"owned":["lemonade",150]},"effect":{"bizMult":["lemonade",2]},"desc":"Lemonade Stand earns x2"},{"id":"dogs-1","name":"Longer Leashes","type":"business","cost":3000,"req":{"owned":["dogs",1]},"effect":{"bizMult":["dogs",2]},"desc":"Dog Walking earns x2"},{"id":"dogs-2","name":"Doggy Treats","type":"business","cost":15000,"req":{"owned":["dogs",10]},"effect":{"bizMult":["dogs",2]},"desc":"Dog Walking earns x2"},{"id":"dogs-3","name":"Doggy Daycare","type":"business","cost":150000,"req":{"owned":["dogs",25]},"effect":{"bizMult":["dogs",2]},"desc":"Dog Walking earns x2"},{"id":"dogs-4","name":"Dog Spa","type":"business","cost":15000000.0,"req":{"owned":["dogs",50]},"effect":{"bizMult":["dogs",2]},"desc":"Dog Walking earns x2"},{"id":"dogs-5","name":"Pet Hotel","type":"business","cost":1500000000.0,"req":{"owned":["dogs",100]},"effect":{"bizMult":["dogs",2]},"desc":"Dog Walking earns x2"},{"id":"dogs-6","name":"Pawsome App","type":"business","cost":150000000000.0,"req":{"owned":["dogs",150]},"effect":{"bizMult":["dogs",2]},"desc":"Dog Walking earns x2"},{"id":"truck-1","name":"Secret Sauce","type":"business","cost":33000,"req":{"owned":["truck",1]},"effect":{"bizMult":["truck",2]},"desc":"Food Truck earns x2"},{"id":"truck-2","name":"Second Grill","type":"business","cost":165000,"req":{"owned":["truck",10]},"effect":{"bizMult":["truck",2]},"desc":"Food Truck earns x2"},{"id":"truck-3","name":"Food Festival","type":"business","cost":1650000,"req":{"owned":["truck",25]},"effect":{"bizMult":["truck",2]},"desc":"Food Truck earns x2"},{"id":"truck-4","name":"Gourmet Menu","type":"business","cost":165000000.0,"req":{"owned":["truck",50]},"effect":{"bizMult":["truck",2]},"desc":"Food Truck earns x2"},{"id":"truck-5","name":"Truck Fleet","type":"business","cost":16500000000.0,"req":{"owned":["truck",100]},"effect":{"bizMult":["truck",2]},"desc":"Food Truck earns x2"},{"id":"truck-6","name":"Viral Burger","type":"business","cost":1650000000000.0,"req":{"owned":["truck",150]},"effect":{"bizMult":["truck",2]},"desc":"Food Truck earns x2"},{"id":"store-1","name":"Late Hours","type":"business","cost":360000.0,"req":{"owned":["store",1]},"effect":{"bizMult":["store",2]},"desc":"Corner Store earns x2"},{"id":"store-2","name":"Loyalty Cards","type":"business","cost":1800000.0,"req":{"owned":["store",10]},"effect":{"bizMult":["store",2]},"desc":"Corner Store earns x2"},{"id":"store-3","name":"Self Checkout","type":"business","cost":18000000.0,"req":{"owned":["store",25]},"effect":{"bizMult":["store",2]},"desc":"Corner Store earns x2"},{"id":"store-4","name":"Fresh Bakery","type":"business","cost":1800000000.0,"req":{"owned":["store",50]},"effect":{"bizMult":["store",2]},"desc":"Corner Store earns x2"},{"id":"store-5","name":"Delivery Bikes","type":"business","cost":180000000000.0,"req":{"owned":["store",100]},"effect":{"bizMult":["store",2]},"desc":"Corner Store earns x2"},{"id":"store-6","name":"Store Chain","type":"business","cost":18000000000000.0,"req":{"owned":["store",150]},"effect":{"bizMult":["store",2]},"desc":"Corner Store earns x2"},{"id":"carwash-1","name":"Foam Cannon","type":"business","cost":3900000.0,"req":{"owned":["carwash",1]},"effect":{"bizMult":["carwash",2]},"desc":"Car Wash earns x2"},{"id":"carwash-2","name":"Wax Package","type":"business","cost":19500000.0,"req":{"owned":["carwash",10]},"effect":{"bizMult":["carwash",2]},"desc":"Car Wash earns x2"},{"id":"carwash-3","name":"Drive-Through Tunnel","type":"business","cost":195000000.0,"req":{"owned":["carwash",25]},"effect":{"bizMult":["carwash",2]},"desc":"Car Wash earns x2"},{"id":"carwash-4","name":"Interior Detailing","type":"business","cost":19500000000.0,"req":{"owned":["carwash",50]},"effect":{"bizMult":["carwash",2]},"desc":"Car Wash earns x2"},{"id":"carwash-5","name":"Monthly Pass","type":"business","cost":1950000000000.0,"req":{"owned":["carwash",100]},"effect":{"bizMult":["carwash",2]},"desc":"Car Wash earns x2"},{"id":"carwash-6","name":"Car Wash Empire","type":"business","cost":195000000000000.0,"req":{"owned":["carwash",150]},"effect":{"bizMult":["carwash",2]},"desc":"Car Wash earns x2"},{"id":"coffee-1","name":"Double Shot","type":"business","cost":42000000.0,"req":{"owned":["coffee",1]},"effect":{"bizMult":["coffee",2]},"desc":"Coffee Shop earns x2"},{"id":"coffee-2","name":"Latte Art","type":"business","cost":210000000.0,"req":{"owned":["coffee",10]},"effect":{"bizMult":["coffee",2]},"desc":"Coffee Shop earns x2"},{"id":"coffee-3","name":"Cozy Couches","type":"business","cost":2100000000.0,"req":{"owned":["coffee",25]},"effect":{"bizMult":["coffee",2]},"desc":"Coffee Shop earns x2"},{"id":"coffee-4","name":"Bean Roastery","type":"business","cost":210000000000.0,"req":{"owned":["coffee",50]},"effect":{"bizMult":["coffee",2]},"desc":"Coffee Shop earns x2"},{"id":"coffee-5","name":"Drive-Thru Window","type":"business","cost":21000000000000.0,"req":{"owned":["coffee",100]},"effect":{"bizMult":["coffee",2]},"desc":"Coffee Shop earns x2"},{"id":"coffee-6","name":"Coffee Chain","type":"business","cost":2100000000000000.0,"req":{"owned":["coffee",150]},"effect":{"bizMult":["coffee",2]},"desc":"Coffee Shop earns x2"},{"id":"gym-1","name":"New Dumbbells","type":"business","cost":600000000.0,"req":{"owned":["gym",1]},"effect":{"bizMult":["gym",2]},"desc":"Gym earns x2"},{"id":"gym-2","name":"Personal Trainers","type":"business","cost":3000000000.0,"req":{"owned":["gym",10]},"effect":{"bizMult":["gym",2]},"desc":"Gym earns x2"},{"id":"gym-3","name":"Yoga Classes","type":"business","cost":30000000000.0,"req":{"owned":["gym",25]},"effect":{"bizMult":["gym",2]},"desc":"Gym earns x2"},{"id":"gym-4","name":"Smoothie Bar","type":"business","cost":3000000000000.0,"req":{"owned":["gym",50]},"effect":{"bizMult":["gym",2]},"desc":"Gym earns x2"},{"id":"gym-5","name":"Open 24/7","type":"business","cost":300000000000000.0,"req":{"owned":["gym",100]},"effect":{"bizMult":["gym",2]},"desc":"Gym earns x2"},{"id":"gym-6","name":"Fitness App","type":"business","cost":3e+16,"req":{"owned":["gym",150]},"effect":{"bizMult":["gym",2]},"desc":"Gym earns x2"},{"id":"restaurant-1","name":"Chef's Special","type":"business","cost":9900000000.0,"req":{"owned":["restaurant",1]},"effect":{"bizMult":["restaurant",2]},"desc":"Restaurant earns x2"},{"id":"restaurant-2","name":"Wine List","type":"business","cost":49500000000.0,"req":{"owned":["restaurant",10]},"effect":{"bizMult":["restaurant",2]},"desc":"Restaurant earns x2"},{"id":"restaurant-3","name":"Michelin Star","type":"business","cost":495000000000.0,"req":{"owned":["restaurant",25]},"effect":{"bizMult":["restaurant",2]},"desc":"Restaurant earns x2"},{"id":"restaurant-4","name":"Celebrity Chef","type":"business","cost":49500000000000.0,"req":{"owned":["restaurant",50]},"effect":{"bizMult":["restaurant",2]},"desc":"Restaurant earns x2"},{"id":"restaurant-5","name":"Second Location","type":"business","cost":4950000000000000.0,"req":{"owned":["restaurant",100]},"effect":{"bizMult":["restaurant",2]},"desc":"Restaurant earns x2"},{"id":"restaurant-6","name":"Restaurant Group","type":"business","cost":4.95e+17,"req":{"owned":["restaurant",150]},"effect":{"bizMult":["restaurant",2]},"desc":"Restaurant earns x2"},{"id":"realestate-1","name":"Open Houses","type":"business","cost":153000000000.0,"req":{"owned":["realestate",1]},"effect":{"bizMult":["realestate",2]},"desc":"Real Estate earns x2"},{"id":"realestate-2","name":"House Flipping","type":"business","cost":765000000000.0,"req":{"owned":["realestate",10]},"effect":{"bizMult":["realestate",2]},"desc":"Real Estate earns x2"},{"id":"realestate-3","name":"Rental Units","type":"business","cost":7650000000000.0,"req":{"owned":["realestate",25]},"effect":{"bizMult":["realestate",2]},"desc":"Real Estate earns x2"},{"id":"realestate-4","name":"Office Tower","type":"business","cost":765000000000000.0,"req":{"owned":["realestate",50]},"effect":{"bizMult":["realestate",2]},"desc":"Real Estate earns x2"},{"id":"realestate-5","name":"City Block","type":"business","cost":7.65e+16,"req":{"owned":["realestate",100]},"effect":{"bizMult":["realestate",2]},"desc":"Real Estate earns x2"},{"id":"realestate-6","name":"Skyline","type":"business","cost":7.65e+18,"req":{"owned":["realestate",150]},"effect":{"bizMult":["realestate",2]},"desc":"Real Estate earns x2"},{"id":"factory-1","name":"Conveyor Belts","type":"business","cost":2250000000000.0,"req":{"owned":["factory",1]},"effect":{"bizMult":["factory",2]},"desc":"Factory earns x2"},{"id":"factory-2","name":"Night Crew","type":"business","cost":11250000000000.0,"req":{"owned":["factory",10]},"effect":{"bizMult":["factory",2]},"desc":"Factory earns x2"},{"id":"factory-3","name":"Robot Arms","type":"business","cost":112500000000000.0,"req":{"owned":["factory",25]},"effect":{"bizMult":["factory",2]},"desc":"Factory earns x2"},{"id":"factory-4","name":"Bigger Warehouse","type":"business","cost":1.125e+16,"req":{"owned":["factory",50]},"effect":{"bizMult":["factory",2]},"desc":"Factory earns x2"},{"id":"factory-5","name":"Global Export","type":"business","cost":1.125e+18,"req":{"owned":["factory",100]},"effect":{"bizMult":["factory",2]},"desc":"Factory earns x2"},{"id":"factory-6","name":"Smart Factory","type":"business","cost":1.125e+20,"req":{"owned":["factory",150]},"effect":{"bizMult":["factory",2]},"desc":"Factory earns x2"},{"id":"startup-1","name":"Free Snacks","type":"business","cost":30000000000000.0,"req":{"owned":["startup",1]},"effect":{"bizMult":["startup",2]},"desc":"Tech Startup earns x2"},{"id":"startup-2","name":"Seed Round","type":"business","cost":150000000000000.0,"req":{"owned":["startup",10]},"effect":{"bizMult":["startup",2]},"desc":"Tech Startup earns x2"},{"id":"startup-3","name":"Viral App","type":"business","cost":1500000000000000.0,"req":{"owned":["startup",25]},"effect":{"bizMult":["startup",2]},"desc":"Tech Startup earns x2"},{"id":"startup-4","name":"Unicorn Status","type":"business","cost":1.5e+17,"req":{"owned":["startup",50]},"effect":{"bizMult":["startup",2]},"desc":"Tech Startup earns x2"},{"id":"startup-5","name":"IPO","type":"business","cost":1.5e+19,"req":{"owned":["startup",100]},"effect":{"bizMult":["startup",2]},"desc":"Tech Startup earns x2"},{"id":"startup-6","name":"Tech Giant","type":"business","cost":1.5e+21,"req":{"owned":["startup",150]},"effect":{"bizMult":["startup",2]},"desc":"Tech Startup earns x2"},{"id":"bank-1","name":"Piggy Accounts","type":"business","cost":420000000000000.0,"req":{"owned":["bank",1]},"effect":{"bizMult":["bank",2]},"desc":"Bank earns x2"},{"id":"bank-2","name":"Credit Cards","type":"business","cost":2100000000000000.0,"req":{"owned":["bank",10]},"effect":{"bizMult":["bank",2]},"desc":"Bank earns x2"},{"id":"bank-3","name":"Golden Vault","type":"business","cost":2.1e+16,"req":{"owned":["bank",25]},"effect":{"bizMult":["bank",2]},"desc":"Bank earns x2"},{"id":"bank-4","name":"Investment Arm","type":"business","cost":2.1e+18,"req":{"owned":["bank",50]},"effect":{"bizMult":["bank",2]},"desc":"Bank earns x2"},{"id":"bank-5","name":"Private Banking","type":"business","cost":2.1e+20,"req":{"owned":["bank",100]},"effect":{"bizMult":["bank",2]},"desc":"Bank earns x2"},{"id":"bank-6","name":"Global Bank","type":"business","cost":2.1e+22,"req":{"owned":["bank",150]},"effect":{"bizMult":["bank",2]},"desc":"Bank earns x2"},{"id":"airline-1","name":"Extra Legroom","type":"business","cost":5100000000000000.0,"req":{"owned":["airline",1]},"effect":{"bizMult":["airline",2]},"desc":"Airline earns x2"},{"id":"airline-2","name":"Frequent Flyers","type":"business","cost":2.55e+16,"req":{"owned":["airline",10]},"effect":{"bizMult":["airline",2]},"desc":"Airline earns x2"},{"id":"airline-3","name":"Jumbo Jets","type":"business","cost":2.55e+17,"req":{"owned":["airline",25]},"effect":{"bizMult":["airline",2]},"desc":"Airline earns x2"},{"id":"airline-4","name":"Private Lounges","type":"business","cost":2.55e+19,"req":{"owned":["airline",50]},"effect":{"bizMult":["airline",2]},"desc":"Airline earns x2"},{"id":"airline-5","name":"New Routes","type":"business","cost":2.55e+21,"req":{"owned":["airline",100]},"effect":{"bizMult":["airline",2]},"desc":"Airline earns x2"},{"id":"airline-6","name":"Supersonic Jets","type":"business","cost":2.55e+23,"req":{"owned":["airline",150]},"effect":{"bizMult":["airline",2]},"desc":"Airline earns x2"},{"id":"studio-1","name":"Blockbuster","type":"business","cost":6.3e+16,"req":{"owned":["studio",1]},"effect":{"bizMult":["studio",2]},"desc":"Movie Studio earns x2"},{"id":"studio-2","name":"Sequels","type":"business","cost":3.15e+17,"req":{"owned":["studio",10]},"effect":{"bizMult":["studio",2]},"desc":"Movie Studio earns x2"},{"id":"studio-3","name":"Streaming Deal","type":"business","cost":3.15e+18,"req":{"owned":["studio",25]},"effect":{"bizMult":["studio",2]},"desc":"Movie Studio earns x2"},{"id":"studio-4","name":"Movie Stars","type":"business","cost":3.15e+20,"req":{"owned":["studio",50]},"effect":{"bizMult":["studio",2]},"desc":"Movie Studio earns x2"},{"id":"studio-5","name":"Theme Park","type":"business","cost":3.15e+22,"req":{"owned":["studio",100]},"effect":{"bizMult":["studio",2]},"desc":"Movie Studio earns x2"},{"id":"studio-6","name":"Award Season","type":"business","cost":3.15e+24,"req":{"owned":["studio",150]},"effect":{"bizMult":["studio",2]},"desc":"Movie Studio earns x2"},{"id":"space-1","name":"Reusable Rockets","type":"business","cost":7.8e+17,"req":{"owned":["space",1]},"effect":{"bizMult":["space",2]},"desc":"Space Company earns x2"},{"id":"space-2","name":"Satellite Network","type":"business","cost":3.9e+18,"req":{"owned":["space",10]},"effect":{"bizMult":["space",2]},"desc":"Space Company earns x2"},{"id":"space-3","name":"Space Tourism","type":"business","cost":3.9e+19,"req":{"owned":["space",25]},"effect":{"bizMult":["space",2]},"desc":"Space Company earns x2"},{"id":"space-4","name":"Moon Base","type":"business","cost":3.9e+21,"req":{"owned":["space",50]},"effect":{"bizMult":["space",2]},"desc":"Space Company earns x2"},{"id":"space-5","name":"Asteroid Mining","type":"business","cost":3.9e+23,"req":{"owned":["space",100]},"effect":{"bizMult":["space",2]},"desc":"Space Company earns x2"},{"id":"space-6","name":"Mars Colony","type":"business","cost":3.9e+25,"req":{"owned":["space",150]},"effect":{"bizMult":["space",2]},"desc":"Space Company earns x2"},{"id":"grip1","name":"Better Grip","type":"tap","cost":300,"req":{},"effect":{"tapMult":2}},{"id":"grip2","name":"Calloused Thumb","type":"tap","cost":3000.0,"req":{},"effect":{"tapMult":2}},{"id":"hustle1","name":"Side Hustle","type":"tap","cost":15000.0,"req":{},"effect":{"hustle":0.01}},{"id":"crit1","name":"Lucky Thumb","type":"tap","cost":30000.0,"req":{},"effect":{"critChance":0.02}},{"id":"grip3","name":"Pro Tapper","type":"tap","cost":75000.0,"req":{},"effect":{"tapMult":2}},{"id":"hustle2","name":"Night Shift","type":"tap","cost":225000.0,"req":{},"effect":{"hustle":0.02}},{"id":"crit2","name":"Big Tipper","type":"tap","cost":750000.0,"req":{},"effect":{"critMult":15}},{"id":"grip4","name":"Iron Finger","type":"tap","cost":1500000.0,"req":{},"effect":{"tapMult":2}},{"id":"hustle3","name":"Grindset","type":"tap","cost":3000000.0,"req":{},"effect":{"hustle":0.03}},{"id":"crit3","name":"Sharp Eye","type":"tap","cost":3000000000.0,"req":{},"effect":{"critChance":0.02}},{"id":"grip5","name":"Golden Finger","type":"tap","cost":1500000000.0,"req":{},"effect":{"tapMult":2}},{"id":"hustle4","name":"Empire Mindset","type":"tap","cost":300000000000.0,"req":{},"effect":{"hustle":0.005}},{"id":"crit4","name":"High Roller","type":"tap","cost":3000000000000.0,"req":{},"effect":{"critMult":20}},{"id":"grip6","name":"Midas Touch","type":"tap","cost":1500000000000000.0,"req":{},"effect":{"tapMult":2}},{"id":"hustle5","name":"Always Be Closing","type":"tap","cost":3e+17,"req":{},"effect":{"hustle":0.005}},{"id":"helper1","name":"Coffee Machine","type":"helper","cost":7500,"req":{"helpers":5},"effect":{"helperSpeed":2}},{"id":"helper2","name":"Team Spirit","type":"helper","cost":450000.0,"req":{"helpers":15},"effect":{"helperValue":2}},{"id":"helper3","name":"Hire Interns","type":"helper","cost":3000000.0,"req":{"helpers":25},"effect":{"helperValue":2}},{"id":"helper4","name":"Standing Desks","type":"helper","cost":30000000.0,"req":{"helpers":40},"effect":{"helperSpeed":1.5}},{"id":"helper5","name":"Hire Assistants","type":"helper","cost":300000000.0,"req":{"helpers":50},"effect":{"helperValue":2}},{"id":"helper6","name":"Bonus Checks","type":"helper","cost":30000000000.0,"req":{"helpers":75},"effect":{"helperValue":2}},{"id":"helper7","name":"Robot Helpers","type":"helper","cost":3000000000000.0,"req":{"helpers":100},"effect":{"helperHustle":0.0005}},{"id":"helper8","name":"Overtime Pay","type":"helper","cost":300000000000000.0,"req":{"helpers":150},"effect":{"helperHustle":0.0005}},{"id":"helper9","name":"Dream Team","type":"helper","cost":3e+16,"req":{"helpers":200},"effect":{"helperHustle":0.001}},{"id":"helper10","name":"Employee of the Month","type":"helper","cost":3e+18,"req":{"helpers":250},"effect":{"helperHustle":0.001}},{"id":"syn1","name":"Lemonade on the Menu","type":"synergy","cost":3300000,"req":{"owned":["truck",15],"owned2":["lemonade",15]},"effect":{"synergy":["truck","lemonade",0.01]},"desc":"Food Truck +1% per Lemonade Stand"},{"id":"syn2","name":"Dog-Friendly Cafe","type":"synergy","cost":4200000000.0,"req":{"owned":["coffee",15],"owned2":["dogs",15]},"effect":{"synergy":["coffee","dogs",0.01]},"desc":"Coffee Shop +1% per Dog Walking"},{"id":"syn3","name":"Snack Aisle","type":"synergy","cost":36000000.0,"req":{"owned":["store",15],"owned2":["truck",15]},"effect":{"synergy":["store","truck",0.01]},"desc":"Corner Store +1% per Food Truck"},{"id":"syn4","name":"Shiny Delivery Vans","type":"synergy","cost":390000000.0,"req":{"owned":["carwash",15],"owned2":["store",15]},"effect":{"synergy":["carwash","store",0.01]},"desc":"Car Wash +1% per Corner Store"},{"id":"syn5","name":"Pre-Workout Espresso","type":"synergy","cost":60000000000.0,"req":{"owned":["gym",15],"owned2":["coffee",15]},"effect":{"synergy":["gym","coffee",0.01]},"desc":"Gym +1% per Coffee Shop"},{"id":"syn6","name":"Protein Menu","type":"synergy","cost":990000000000.0,"req":{"owned":["restaurant",15],"owned2":["gym",15]},"effect":{"synergy":["restaurant","gym",0.01]},"desc":"Restaurant +1% per Gym"},{"id":"syn7","name":"Commercial Leases","type":"synergy","cost":15300000000000.0,"req":{"owned":["realestate",15],"owned2":["restaurant",15]},"effect":{"synergy":["realestate","restaurant",0.01]},"desc":"Real Estate +1% per Restaurant"},{"id":"syn8","name":"Warehouse Space","type":"synergy","cost":225000000000000.0,"req":{"owned":["factory",15],"owned2":["realestate",15]},"effect":{"synergy":["factory","realestate",0.01]},"desc":"Factory +1% per Real Estate"},{"id":"syn9","name":"Smart Manufacturing","type":"synergy","cost":3000000000000000.0,"req":{"owned":["factory",15],"owned2":["startup",15]},"effect":{"synergy":["factory","startup",0.01]},"desc":"Factory +1% per Tech Startup"},{"id":"syn10","name":"Fintech","type":"synergy","cost":4.2e+16,"req":{"owned":["bank",15],"owned2":["startup",15]},"effect":{"synergy":["bank","startup",0.01]},"desc":"Bank +1% per Tech Startup"},{"id":"syn11","name":"Business Loans","type":"synergy","cost":4.2e+16,"req":{"owned":["store",15],"owned2":["bank",15]},"effect":{"synergy":["store","bank",0.01]},"desc":"Corner Store +1% per Bank"},{"id":"syn12","name":"In-Flight Movies","type":"synergy","cost":6.3e+18,"req":{"owned":["airline",15],"owned2":["studio",15]},"effect":{"synergy":["airline","studio",0.01]},"desc":"Airline +1% per Movie Studio"},{"id":"syn13","name":"Product Placement","type":"synergy","cost":6.3e+18,"req":{"owned":["studio",15],"owned2":["truck",15]},"effect":{"synergy":["studio","truck",0.01]},"desc":"Movie Studio +1% per Food Truck"},{"id":"syn14","name":"Rocket Fuel","type":"synergy","cost":7.8e+19,"req":{"owned":["space",15],"owned2":["factory",15]},"effect":{"synergy":["space","factory",0.01]},"desc":"Space Company +1% per Factory"},{"id":"syn15","name":"Space Flights","type":"synergy","cost":7.8e+19,"req":{"owned":["airline",15],"owned2":["space",15]},"effect":{"synergy":["airline","space",0.01]},"desc":"Airline +1% per Space Company"},{"id":"glob1","name":"Bookkeeping","type":"global","cost":300000.0,"req":{},"effect":{"prodMult":1.1},"desc":"All businesses +10%"},{"id":"glob2","name":"Business Cards","type":"global","cost":30000000.0,"req":{},"effect":{"prodMult":1.1},"desc":"All businesses +10%"},{"id":"glob3","name":"Marketing Team","type":"global","cost":3000000000.0,"req":{},"effect":{"prodMult":1.15},"desc":"All businesses +15%"},{"id":"glob4","name":"Accountant","type":"global","cost":300000000000.0,"req":{},"effect":{"prodMult":1.15},"desc":"All businesses +15%"},{"id":"glob5","name":"Legal Team","type":"global","cost":30000000000000.0,"req":{},"effect":{"prodMult":1.2},"desc":"All businesses +20%"},{"id":"glob6","name":"Board of Directors","type":"global","cost":3000000000000000.0,"req":{},"effect":{"prodMult":1.2},"desc":"All businesses +20%"},{"id":"glob7","name":"Private Jet","type":"global","cost":3e+17,"req":{},"effect":{"prodMult":1.25},"desc":"All businesses +25%"},{"id":"glob8","name":"Media Empire","type":"global","cost":3e+19,"req":{},"effect":{"prodMult":1.25},"desc":"All businesses +25%"},{"id":"glob9","name":"Holding Company","type":"global","cost":3e+21,"req":{},"effect":{"prodMult":1.5},"desc":"All businesses +50%"},{"id":"glob10","name":"Global Brand","type":"global","cost":2.9999999999999997e+23,"req":{},"effect":{"prodMult":1.5},"desc":"All businesses +50%"},{"id":"luck1","name":"Four-Leaf Clover","type":"lucky","cost":150000.0,"req":{},"effect":{"coinFreq":1.25}},{"id":"luck2","name":"Rabbit's Foot","type":"lucky","cost":2400000.0,"req":{},"effect":{"rareChance":2}},{"id":"luck3","name":"Wishbone","type":"lucky","cost":300000000.0,"req":{},"effect":{"findMult":2}},{"id":"luck4","name":"Horseshoe","type":"lucky","cost":30000000000.0,"req":{},"effect":{"coinFreq":1.25}},{"id":"luck5","name":"Lucky Charm","type":"lucky","cost":3000000000000.0,"req":{},"effect":{"bonusDuration":1.5}},{"id":"luck6","name":"Golden Goose","type":"lucky","cost":300000000000000.0,"req":{},"effect":{"rareChance":2}},{"id":"frenzy1","name":"Adrenaline","type":"frenzy","cost":60000.0,"req":{},"effect":{"frenzyFill":1.5}},{"id":"frenzy2","name":"Second Wind","type":"frenzy","cost":900000.0,"req":{},"effect":{"frenzyLength":15}},{"id":"frenzy3","name":"Energy Drink","type":"frenzy","cost":3000000000.0,"req":{},"effect":{"frenzyFill":1.5}},{"id":"frenzy4","name":"Beast Mode","type":"frenzy","cost":3000000000000.0,"req":{},"effect":{"frenzyMult":10}}]}/*END*/;
@@ -370,7 +471,8 @@ const SCENES={
 // ---------- state ----------
 const KEY='p2e-save-v1';
 function fresh(){return{v:2,money:0,total:0,alltime:0,heirs:0,owned:Object.fromEntries(BIZ.map(b=>[b.id,0])),helpers:0,ups:[],pity:0,play:0,ms:{},piggy:0,dayOffset:0,queue:[],streak:{last:null,count:0,best:0,grace:null,claimed:false},inherits:0,trophies:[],welcomed:false,notifAsked:false,maxSeen:0,skew:0,
-  settings:{sound:80,music:50,soundOn:true,musicOn:true,vib:true,notif:true,lite:null,lang:/^es/i.test(navigator.language||'')?'es':'en'},lastSeen:Date.now()}}
+  heirSeen:0,cityOn:false,cityNew:false,bolsa:null,e24:{h:0,a:Array(24).fill(0)},nlog:[],
+  settings:{sound:80,music:50,soundOn:true,musicOn:true,vib:true,notif:true,notifB:true,lite:null,lang:/^es/i.test(navigator.language||'')?'es':'en'},lastSeen:Date.now()}}
 let S=fresh();
 // ---------- language: English / Spanish, saved in settings ----------
 const L=()=>S.settings.lang==='es'?'es':'en';
@@ -463,7 +565,7 @@ const helperTap=()=>TAP*tapMult()*fx('helperValue',1,mul)*heirMult()+baseRate()*
 const helperRate=()=>S.helpers*helperSpeed()/HELPER.interval*helperTap()*(1+critChance()*(critMult()-1));
 const price=b=>b.cost*Math.pow(GROWTH,S.owned[b.id]);
 const helperPrice=()=>HELPER.cost*Math.pow(GROWTH,S.helpers);
-function earn(v){S.money+=v;S.total+=v;S.alltime+=v}
+function earn(v){S.money+=v;S.total+=v;S.alltime+=v;trackEarn(v)}
 // tester stats: active play time when each milestone was first reached
 function mark(k){if(S.ms[k]===undefined)S.ms[k]=Math.round(S.play)}
 function checkMilestones(){[1e3,1e4,1e5,1e6,1e7,1e8,1e9,1e12].forEach(v=>{if(S.alltime>=v)mark('$'+v)})}
@@ -550,12 +652,20 @@ function applyHome(i,announce){
     if(!reduce){const r=scene.getBoundingClientRect();burst(r.width/2,r.height/2,'#F5C542',26)}
   }
 }
+let stagesShown='';
+function drawStages(st,k,f){
+  const bar=$('hbar');if(stagesShown!==st+'|'+L()){stagesShown=st+'|'+L();bar.innerHTML='<span><i></i></span>'.repeat(st)}
+  [...bar.children].forEach((e,i)=>{e.firstChild.style.width=(i<k?100:i>k?0:f*100)+'%'});
+}
 function drawHome(){
   const i=homeIdx(),h=HOMES[i],n=HOMES[i+1];
   $('homeName').textContent=h.name;
-  if(n){const lo=Math.max(1,h.threshold),f=Math.max(0,Math.min(1,Math.log(Math.max(1,S.total)/lo)/Math.log(n.threshold/lo)));
-    $('homeFill').style.width=(f*100)+'%';$('homeNext').textContent=fmtShort(S.total)+' / '+fmtShort(n.threshold);$('home').title=t(`${n.name} when you have earned ${fmt(n.threshold)}`,`${n.name} cuando hayas ganado ${fmt(n.threshold)}`)}
-  else{$('homeFill').style.width='100%';$('homeNext').textContent=t('Top home','Mejor casa')}
+  // the way to the next home is split in x10 stages; inside a stage the bar and the amounts always match
+  if(n){const lo=h.threshold||n.threshold/1000,st=Math.max(1,Math.round(Math.log10(n.threshold/lo)));
+    const k=Math.max(0,Math.min(st-1,Math.floor(Math.log10(Math.max(lo,S.total)/lo)+1e-9))),goal=lo*Math.pow(10,k+1),f=Math.min(1,S.total/goal);
+    drawStages(st,k,f);
+    $('homeNext').textContent=t(`Stage ${k+1} of ${st}`,`Etapa ${k+1} de ${st}`)+' · '+fmtShort(S.total)+' / '+fmtShort(goal);$('home').title=t(`${n.name} when you have earned ${fmt(n.threshold)}`,`${n.name} cuando hayas ganado ${fmt(n.threshold)}`)}
+  else{drawStages(1,0,1);$('homeNext').textContent=t('Top home','Mejor casa')}
   const avail=heirsAvail(),show=homeIdx()>=HOMEIDX[C.inheritance.unlockHome]||S.heirs>0;
   for(let k=1;k<=3;k++)$('phone').classList.toggle('lux'+k,Math.min(3,S.inherits||0)===k);
   $('heirBtn').classList.toggle('on',show);$('heirBtn').classList.toggle('ready',show&&avail>S.heirs);
@@ -594,8 +704,10 @@ $('doHeir').onclick=()=>{
   inherit();$('heirPanel').classList.remove('on');
 };
 function inherit(){
+  bolsaOnInherit();
   const keep={alltime:S.alltime,heirs:Math.max(heirsAvail(),S.heirs),settings:S.settings,streak:S.streak,dayOffset:S.dayOffset,play:S.play,ms:S.ms,queue:S.queue,
-    inherits:(S.inherits||0)+1,trophies:S.trophies||[],welcomed:true,notifAsked:S.notifAsked,maxSeen:S.maxSeen,skew:S.skew};
+    inherits:(S.inherits||0)+1,trophies:S.trophies||[],welcomed:true,notifAsked:S.notifAsked,maxSeen:S.maxSeen,skew:S.skew,
+    heirSeen:S.heirSeen,cityOn:S.cityOn,cityNew:S.cityNew,bolsa:S.bolsa,e24:S.e24,nlog:S.nlog};
   S=Object.assign(fresh(),keep);mark('inherit-'+S.heirs);
   resetRuntime();save();play('jackpot');toast(t(`${S.heirs} heirs: everything +${Math.round(S.heirs*C.inheritance.perHeir*100)}%`,`${S.heirs} herederos: todo +${Math.round(S.heirs*C.inheritance.perHeir*100)}%`),'#F5C542');
   setTimeout(awardTrophies,2800);
@@ -697,8 +809,9 @@ function refresh(force){
   const n=UPS.filter(u=>upAvailable(u)&&S.money>=u.cost).length;setText('upBadge',String(n||''));
   document.querySelectorAll('#list .row:not(.locked) .buy:not(.owned)').forEach(btn=>{
     if(!btn.dataset.cost)return;
-    const f=Math.min(1,S.money/costOf(btn.dataset.cost)),p=(f*100).toFixed(0)+'%';
-    if(btn.dataset.p!==p){btn.dataset.p=p;btn.style.setProperty('--p',p);btn.disabled=f<1;btn.classList.toggle('ready',f>=1)}
+    // the key includes "can pay": at 99.6% the bar already reads 100%, so the % alone never turned the button on
+    const f=Math.min(1,S.money/costOf(btn.dataset.cost)),p=(f*100).toFixed(0)+'%',k=p+(f>=1?'+':'');
+    if(btn.dataset.p!==k){btn.dataset.p=k;btn.style.setProperty('--p',p);btn.disabled=f<1;btn.classList.toggle('ready',f>=1)}
   });
 }
 let sig='';
@@ -891,6 +1004,11 @@ function sanitize(o){
   f.inherits=Math.floor(num(o.inherits,f.heirs>0?1:0));f.trophies=Array.isArray(o.trophies)?o.trophies.filter(k=>TROPHIES.includes(k)):[];
   delete f.streak.trophies;f.welcomed=!!o.welcomed||f.alltime>0;f.notifAsked=!!o.notifAsked;
   f.maxSeen=num(o.maxSeen,0);f.skew=typeof o.skew==='number'&&isFinite(o.skew)?o.skew:0;
+  // 1.1: saves without these fields start them quietly (no "new heir" alert for heirs you could already claim)
+  f.heirSeen=typeof o.heirSeen==='number'?o.heirSeen:-1;f.cityOn=!!o.cityOn;f.cityNew=!!o.cityNew;
+  if(o.bolsa&&typeof o.bolsa==='object'&&Array.isArray(o.bolsa.cos)&&o.bolsa.cos.length===6)f.bolsa=o.bolsa;
+  if(o.e24&&Array.isArray(o.e24.a)&&o.e24.a.length===24)f.e24={h:num(o.e24.h,0),a:o.e24.a.map(v=>num(v,0))};
+  f.nlog=Array.isArray(o.nlog)?o.nlog.filter(v=>typeof v==='number'):[];
   return f;
 }
 function load(){try{const raw=localStorage.getItem(KEY);if(raw){const s=sanitize(JSON.parse(raw));if(s)S=s}}catch(e){}}
@@ -976,7 +1094,7 @@ const TROPHY_AT={bronze:1,silver:3,gold:5};
 const TROPHY_ES={bronze:'bronce',silver:'plata',gold:'oro'};
 function awardTrophies(){
   S.trophies=S.trophies||[];let got=false;
-  TROPHIES.forEach(k=>{if((S.inherits||0)>=TROPHY_AT[k]&&!S.trophies.includes(k)){S.trophies.push(k);got=true;toast(t(`New ${k} trophy! It is now on display at home`,`¡Nuevo trofeo de ${TROPHY_ES[k]}! Ya está en exhibición en tu casa`),'#F5C542')}});
+  TROPHIES.forEach(k=>{if((S.inherits||0)>=TROPHY_AT[k]&&!S.trophies.includes(k)){S.trophies.push(k);got=true;toast(t(`New ${k} trophy! See it in Inheritance`,`¡Nuevo trofeo de ${TROPHY_ES[k]}! Lo ves en Herencia`),'#F5C542')}});
   if(got){drawTrophies();save()}
 }
 const nth=n=>L()==='es'?n+'ª':n+(n===1?'st':n===2?'nd':n===3?'rd':'th');
@@ -984,19 +1102,13 @@ function trophyRow(){
   const own=S.trophies||[];
   return TROPHIES.map(k=>`<div class="${own.includes(k)?'':'locked'}"><img src="a/trophy-${k}.svg" alt="${t(k+' trophy','trofeo de '+TROPHY_ES[k])}">${t(nth(TROPHY_AT[k])+' heir',nth(TROPHY_AT[k])+' herencia')}</div>`).join('');
 }
-function drawTrophies(){
-  document.querySelectorAll('.trophy').forEach(e=>e.remove());
-  (S.trophies||[]).forEach((k,i)=>{
-    const d=document.createElement('div');d.className='trophy';d.style.right=(6+i*10)+'%';
-    d.innerHTML=`<img src="a/trophy-${k}.svg" alt="">`;
-    scene.appendChild(d);
-  });
-}
+// 1.1: trophies no longer stand in the room (they did not fit anywhere); they are shown in the Inheritance panel
+function drawTrophies(){}
 // ---------- settings panel ----------
 function syncSettings(){
   const s=S.settings;$('volS').value=s.sound;$('volM').value=s.music;
-  [['swS','soundOn'],['swM','musicOn'],['swV','vib'],['swN','notif']].forEach(([id,k])=>{$(id).setAttribute('aria-pressed',s[k]);$(id).textContent=s[k]?t('On','Sí'):t('Off','No')});
-  $('notifRow').hidden=!window.PennyNative;
+  [['swS','soundOn'],['swM','musicOn'],['swV','vib'],['swN','notif'],['swNB','notifB']].forEach(([id,k])=>{$(id).setAttribute('aria-pressed',s[k]);$(id).textContent=s[k]?t('On','Sí'):t('Off','No')});
+  $('notifRow').hidden=!window.PennyNative;$('notifBRow').hidden=!window.PennyNative||!(S.bolsa&&S.bolsa.on);
   const lite=!!S.settings.lite;$('swL').setAttribute('aria-pressed',lite);$('swL').textContent=lite?t('Light','Livianos'):t('Full','Completos');$('phone').classList.toggle('lite',lite);
   applyVolumes();
 }
@@ -1007,11 +1119,13 @@ $('volS').oninput=e=>{S.settings.sound=+e.target.value;applyVolumes()};
 $('volS').onchange=()=>play('tap');
 $('volM').oninput=e=>{S.settings.music=+e.target.value;applyVolumes()};
 $('swL').onclick=()=>{S.settings.lite=!S.settings.lite;syncSettings();save()};
-[['swS','soundOn'],['swM','musicOn'],['swV','vib'],['swN','notif']].forEach(([id,k])=>$(id).onclick=()=>{S.settings[k]=!S.settings[k];syncSettings();save();if(k==='notif'&&S.settings.notif)askNotif(true)});
+[['swS','soundOn'],['swM','musicOn'],['swV','vib'],['swN','notif'],['swNB','notifB']].forEach(([id,k])=>$(id).onclick=()=>{S.settings[k]=!S.settings[k];syncSettings();save();if((k==='notif'||k==='notifB')&&S.settings[k])askNotif(true)});
 function setLang(l){
   S.settings.lang=l;applyLang();applyHome(homeIdx(),false);sig='';renderList();syncSettings();showStats();
   if(T.bonus)$('bonusName').textContent=T.bonus.name;
   if($('heirPanel').classList.contains('on'))showHeir();
+  if($('city').classList.contains('on'))drawCity();
+  if($('stock').classList.contains('on'))drawStock();
   if($('daily').classList.contains('on')&&S.streak.count>0)showDaily();
   save();
 }
@@ -1026,7 +1140,7 @@ $('resetSave').onclick=()=>{
 $('resetNo').onclick=()=>$('resetAsk').classList.remove('on');
 $('resetYes').onclick=()=>{
   const st=S.settings;S=fresh();S.settings=st;S.welcomed=true;resetRuntime();save();
-  $('resetAsk').classList.remove('on');$('overlay').classList.remove('on');toast(t('Progress erased. Fresh start!','Progreso borrado. ¡A empezar de nuevo!'));
+  $('resetAsk').classList.remove('on');$('overlay').classList.remove('on');$('city').classList.remove('on');$('stock').classList.remove('on');unlockCheck();toast(t('Progress erased. Fresh start!','Progreso borrado. ¡A empezar de nuevo!'));
 };
 function resetRuntime(){
   changed();
@@ -1040,14 +1154,17 @@ let hiddenAt=0;
 function onHide(){
   if(hiddenAt)return;hiddenAt=now();save();
   if(ac&&ac.state==='running')try{ac.suspend()}catch(e){}
-  scheduleNotif();
+  if(P)peakEnd();
+  S.nlog=(S.nlog||[]).filter(x=>x>Date.now()-2*864e5);
+  scheduleNotif();scheduleBolsaNotif();save();
 }
 function onShow(){
   if(!hiddenAt)return;const d=now()-hiddenAt;hiddenAt=0;
   // bonus coins, bonuses and Frenzy wait for you instead of running out (or piling up) while the app is closed
   T.nextLucky+=d;if(T.bonus)T.bonusEnd+=d;if(T.frenzyUntil>now()-d)T.frenzyUntil+=d;
   if(ac&&ac.state!=='running')try{ac.resume()}catch(e){}
-  cancelNotif();offline();refresh(true);checkDaily();
+  cancelNotif();S.nlog=(S.nlog||[]).filter(x=>x<=Date.now());offline();refresh(true);checkDaily();
+  reportOrders(bolsaCatchUp());if($('stock').classList.contains('on'))drawStock();
 }
 document.addEventListener('visibilitychange',()=>{document.hidden?onHide():onShow()});
 document.addEventListener('pause',onHide);document.addEventListener('resume',onShow);
@@ -1062,13 +1179,304 @@ function scheduleNotif(){
   const r=(baseRate()+helperRate())*PIGGY_RATE,max=piggyMax();
   if(!(r>0)||S.piggy>=max)return;
   const sec=Math.min(PIGGY_CAP,(max-S.piggy)/r);
-  const pn=HOMES[homeIdx()].piggy;
-  PennyNative.notify(Date.now()+Math.max(60,sec)*1000,
+  const pn=HOMES[homeIdx()].piggy,at=fitNotif(Date.now()+Math.max(60,sec)*1000);if(!at)return;S.nlog.push(at);
+  PennyNative.notify(at,
     t(`Your ${pn.toLowerCase()} is full!`,`¡Tu ${pn.toLowerCase()} está llena!`),
     t(`${fmt(max)} is waiting for you in Penny Up.`,`Te esperan ${fmt(max)} en Penny Up. Entrá a cobrarlos.`),
     t('Piggy bank','Alcancía'));
 }
 function cancelNotif(){if(window.PennyNative)PennyNative.cancel()}
+// ---------- 1.1: new heir alert ----------
+// once per new heir you can claim (not when you pass it on): the crown jumps, coins fly out and a banner shows
+function heirCheck(){
+  if(!(homeIdx()>=HOMEIDX[C.inheritance.unlockHome]||S.heirs>0))return;
+  const a=heirsAvail();
+  if(S.heirSeen<0){S.heirSeen=a;return}
+  if(a>S.heirSeen){S.heirSeen=a;if(a>S.heirs)heirParty()}
+}
+function heirParty(){
+  const b=$('heirBtn'),ph=$('phone');b.classList.remove('pop');void b.offsetWidth;b.classList.add('pop');setTimeout(()=>b.classList.remove('pop'),2600);
+  play('move');buzz([30,40,60]);
+  const r=ph.getBoundingClientRect(),c=b.getBoundingClientRect(),x=c.left-r.left+c.width/2,y=c.top-r.top+c.height/2;
+  if(!reduce&&!S.settings.lite){
+    const ray=document.createElement('div');ray.className='hrays';ray.style.left=x+'px';ray.style.top=y+'px';ph.appendChild(ray);
+    ray.animate([{transform:'translate(-50%,-50%) scale(.3) rotate(0)',opacity:0},{transform:'translate(-50%,-50%) scale(1) rotate(40deg)',opacity:1,offset:.25},{transform:'translate(-50%,-50%) scale(1.15) rotate(120deg)',opacity:0}],{duration:1800,easing:'ease-out'}).onfinish=()=>ray.remove();
+    for(let i=0;i<10;i++){
+      const s=document.createElement('div');s.className='hcoin';s.style.left=x-11+'px';s.style.top=y-11+'px';ph.appendChild(s);
+      const a=Math.PI*(.05+.9*Math.random()),d=60+Math.random()*90;
+      s.animate([{transform:'translate(0,0) scale(.6)'},{transform:`translate(${Math.cos(a)*d}px,${Math.sin(a)*d}px) scale(1)`,offset:.4},{transform:`translate(${Math.cos(a)*d*1.2}px,${Math.sin(a)*d+160}px) scale(.7)`,opacity:0}],{duration:1300,easing:'ease-out'}).onfinish=()=>s.remove();
+    }
+  }
+  const d=document.createElement('div');d.className='heirnote';d.textContent=t('New heir available!','¡Nuevo heredero disponible!');ph.appendChild(d);
+  d.animate([{transform:'translate(-50%,-50%) scale(.6)',opacity:0},{transform:'translate(-50%,-50%) scale(1.06)',opacity:1,offset:.08},{transform:'translate(-50%,-50%) scale(1)',opacity:1,offset:.15},{transform:'translate(-50%,-50%) scale(1)',opacity:1,offset:.85},{transform:'translate(-50%,-50%) scale(.9)',opacity:0}],{duration:3200,easing:'ease-out'}).onfinish=()=>d.remove();
+}
+// ---------- 1.1: unlocks (they stay after passing it on) ----------
+function unlockCheck(){
+  const h=homeIdx();
+  if(!S.cityOn&&h>=HOMEIDX.mansion){S.cityOn=true;S.cityNew=true;toast(t('New: My city! Tap the green button to see all your businesses','¡Nuevo: Mi ciudad! Tocá el botón verde para ver todos tus negocios'),'#B9DE8F',true);save()}
+  if(!(S.bolsa&&S.bolsa.on)&&h>=HOMEIDX.island){bolsaInit();save();$('stockHello').classList.add('on')}
+  $('cityBtn').classList.toggle('on',!!S.cityOn);$('cityBtn').classList.toggle('new',!!S.cityNew);
+  const bo=!!(S.bolsa&&S.bolsa.on);$('stockBtn').classList.toggle('on',bo);$('stockBtn').classList.toggle('new',bo&&!!S.bolsa.isNew);
+}
+// ---------- 1.1: My city (isometric map) ----------
+// one platform per home, joined by a road; each business grows at 1, 10, 25, 50 and 100 owned
+const cityStage=n=>n>=100?5:n>=50?4:n>=25?3:n>=10?2:n>=1?1:0;
+function drawCity(){
+  const D=HOMES.slice(0,6),hi=homeIdx(),W=380,GAP=112,H=78+D.length*GAP;
+  const tot=Object.values(S.owned).reduce((a,b)=>a+b,0),types=BIZ.filter(b=>S.owned[b.id]>0).length;
+  $('citySub').textContent=t(`${tot} businesses · ${types} of ${BIZ.length} kinds`,`${tot} negocios · ${types} de ${BIZ.length} tipos`);
+  let g='',top='';
+  const sign=(x,y,txt,on)=>{const w=txt.length*7.4+18;return `<g><rect x="${x}" y="${y}" width="${w}" height="21" rx="7" fill="${on?'#3D8C5A':'#A79A88'}" stroke="#2B2340" stroke-width="2.5"/><text x="${x+w/2}" y="${y+15}" text-anchor="middle" font-family="Fredoka,sans-serif" font-weight="600" font-size="12.5" fill="#fff">${txt}</text></g>`};
+  const badge=(x,y,n)=>{const s=(n>=100?'★ ':'')+n,w=s.length*7+10;return `<g><rect x="${x-w/2}" y="${y}" width="${w}" height="17" rx="7" fill="${n>=100?'#F5C542':'#2B2340'}" stroke="${n>=100?'#2B2340':'#FFF6E5'}" stroke-width="2"/><text x="${x}" y="${y+12.5}" text-anchor="middle" font-family="Fredoka,sans-serif" font-weight="700" font-size="11.5" fill="${n>=100?'#2B2340':'#FFF6E5'}">${s}</text></g>`};
+  D.forEach((h,k)=>{
+    const side=k%2,cx=side?250:130,cy=70+k*GAP,TW=120,TH=60,open=k<=hi,items=BIZ.filter(b=>b.home===h.id);
+    const P=`${cx},${cy-TH/2} ${cx+TW},${cy} ${cx},${cy+TH/2} ${cx-TW},${cy}`;
+    if(k<D.length-1){const nx=(k+1)%2?250:130;g+=`<path d="M${cx} ${cy+TH/2}L${nx} ${cy+GAP-TH/2}" stroke="#8E8AA0" stroke-width="10" stroke-linecap="round"/><path d="M${cx} ${cy+TH/2}L${nx} ${cy+GAP-TH/2}" stroke="#FFF6E5" stroke-width="2" stroke-dasharray="6 6"/>`}
+    g+=`<polygon points="${P}" transform="translate(0,10)" fill="${open?'#6B8F5E':'#A79A88'}"/><polygon points="${P}" fill="${open?'#9FD27F':'#D8D0C2'}" stroke="#2B2340" stroke-width="2.5"/>`;
+    top+=sign(side?cx-120:cx+40,cy+22,h.name,open);
+    items.forEach((b,j)=>{
+      const n=S.owned[b.id]||0,s=cityStage(n),bx=cx+(j-(items.length-1)/2)*62;
+      if(!open||!s){top+=open?`<image href="${b.icon}" x="${bx-17}" y="${cy-40}" width="34" height="34" opacity=".3" style="filter:grayscale(1)"/>`:`<text x="${bx}" y="${cy-6}" text-anchor="middle" font-family="Fredoka,sans-serif" font-weight="700" font-size="26" fill="#A79A88">?</text>`;return}
+      const sz=[0,38,44,50,54,58][s];
+      if(s>=3)top+=`<image href="${b.icon}" x="${bx-sz/2+16}" y="${cy-sz*.7+6}" width="${sz*.6}" height="${sz*.6}"/>`;
+      top+=`<image href="${b.icon}" x="${bx-sz/2}" y="${cy-sz+4}" width="${sz}" height="${sz}"/>`+badge(bx,cy+2,n);
+    });
+  });
+  $('cityMap').innerHTML=`<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="${t('Map of your businesses','Mapa de tus negocios')}">${g}${top}</svg>`;
+}
+$('cityBtn').onclick=()=>{audioInit();S.cityNew=false;unlockCheck();drawCity();$('city').classList.add('on')};
+$('cityClose').onclick=()=>$('city').classList.remove('on');
+// ---------- 1.1: Penny Stock Market ----------
+// Six companies whose prices move every minute, also while the game is closed. Prices are points (normal = 100)
+// and one point is 0.1 seconds of your production, so the market weighs the same at any stage of the game.
+// Limits that keep it from breaking progress (see balance/bolsa_impacto_100.py): 2,000 shares per company, 5% fee
+// on every purchase, each purchase keeps the production value of the moment it was bought, and the market can pay
+// at most one day of earnings per day.
+const BOLSA={fee:.05,max:2000,unit:.1,hist:{h2:[1,120],h24:[15,96],h7:[60,168],h30:[360,120]}};
+const COS=[['air','airline','Penny Air','Aerolínea Penny'],['film','studio','Movie Studio','Estudio de Cine'],['space','space','Space Company','Empresa Espacial'],
+  ['bank','bank','Penny Bank','Banco Penny'],['startup','startup','Startup','Startup'],['factory','factory','Factory','Fábrica']];
+const coName=i=>t(COS[i][2],COS[i][3]);
+const DRIFT=[0,.03,-.03,.09,-.09,0],MODEW=[30,20,20,10,10,10];
+function rnd(o){let x=o.r=(o.r+0x6D2B79F5)|0;x=Math.imul(x^x>>>15,x|1);x^=x+Math.imul(x^x>>>7,x|61);return((x^x>>>14)>>>0)/4294967296}
+const gauss=o=>{const u=rnd(o)||1e-9,v=rnd(o);return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)};
+const minuteNow=()=>Math.floor(clockNow()/60000);
+const dayAt=ms=>{const d=new Date(ms+(S.dayOffset||0)*864e5);return Math.floor(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/864e5)};
+const prodNow=()=>baseRate()+helperRate();
+const unitNow=()=>prodNow()*BOLSA.unit;
+// one minute of market: prices, then news (news only change how prices move, never the price itself)
+function stepMarket(B,m,predict){
+  for(const c of B.cos){
+    if(c.ml<=0){let x=rnd(c)*100,k=0;while(k<5&&x>=MODEW[k]){x-=MODEW[k];k++}c.mode=k;c.ml=120+Math.floor(rnd(c)*361)}
+    c.ml--;c.d=c.d*.97+DRIFT[c.mode]*.05+gauss(c)*(c.mode===5?.216:.09);
+    c.v=Math.max(35,Math.min(250,c.v+(100-c.v)*.02+c.d));
+  }
+  if(rnd(B)<1/30){
+    const k=Math.floor(rnd(B)*7),key=k<6?COS[k][0]:'market',idx=Math.floor(rnd(B)*RUMORS[key].length),a=rnd(B),b=rnd(B),len=60+Math.floor(rnd(B)*120);
+    if(k<6){const c=B.cos[k];c.mode=a<.5?5:b<.5?3:4;c.ml=len}else B.cos.forEach(c=>{c.mode=5;c.ml=60});
+    if(!predict){B.news.unshift([m,key,idx,0]);B.news.length=Math.min(B.news.length,3)}
+  }
+  if(m-B.lastStrong>=4320&&rnd(B)<1/1440){
+    const s=Math.floor(rnd(B)*STRONG_NEWS.length),[key,dir]=STRONG_NEWS[s],c=B.cos[COS.findIndex(x=>x[0]===key)],real=rnd(B)<.85?dir:-dir;
+    c.mode=real>0?3:4;c.ml=240+Math.floor(rnd(B)*240);c.d+=real*1.5;B.lastStrong=m;
+    if(!predict){B.news.unshift([m,key,s,1]);B.news.length=Math.min(B.news.length,3)}
+  }
+  if(predict)return;
+  for(const c of B.cos)for(const k in BOLSA.hist){const [every,keep]=BOLSA.hist[k];if(m%every===0){c[k].push(Math.round(c.v*10)/10);if(c[k].length>keep)c[k].shift()}}
+}
+function bolsaInit(){
+  const seed=(Math.random()*4294967296)>>>0,m=minuteNow();
+  const B={on:true,isNew:true,r:seed,m:m-30*1440,cos:COS.map((c,i)=>({r:(seed^(i+1)*2654435761)>>>0,v:80+i*8,d:0,mode:0,ml:0,h2:[],h24:[],h7:[],h30:[],lots:[],sell:null,buy:null})),
+    news:[],lastStrong:-1e9,day:0,gain:0,total:0,peakNext:0,asked:false};
+  S.bolsa=B;
+  // a month of made-up history so the charts are full from day one
+  while(B.m<m){B.m++;stepMarket(B,B.m)}
+}
+// what the market can still pay today: one day of earnings (the last 24 h without the market, at least 3 h of production)
+function trackEarn(v){const h=Math.floor(Date.now()/3.6e6),E=S.e24;if(h>E.h){const k=Math.min(24,h-E.h);for(let i=0;i<k;i++){E.a.shift();E.a.push(0)}E.h=h}E.a[23]+=v}
+const bolsaCap=()=>Math.max(S.e24.a.reduce((a,b)=>a+b,0),3*3600*prodNow());
+function bolsaDay(B,ms){const d=dayAt(ms);if(B.day!==d){B.day=d;B.gain=0}}
+const bolsaRoom=()=>Math.max(0,bolsaCap()-S.bolsa.gain);
+const held=c=>c.lots.reduce((a,l)=>a+l.n,0);
+// money back from the market: what you paid always returns; the profit is capped and counts as earned
+function bolsaPay(cost,profit){
+  const B=S.bolsa;let capped=false;if(profit>0){const room=bolsaRoom();if(profit>room){profit=room;capped=true}}
+  B.gain+=profit;B.total+=profit;S.money+=Math.max(0,cost+profit);if(profit>0){S.total+=profit;S.alltime+=profit}
+  return {profit,capped};
+}
+function sellCo(c,n,ms){
+  let cost=0,val=0;n=Math.min(n,held(c));if(n<=0)return null;
+  while(n>0&&c.lots.length){const l=c.lots[0],k=Math.min(n,l.n);cost+=k*l.p*l.u;val+=k*c.v*l.u;l.n-=k;n-=k;if(!l.n)c.lots.shift()}
+  bolsaDay(S.bolsa,ms);return bolsaPay(cost,val-cost);
+}
+function buyCo(c,n,ms){
+  bolsaDay(S.bolsa,ms);if(bolsaRoom()<=0)return 0;
+  const u=unitNow(),each=c.v*(1+BOLSA.fee)*u;if(!(each>0))return 0;
+  n=Math.min(n,BOLSA.max-held(c),Math.floor(S.money/each));if(n<=0)return 0;
+  S.money-=n*each;c.lots.push({n,p:c.v*(1+BOLSA.fee),u});return n;
+}
+// orders run every minute, also while you are away
+function runOrders(B,m,report){
+  B.cos.forEach((c,i)=>{
+    if(c.sell&&c.lots.length&&c.v>=c.sell){const r=sellCo(c,BOLSA.max,m*60000);c.sell=null;if(r&&report)report.push([i,'sell',r.profit,r.capped])}
+    if(c.buy&&c.v<=c.buy){const n=buyCo(c,BOLSA.max,m*60000);if(n){c.buy=null;if(report)report.push([i,'buy',n])}}
+  });
+}
+// catch up on the minutes that went by (at most 30 days); returns what your orders did
+function bolsaCatchUp(){
+  const B=S.bolsa;if(!B||!B.on)return [];
+  const m=minuteNow();if(m<=B.m)return [];
+  if(m-B.m>43200)B.m=m-43200;
+  const rep=[];while(B.m<m){B.m++;stepMarket(B,B.m);runOrders(B,B.m,rep)}
+  return rep;
+}
+function reportOrders(rep){
+  rep.forEach(([i,kind,x,capped],j)=>setTimeout(()=>toast(kind==='sell'
+    ?t(`Market: your ${coName(i)} shares were sold. Profit ${x>=0?'+':'−'}${fmt(Math.abs(x))}`,`Bolsa: se vendieron tus acciones de ${coName(i)}. Ganancia ${x>=0?'+':'−'}${fmt(Math.abs(x))}`)+(capped?t(' (today\'s limit)',' (tope de hoy)'):'')
+    :t(`Market: you bought ${x} ${coName(i)} shares`,`Bolsa: compraste ${x} acciones de ${coName(i)}`),'#CDEBDD',true),900+j*4200));
+}
+// passing it on sells everything at today's price
+function bolsaOnInherit(){
+  const B=S.bolsa;if(!B||!B.on)return;bolsaCatchUp();
+  B.cos.forEach(c=>{sellCo(c,BOLSA.max,clockNow());c.sell=c.buy=null});
+}
+// ---------- Stock Market screens ----------
+let stockSel=-1,stockRange='h24';
+const RANGES=[['h2','2 h'],['h24','24 h'],['h7','7 d'],['h30','30 d']];
+const pct=v=>(v>=0?'+':'−')+dec(Math.abs(v),1)+'%';
+// charts zoom to the period's low and high, so even small moves fill the chart (the market itself does not change)
+function chartSvg(arr,W,H,opt={}){
+  if(arr.length<2)return '';
+  const lo=Math.min(...arr,opt.line||Infinity),hi=Math.max(...arr,opt.line||-Infinity),pad=(hi-lo||1)*.08,mn=lo-pad,mx=hi+pad,X=k=>k*W/(arr.length-1),Y=v=>H-(v-mn)/(mx-mn)*H;
+  const up=arr[arr.length-1]>=arr[0],col=up?'#24946A':'#D9473B',pts=arr.map((v,k)=>X(k).toFixed(1)+','+Y(v).toFixed(1)).join(' '),id='cg'+(opt.id||0);
+  let s=`<svg viewBox="0 0 ${W} ${H}" width="100%" height="${opt.h||H}" preserveAspectRatio="none" aria-hidden="true">`;
+  if(opt.fill!==false)s+=`<defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${col}" stop-opacity=".45"/><stop offset="1" stop-color="${col}" stop-opacity="0"/></linearGradient></defs><polygon points="0,${H} ${pts} ${W},${H}" fill="url(#${id})"/>`;
+  if(opt.line)s+=`<line x1="0" x2="${W}" y1="${Y(opt.line)}" y2="${Y(opt.line)}" stroke="#2B2340" stroke-width="1.5" stroke-dasharray="5 4" vector-effect="non-scaling-stroke"/>`;
+  return s+`<polyline fill="none" stroke="${col}" stroke-width="${opt.sw||3}" stroke-linejoin="round" vector-effect="non-scaling-stroke" points="${pts}"/></svg>`;
+}
+function newsText(n){const [m,key,idx,strong]=n,r=strong?STRONG_NEWS[idx]:RUMORS[key][idx];return strong?t(r[3],r[2]):t(r[1],r[0])}
+const ago=m=>{const d=Math.max(0,minuteNow()-m);return d<60?t(`${d} min ago`,`hace ${d} min`):t(`${Math.floor(d/60)} h ago`,`hace ${Math.floor(d/60)} h`)};
+function drawStock(){
+  const B=S.bolsa;if(!B)return;const u=unitNow();
+  bolsaDay(B,clockNow());
+  const value=B.cos.reduce((a,c)=>a+c.lots.reduce((x,l)=>x+l.n*c.v*l.u,0),0),room=bolsaRoom();
+  $('stockBack').hidden=stockSel<0;
+  if(stockSel<0){
+    $('stockTitle').textContent=t('Penny Stock Market','Bolsa de Penny');$('stockSub').textContent=t(`Up to ${BOLSA.max} shares per company`,`Hasta ${BOLSA.max} acciones por empresa`);
+    $('stockBody').innerHTML=`<div class="scart"><div>${t('Your shares','Tus acciones')}<b>${fmt(value)}</b></div><div>${t('Profit today','Ganancia de hoy')}<b class="${B.gain>=0?'g':'r'}">${B.gain<0?'−':''}${fmt(Math.abs(B.gain))}</b></div><div>${t('Left today','Tope restante')}<b>${fmt(room)}</b></div></div>`
+      +(B.news.length?`<div class="sticker"><span>${B.news.map(n=>`<i>${n[3]?t('NEWS','NOTICIA'):t('RUMOR','RUMOR')}</i> ${newsText(n)} <em>${ago(n[0])}</em>`).join(' · ')}</span></div>`:'')
+      +`<div class="slist">${B.cos.map((c,i)=>{const h=c.h24,ch=h.length?(c.v/h[0]-1)*100:0,n=held(c);
+        return `<button class="sco" data-i="${i}"><img src="${BIZM[COS[i][1]].icon}" alt=""><span><b>${coName(i)}</b><small>${n?t(`You own ${n}`,`Tenés ${n}`):t('None owned','No tenés')}${c.sell||c.buy?' · '+t('order on','orden activa'):''}</small></span><span class="spr">${fmt(c.v*u)}<small class="${ch>=0?'g':'r'}">${ch>=0?'▲':'▼'} ${pct(Math.abs(ch)).slice(1)}</small></span><span class="spk">${chartSvg(c.h24.concat([c.v]),70,32,{fill:false,sw:2.2,h:32})}</span></button>`}).join('')}</div>`
+      +(room<=0?`<p class="snote">${t('Market closed for today: you reached the daily limit. Come back tomorrow!','Mercado cerrado por hoy: llegaste al tope diario. ¡Volvé mañana!')}</p>`:`<p class="snote">${t('Prices move every minute, even with the game closed. Buying has a 5% fee.','Los precios se mueven cada minuto, también con el juego cerrado. Comprar tiene 5% de comisión.')}</p>`);
+    $('stockBody').querySelectorAll('.sco').forEach(b=>b.onclick=()=>{stockSel=+b.dataset.i;drawStock()});
+    return;
+  }
+  const i=stockSel,c=B.cos[i],n=held(c),arr=c[stockRange].concat([c.v]),ch=(c.v/arr[0]-1)*100;
+  const paid=c.lots.reduce((a,l)=>a+l.n*l.p*l.u,0),now$=c.lots.reduce((a,l)=>a+l.n*c.v*l.u,0),avg=n?c.lots.reduce((a,l)=>a+l.n*l.p,0)/n:0;
+  const each=c.v*(1+BOLSA.fee)*u;
+  $('stockTitle').textContent=coName(i);$('stockSub').textContent=t(`You own ${n} of ${BOLSA.max} shares`,`Tenés ${n} de ${BOLSA.max} acciones`);
+  const ord=(k,label)=>{const v=c[k];return `<div class="sord"><span>${label}</span><span class="sstep"><button data-o="${k}" data-d="-1">−</button><b>${fmt((v||Math.max(36,Math.min(249,Math.round(c.v*(k==='sell'?1.1:.9)))))*u)}</b><button data-o="${k}" data-d="1">+</button></span><button class="sw" data-ot="${k}" aria-pressed="${!!v}">${v?t('On','Activa'):t('Off','No')}</button></div>`};
+  $('stockBody').innerHTML=`<div class="sdet"><div class="sprice"><div><small>${t('Price per share','Precio por acción')}</small><b>${fmt(c.v*u)}</b></div><span class="${ch>=0?'g':'r'}">${ch>=0?'▲':'▼'} ${pct(Math.abs(ch)).slice(1)}</span></div>
+    <div class="schips">${RANGES.map(([k,l])=>`<button data-r="${k}" aria-pressed="${k===stockRange}">${l}</button>`).join('')}</div>
+    <div class="schart">${chartSvg(arr,320,150,{id:i,line:n?avg:0,h:150})}<div class="sax"><span>${t('high','máx')} ${fmt(Math.max(...arr)*u)}</span><span>${t('low','mín')} ${fmt(Math.min(...arr)*u)}</span></div></div>
+    <div class="shold">${n?t(`You paid <b>${fmt(paid)}</b> (5% fee included) · worth now <b>${fmt(now$)}</b>`,`Pagaste <b>${fmt(paid)}</b> (con 5% de comisión) · valen hoy <b>${fmt(now$)}</b>`)+(n?`<br><span class="sline">- - -</span> ${t('your average price','tu precio promedio')}`:''):t('You have no shares of this company.','No tenés acciones de esta empresa.')}</div>
+    <div class="sbtns">${[[10,'+10'],[100,'+100'],[BOLSA.max,t('Max','Máx')]].map(([k,l])=>`<button class="sbuy" data-b="${k}" ${room>0&&n<BOLSA.max?'':'disabled'}>${t('Buy','Comprar')} ${l}</button>`).join('')}</div>
+    <div class="sbtns">${[[10,'10'],[100,'100'],[BOLSA.max,t('all','todo')]].map(([k,l])=>`<button class="ssell" data-s="${k}" ${n?'':'disabled'}>${t('Sell','Vender')} ${l}</button>`).join('')}</div>
+    ${ord('sell',t('Sell all if it reaches','Vender todo si llega a'))}${ord('buy',t('Buy max if it drops to','Comprar máx si baja a'))}
+    <p class="snote">${room<=0?t('Daily limit reached: buying opens again tomorrow. You can still sell.','Llegaste al tope de hoy: se puede volver a comprar mañana. Vender sí podés.'):t(`One share costs ${fmt(each)} with the fee. Profit left for today: ${fmt(room)}.`,`Una acción cuesta ${fmt(each)} con la comisión. Ganancia que te queda hoy: ${fmt(room)}.`)}</p></div>`;
+  const body=$('stockBody');
+  body.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>{stockRange=b.dataset.r;drawStock()});
+  body.querySelectorAll('.sbuy').forEach(b=>b.onclick=()=>{const k=buyCo(c,+b.dataset.b,clockNow());if(k){play('buy');buzz(15);toast(t(`Bought ${k} shares`,`Compraste ${k} acciones`),'#CDEBDD');save()}else toast(t('Not enough money for a share','No te alcanza para una acción'));drawStock()});
+  body.querySelectorAll('.ssell').forEach(b=>b.onclick=()=>{const r=sellCo(c,+b.dataset.s,clockNow());if(r){play(r.profit>0?'find':'buy');buzz(15);if(r.capped)toast(t('Daily limit reached: part of that profit did not count','Llegaste al tope de hoy: parte de esa ganancia no se sumó'),null,true);save()}drawStock()});
+  body.querySelectorAll('[data-o]').forEach(b=>b.onclick=()=>{const k=b.dataset.o;const base=c[k]||Math.max(36,Math.min(249,Math.round(c.v*(k==='sell'?1.1:.9))));c[k]=Math.max(36,Math.min(249,base+(+b.dataset.d)*Math.max(1,Math.round(base*.02))));orderSet();drawStock()});
+  body.querySelectorAll('[data-ot]').forEach(b=>b.onclick=()=>{const k=b.dataset.ot;c[k]=c[k]?null:Math.max(36,Math.min(249,Math.round(c.v*(k==='sell'?1.1:.9))));if(c[k])orderSet();save();drawStock()});
+}
+// the first order is the moment to offer alerts: the benefit is the alert itself, there is no prize for it
+function orderSet(){const B=S.bolsa;save();if(!B.asked&&window.PennyNative){B.asked=true;save();$('stockAsk').classList.add('on')}}
+$('stockAskYes').onclick=()=>{S.settings.notifB=true;$('stockAsk').classList.remove('on');askNotif(true);syncSettings();save()};
+$('stockAskNo').onclick=()=>$('stockAsk').classList.remove('on');
+$('stockBtn').onclick=()=>{audioInit();if(S.bolsa)S.bolsa.isNew=false;unlockCheck();reportOrders(bolsaCatchUp());stockSel=-1;drawStock();$('stock').classList.add('on')};
+$('stockClose').onclick=()=>{$('stock').classList.remove('on');save()};
+$('stockBack').onclick=()=>{stockSel=-1;drawStock()};
+$('stockHelloGo').onclick=()=>{$('stockHello').classList.remove('on');$('stockBtn').onclick()};
+// ---------- Rush hour: a 30-second micro-game while you play ----------
+// shows up now and then if you tapped in the last 30 seconds, at most once every 15 minutes of play; 3 borrowed
+// shares, up to 3 buy-and-sell rounds; it pays between −15 and +60 seconds of production and counts for the daily limit
+const PEAK={len:30,tick:400,ops:3,sec:1/3,min:-15,max:60};
+let P=null,peakOffer=null;
+function peakCheck(){
+  const B=S.bolsa;if(!B||!B.on||P||peakOffer||document.hidden)return;
+  if(now()-T.lastTap>30||S.play<B.peakNext||document.querySelector('.overlay.on,.full.on'))return;
+  if(Math.random()>.02)return;
+  const i=Math.floor(Math.random()*6),b=document.createElement('button');b.className='peakoffer';
+  b.innerHTML=`<small>${t('RUSH HOUR · 30 seconds','¡HORA PICO! · 30 segundos')}</small>${t(`${coName(i)} went wild`,`${coName(i)} se volvió loca`)}<span>${t('Play','Jugar')}</span>`;
+  scene.appendChild(b);peakOffer=b;play('appear2');
+  const gone=setTimeout(()=>{b.remove();peakOffer=null;B.peakNext=S.play+300},12000);
+  b.onclick=()=>{clearTimeout(gone);b.remove();peakOffer=null;peakStart(i)};
+}
+function peakStart(i){
+  audioInit();const B=S.bolsa;B.peakNext=S.play+900;
+  P={i,p:100,d:0,arr:[100],left:PEAK.len,ops:0,hold:null,res:0,marks:[]};
+  $('peakName').textContent=coName(i);$('peak').classList.add('on');drawPeak();
+  P.timer=setInterval(()=>{
+    P.d=P.d*.85+(Math.random()*2-1)*1.9;P.p=Math.max(70,Math.min(130,P.p+P.d));P.arr.push(P.p);if(P.arr.length>60)P.arr.shift();
+    P.left-=PEAK.tick/1000;if(P.left<=0)peakEnd();else drawPeak();
+  },PEAK.tick);
+}
+const peakMoney=pts=>pts*3*PEAK.sec*prodNow();
+function drawPeak(){
+  $('peakLeft').textContent='0:'+String(Math.ceil(P.left)).padStart(2,'0');
+  $('peakGain').textContent=(P.res<0?'−':'+')+fmt(Math.abs(peakMoney(P.res)));$('peakGain').className=P.res<0?'r':'g';
+  $('peakChart').innerHTML=chartSvg(P.arr,320,170,{id:'pk',line:P.hold,h:170});
+  $('peakPrice').textContent=fmt(P.p*PEAK.sec*prodNow());
+  $('peakBuy').disabled=!!P.hold||P.ops>=PEAK.ops;$('peakSell').disabled=!P.hold;
+  $('peakOps').textContent=t(`Rounds left: ${PEAK.ops-P.ops}`,`Rondas que quedan: ${PEAK.ops-P.ops}`);
+}
+$('peakBuy').onclick=()=>{if(!P||P.hold||P.ops>=PEAK.ops)return;P.hold=P.p;play('tap');buzz(10);drawPeak()};
+$('peakSell').onclick=()=>{if(!P||!P.hold)return;const g=P.p-P.hold;P.res+=g;P.hold=null;P.ops++;play(g>0?'find':'tap');buzz(15);drawPeak();if(P.ops>=PEAK.ops)setTimeout(peakEnd,500)};
+function peakEnd(){
+  if(!P)return;clearInterval(P.timer);if(P.hold){P.res+=P.p-P.hold;P.hold=null}
+  const pts=Math.max(PEAK.min,Math.min(PEAK.max,P.res*3*PEAK.sec)),v=pts*prodNow(),B=S.bolsa;
+  bolsaDay(B,clockNow());const r=bolsaPay(0,v);
+  $('peak').classList.remove('on');P=null;
+  toast(r.profit>=0?t(`Rush hour: +${fmt(r.profit)}`,`Hora pico: +${fmt(r.profit)}`):t(`Rush hour: −${fmt(-r.profit)}. Better luck next time!`,`Hora pico: −${fmt(-r.profit)}. ¡La próxima sale mejor!`),r.profit>=0?'#CDEBDD':null);
+  save();
+}
+// ---------- phone alerts: few and never at night ----------
+// at most 2 a day (piggy bank and market together), 4 h apart or more, only 10:00 to 21:00, never within 1 h of playing
+function fitNotif(ms){
+  const log=S.nlog||(S.nlog=[]);ms=Math.max(ms,Date.now()+3600e3);
+  for(let k=0;k<20;k++){
+    const d=new Date(ms),h=d.getHours();
+    if(h<10){d.setHours(10,0,0,0);ms=d.getTime();continue}
+    if(h>=21){d.setDate(d.getDate()+1);d.setHours(10,0,0,0);ms=d.getTime();continue}
+    const near=log.find(x=>Math.abs(x-ms)<4*3600e3);if(near){ms=near+4*3600e3;continue}
+    const day=d.toDateString();if(log.filter(x=>new Date(x).toDateString()===day).length>=2){d.setDate(d.getDate()+1);d.setHours(10,0,0,0);ms=d.getTime();continue}
+    return ms;
+  }
+  return null;
+}
+// when an order will run, found by playing the market forward on a copy (prices follow a fixed random sequence)
+function predictOrder(){
+  const B=S.bolsa;if(!B||!B.on||!B.cos.some(c=>c.sell&&c.lots.length||c.buy))return null;
+  const X=JSON.parse(JSON.stringify({r:B.r,lastStrong:B.lastStrong,cos:B.cos.map(c=>({r:c.r,v:c.v,d:c.d,mode:c.mode,ml:c.ml}))}));
+  for(let m=B.m+1;m<=B.m+2880;m++){
+    stepMarket(X,m,true);
+    for(let i=0;i<6;i++){const c=B.cos[i],x=X.cos[i];if(c.sell&&c.lots.length&&x.v>=c.sell)return [m*60000,i,'sell'];if(c.buy&&x.v<=c.buy&&S.money>=x.v*(1+BOLSA.fee)*unitNow())return [m*60000,i,'buy']}
+  }
+  return null;
+}
+function scheduleBolsaNotif(){
+  if(!window.PennyNative||!S.settings.notifB)return;
+  const p=predictOrder();if(!p)return;
+  const at=fitNotif(p[0]);if(!at)return;S.nlog.push(at);
+  PennyNative.notify(at,p[2]==='sell'?t(`Your ${coName(p[1])} shares were sold`,`Se vendieron tus acciones de ${coName(p[1])}`):t(`You bought ${coName(p[1])} shares`,`Compraste acciones de ${coName(p[1])}`),
+    t('Come and see how the market is doing.','Entrá a ver cómo quedó la Bolsa.'),t('Stock market','Bolsa'),2,'bolsa');
+}
+function bolsaLive(){
+  const B=S.bolsa;if(!B||!B.on)return;const before=B.m,rep=bolsaCatchUp();
+  if(rep.length)reportOrders(rep);
+  if(B.m!==before&&$('stock').classList.contains('on'))drawStock();
+}
 // ---------- main loop ----------
 let ringShown=-1;
 function ring(f){const v=Math.round(f*200)/2;if(v!==ringShown){ringShown=v;$('ringFill').setAttribute('stroke-dasharray',`${v} 100`)}}
@@ -1103,11 +1511,12 @@ function loop(ms){
   refresh();
   slowAcc+=dt;if(slowAcc>.5){slowAcc=0;
     const h=homeIdx();if(h!==T.home){changed();applyHome(h,T.home>=0&&h>T.home);sig=''}
-    maybeRerender();checkMilestones();drawPiggy();drawHome();updateShares()}
+    maybeRerender();checkMilestones();drawPiggy();drawHome();updateShares();unlockCheck();heirCheck();bolsaLive();peakCheck()}
   saveAcc+=dt;if(saveAcc>5){saveAcc=0;save()}
   requestAnimationFrame(loop);
 }
 load();changed();applyLang();syncSettings();offline();layoutHands();applyHome(homeIdx(),false);drawPiggy();drawTrophies();cancelNotif();
+S.nlog=S.nlog.filter(x=>x<=Date.now());unlockCheck();reportOrders(bolsaCatchUp());
 if(!S.welcomed)$('welcome').classList.add('on');
 setTimeout(checkDaily,600);
 if(!S.notifAsked&&rate()>0)setTimeout(askNotif,8000);
