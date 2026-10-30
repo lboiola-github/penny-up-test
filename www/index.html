@@ -255,6 +255,23 @@ html,body,.phone{touch-action:manipulation}
 .sco img{width:38px;height:38px}.sco b{display:block;font-family:var(--display);font-weight:600;font-size:14px;line-height:1.15}
 .sco small{display:block;font-size:11px;font-weight:800;color:var(--muted)}
 .spr{text-align:right;font-family:var(--display);font-weight:700;font-size:13px;line-height:1.2}.spr small{font-family:var(--display);font-size:12px}
+.scash{display:flex;justify-content:center;align-items:baseline;gap:6px;padding:6px 8px;background:var(--gold);border-bottom:3px solid var(--ink);font-weight:800;font-size:12px;color:var(--ink)}.scash b{font:700 16px var(--display)}
+.swrap{position:relative}.smark{position:absolute;right:2px;transform:translateY(-50%);color:#fff;font:800 10.5px var(--body);padding:1px 6px;border-radius:6px;white-space:nowrap;pointer-events:none}
+.sbtns.two{grid-template-columns:1fr 1fr}.sbtns.two button{padding:10px 0;font-size:18px}
+.sord .otx b{display:block;font:600 14px var(--display);color:var(--ink)}.sord .otx small{display:block;font-size:11px;font-weight:800;color:var(--muted)}
+.sord[data-act="false"]{background:#F4EEE4}.sord[data-act="false"] .otx b{color:var(--muted)}.sord[data-k="sell"][data-act="true"]{border-color:#24946A;box-shadow:inset 5px 0 0 #24946A}.sord[data-k="buy"][data-act="true"]{border-color:#3B7DD8;box-shadow:inset 5px 0 0 #3B7DD8}
+.sord[data-k="sell"][data-act="true"] .otx small{color:#24946A}.sord[data-k="buy"][data-act="true"] .otx small{color:#3B7DD8}
+.tog{width:46px;height:28px;border-radius:999px;border:2.5px solid var(--ink);background:#CFC4B4;position:relative;padding:0;cursor:pointer}
+.tog i{position:absolute;top:2px;left:2px;width:19px;height:19px;border-radius:50%;background:#fff;border:2px solid var(--ink);transition:left .15s}
+.sord[data-k="sell"] .tog[aria-checked="true"]{background:#24946A}.sord[data-k="buy"] .tog[aria-checked="true"]{background:#3B7DD8}.tog[aria-checked="true"] i{left:20px}
+.ssheet{position:absolute;inset:0;background:#2B234088;display:none;align-items:flex-end;z-index:3}.ssheet.on{display:flex}
+.shbox{width:100%;background:var(--cream);border-top:3px solid var(--ink);border-radius:20px 20px 0 0;padding:14px 16px calc(16px + var(--sb,0px));display:grid;gap:12px}
+.shbox h4{margin:0;text-align:center;font:600 19px var(--display)}
+.shqty{display:grid;grid-template-columns:48px 1fr 48px;align-items:center;text-align:center}.shqty b{display:block;font:700 34px var(--display)}.shqty small{font-weight:800;font-size:12px;color:var(--muted)}
+.shqty button,#shAll{height:48px;border:2.5px solid var(--ink);border-radius:12px;background:#fff;font:700 24px var(--display);color:var(--ink);cursor:pointer}
+.shrow{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}#shRange{width:100%;accent-color:var(--penny)}#shAll{font-size:15px;padding:0 12px;height:36px}
+.shinfo{background:#fff;border:2.5px solid var(--ink);border-radius:14px;padding:9px 12px;text-align:center;font-weight:800;font-size:14px;color:var(--muted)}.shinfo b{display:block;font:700 24px var(--display);color:var(--ink)}.shinfo small{display:block;font-size:12px}
+.shbtns{display:grid;grid-template-columns:1fr 1.6fr;gap:10px}.shbtns button{padding:12px 0;font-size:18px}#shCancel{border:2.5px solid var(--ink);border-radius:12px;background:#fff;font:600 18px var(--display);color:var(--ink);box-shadow:0 3px 0 var(--ink);cursor:pointer}
 .snote{font-size:12px;font-weight:700;color:var(--muted);text-align:center;margin:6px 12px 12px}
 .sdet{padding:9px 12px}
 .sprice{display:flex;justify-content:space-between;align-items:flex-end;font-family:var(--display);font-weight:700}
@@ -272,7 +289,7 @@ html,body,.phone{touch-action:manipulation}
 .ssell{background:var(--coral)}
 .sbuy:disabled,.ssell:disabled{background:#E6DCCD;color:var(--muted);cursor:default}
 .sbuy:active:not(:disabled),.ssell:active:not(:disabled){transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
-.sord{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:6px;align-items:center;background:#fff;border:2.5px solid var(--ink);border-radius:14px;padding:6px 8px;margin-bottom:7px;font-weight:800;font-size:12px;color:var(--muted)}
+.sord{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px;align-items:center;background:#fff;border:2.5px solid var(--ink);border-radius:14px;padding:6px 8px;margin-bottom:7px;font-weight:800;font-size:12px;color:var(--muted)}
 .sstep{display:flex;align-items:center;gap:4px}
 .sstep button{width:28px;height:28px;border:2.5px solid var(--ink);border-radius:8px;background:var(--cream);font:700 16px var(--display);cursor:pointer;color:var(--ink);padding:0}
 .sstep b{font-family:var(--display);color:var(--ink);font-size:13px;min-width:64px;text-align:center}
@@ -385,6 +402,11 @@ html,body,.phone{touch-action:manipulation}
   <div class="full" id="stock">
     <div class="ftop"><button class="fx2 l" id="stockBack" aria-label="Back" data-es-aria="Volver" hidden><svg viewBox="0 0 24 24"><path d="M15 4 7 12l8 8" fill="none" stroke="#2B2340" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h3 id="stockTitle"></h3><small id="stockSub"></small><button class="fx2 r" id="stockClose" aria-label="Close" data-es-aria="Cerrar">✕</button></div>
     <div class="fbody" id="stockBody"></div>
+    <div class="ssheet" id="stockSheet"><div class="shbox"><h4 id="shTitle"></h4>
+      <div class="shqty"><button id="shMinus" aria-label="−">−</button><span><b id="shN">0</b><small><span data-es="acciones">shares</span> <span id="shMax"></span></small></span><button id="shPlus" aria-label="+">+</button></div>
+      <div class="shrow"><input type="range" id="shRange" min="1" max="1" step="1"><button id="shAll" data-es="Máx">Max</button></div>
+      <div class="shinfo" id="shInfo"></div>
+      <div class="shbtns"><button id="shCancel" data-es="Cancelar">Cancel</button><button id="shOk" class="sbuy"></button></div></div></div>
   </div>
   <div class="full dark" id="peak">
     <div class="ftop"><h3 data-es="¡Hora pico!">Rush hour!</h3><small id="peakName"></small></div>
@@ -1317,8 +1339,8 @@ function buyCo(c,n,ms){
 // orders run every minute, also while you are away
 function runOrders(B,m,report){
   B.cos.forEach((c,i)=>{
-    if(c.sell&&c.lots.length&&c.v>=c.sell){const r=sellCo(c,BOLSA.max,m*60000);c.sell=null;if(r&&report)report.push([i,'sell',r.profit,r.capped])}
-    if(c.buy&&c.v<=c.buy){const n=buyCo(c,BOLSA.max,m*60000);if(n){c.buy=null;if(report)report.push([i,'buy',n])}}
+    if(c.sell&&c.lots.length&&c.v>=c.sell){const r=sellCo(c,BOLSA.max,m*60000);c.sellV=c.sell;c.sell=null;if(r&&report)report.push([i,'sell',r.profit,r.capped])}
+    if(c.buy&&c.v<=c.buy){const n=buyCo(c,BOLSA.max,m*60000);if(n){c.buyV=c.buy;c.buy=null;if(report)report.push([i,'buy',n])}}
   });
 }
 // catch up on the minutes that went by (at most 30 days); returns what your orders did
@@ -1346,11 +1368,12 @@ const pct=v=>(v>=0?'+':'−')+dec(Math.abs(v),1)+'%';
 // charts zoom to the period's low and high, so even small moves fill the chart (the market itself does not change)
 function chartSvg(arr,W,H,opt={}){
   if(arr.length<2)return '';
-  const lo=Math.min(...arr,opt.line||Infinity),hi=Math.max(...arr,opt.line||-Infinity),pad=(hi-lo||1)*.08,mn=lo-pad,mx=hi+pad,X=k=>k*W/(arr.length-1),Y=v=>H-(v-mn)/(mx-mn)*H;
+  const mk=(opt.marks||[]).map(k=>k.v),lo=Math.min(...arr,...mk,opt.line||Infinity),hi=Math.max(...arr,...mk,opt.line||-Infinity),pad=(hi-lo||1)*.08,mn=lo-pad,mx=hi+pad,X=k=>k*W/(arr.length-1),Y=v=>H-(v-mn)/(mx-mn)*H;
   const up=arr[arr.length-1]>=arr[0],col=up?'#24946A':'#D9473B',pts=arr.map((v,k)=>X(k).toFixed(1)+','+Y(v).toFixed(1)).join(' '),id='cg'+(opt.id||0);
   let s=`<svg viewBox="0 0 ${W} ${H}" width="100%" height="${opt.h||H}" preserveAspectRatio="none" aria-hidden="true">`;
   if(opt.fill!==false)s+=`<defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${col}" stop-opacity=".45"/><stop offset="1" stop-color="${col}" stop-opacity="0"/></linearGradient></defs><polygon points="0,${H} ${pts} ${W},${H}" fill="url(#${id})"/>`;
   if(opt.line)s+=`<line x1="0" x2="${W}" y1="${Y(opt.line)}" y2="${Y(opt.line)}" stroke="#2B2340" stroke-width="1.5" stroke-dasharray="5 4" vector-effect="non-scaling-stroke"/>`;
+  (opt.marks||[]).forEach(k=>{s+=`<line x1="0" x2="${W}" y1="${Y(k.v)}" y2="${Y(k.v)}" stroke="${k.col}" stroke-width="2" stroke-dasharray="${k.dash||'6 4'}" vector-effect="non-scaling-stroke"/>`;k.y=Y(k.v)/H*100});
   return s+`<polyline fill="none" stroke="${col}" stroke-width="${opt.sw||3}" stroke-linejoin="round" vector-effect="non-scaling-stroke" points="${pts}"/></svg>`;
 }
 function newsText(n){const [m,key,idx,strong]=n,r=strong?STRONG_NEWS[idx]:RUMORS[key][idx];return strong?t(r[3],r[2]):t(r[1],r[0])}
@@ -1362,41 +1385,70 @@ function drawStock(){
   $('stockBack').hidden=stockSel<0;
   if(stockSel<0){
     $('stockTitle').textContent=t('Penny Stock Market','Bolsa de Penny');$('stockSub').textContent=t(`Up to ${BOLSA.max} shares per company`,`Hasta ${BOLSA.max} acciones por empresa`);
-    $('stockBody').innerHTML=`<div class="scart"><div>${t('Your shares','Tus acciones')}<b>${fmt(value)}</b></div><div>${t('Profit today','Ganancia de hoy')}<b class="${B.gain>=0?'g':'r'}">${B.gain<0?'−':''}${fmt(Math.abs(B.gain))}</b></div><div>${t('Left today','Tope restante')}<b>${fmt(room)}</b></div></div>`
+    $('stockBody').innerHTML=`<div class="scash">${t('Your money','Tu plata')} <b>${fmt(S.money)}</b></div><div class="scart"><div>${t('Your shares','Tus acciones')}<b>${fmt(value)}</b></div><div>${t('Profit today','Ganancia de hoy')}<b class="${B.gain>=0?'g':'r'}">${B.gain<0?'−':''}${fmt(Math.abs(B.gain))}</b></div><div>${t('Left today','Tope restante')}<b>${fmt(room)}</b></div></div>`
       +(B.news.length?`<div class="sticker"><span>${B.news.map(n=>`<i>${n[3]?t('NEWS','NOTICIA'):t('RUMOR','RUMOR')}</i> ${newsText(n)} <em>${ago(n[0])}</em>`).join(' · ')}</span></div>`:'')
       +`<div class="slist">${B.cos.map((c,i)=>{const h=c.h24,ch=h.length?(c.v/h[0]-1)*100:0,n=held(c);
-        return `<button class="sco" data-i="${i}"><img src="${BIZM[COS[i][1]].icon}" alt=""><span><b>${coName(i)}</b><small>${n?t(`You own ${n}`,`Tenés ${n}`):t('None owned','No tenés')}${c.sell||c.buy?' · '+t('order on','orden activa'):''}</small></span><span class="spr">${fmt(c.v*u)}<small class="${ch>=0?'g':'r'}">${ch>=0?'▲':'▼'} ${pct(Math.abs(ch)).slice(1)}</small></span><span class="spk">${chartSvg(c.h24.concat([c.v]),70,32,{fill:false,sw:2.2,h:32})}</span></button>`}).join('')}</div>`
+        return `<button class="sco" data-i="${i}"><img src="${BIZM[COS[i][1]].icon}" alt=""><span><b>${coName(i)}</b><small>${n?t(`You own ${n}`,`Tenés ${n}`):t('None owned','No tenés')}${c.sell||c.buy?' · '+t('order on','orden activa'):''}</small></span><span class="spr">${quote(c.v)}<small class="${ch>=0?'g':'r'}">${ch>=0?'▲':'▼'} ${pct(Math.abs(ch)).slice(1)}</small></span><span class="spk">${chartSvg(c.h24.concat([c.v]),70,32,{fill:false,sw:2.2,h:32})}</span></button>`}).join('')}</div>`
       +(room<=0?`<p class="snote">${t('Market closed for today: you reached the daily limit. Come back tomorrow!','Mercado cerrado por hoy: llegaste al tope diario. ¡Volvé mañana!')}</p>`:`<p class="snote">${t('Prices move every minute, even with the game closed. Buying has a 5% fee.','Los precios se mueven cada minuto, también con el juego cerrado. Comprar tiene 5% de comisión.')}</p>`);
     $('stockBody').querySelectorAll('.sco').forEach(b=>b.onclick=()=>{stockSel=+b.dataset.i;drawStock()});
     return;
   }
   const i=stockSel,c=B.cos[i],n=held(c),arr=c[stockRange].concat([c.v]),ch=(c.v/arr[0]-1)*100;
-  const paid=c.lots.reduce((a,l)=>a+l.n*l.p*l.u,0),now$=c.lots.reduce((a,l)=>a+l.n*c.v*l.u,0),avg=n?c.lots.reduce((a,l)=>a+l.n*l.p,0)/n:0;
-  const each=c.v*(1+BOLSA.fee)*u;
+  const paid=c.lots.reduce((a,l)=>a+l.n*l.p*l.u,0),now$=c.lots.reduce((a,l)=>a+l.n*c.v*l.u,0),avg=n?c.lots.reduce((a,l)=>a+l.n*l.p,0)/n:0,res=now$-paid;
   $('stockTitle').textContent=coName(i);$('stockSub').textContent=t(`You own ${n} of ${BOLSA.max} shares`,`Tenés ${n} de ${BOLSA.max} acciones`);
-  const ord=(k,label)=>{const v=c[k];return `<div class="sord"><span>${label}</span><span class="sstep"><button data-o="${k}" data-d="-1">−</button><b>${fmt((v||Math.max(36,Math.min(249,Math.round(c.v*(k==='sell'?1.1:.9)))))*u)}</b><button data-o="${k}" data-d="1">+</button></span><button class="sw" data-ot="${k}" aria-pressed="${!!v}">${v?t('On','Activa'):t('Off','No')}</button></div>`};
-  $('stockBody').innerHTML=`<div class="sdet"><div class="sprice"><div><small>${t('Price per share','Precio por acción')}</small><b>${fmt(c.v*u)}</b></div><span class="${ch>=0?'g':'r'}">${ch>=0?'▲':'▼'} ${pct(Math.abs(ch)).slice(1)}</span></div>
+  const marks=[];if(n)marks.push({v:avg,col:'#2B2340',lab:t('your buy','tu compra')});
+  if(c.sell)marks.push({v:c.sell,col:'#24946A',lab:t('sell','vender')});if(c.buy)marks.push({v:c.buy,col:'#3B7DD8',lab:t('buy','comprar')});
+  const svg=chartSvg(arr,320,150,{id:i,h:150,marks});
+  marks.slice().sort((a,b)=>a.y-b.y).forEach((k,j,a)=>{k.y=Math.max(8,Math.min(92,k.y));if(j&&k.y-a[j-1].y<13)k.y=a[j-1].y+13});
+  const ord=(k,label,hint)=>{const on=!!c[k],v=ordVal(c,k);return `<div class="sord" data-k="${k}" data-act="${on}"><button class="tog" data-ot="${k}" role="switch" aria-checked="${on}"><i></i></button><span class="otx"><b>${label} ${quote(v)}</b><small>${on?hint:t('Off','Apagada')}</small></span><span class="sstep"><button data-o="${k}" data-d="-1" aria-label="−">−</button><button data-o="${k}" data-d="1" aria-label="+">+</button></span></div>`};
+  $('stockBody').innerHTML=`<div class="scash">${t('Your money','Tu plata')} <b>${fmt(S.money)}</b></div><div class="sdet"><div class="sprice"><div><small>${t('Quote','Cotización')}</small><b>${quote(c.v)}</b></div><span class="${ch>=0?'g':'r'}">${ch>=0?'▲':'▼'} ${pct(Math.abs(ch)).slice(1)}</span></div>
     <div class="schips">${RANGES.map(([k,l])=>`<button data-r="${k}" aria-pressed="${k===stockRange}">${l}</button>`).join('')}</div>
-    <div class="schart">${chartSvg(arr,320,150,{id:i,line:n?avg:0,h:150})}<div class="sax"><span>${t('high','máx')} ${fmt(Math.max(...arr)*u)}</span><span>${t('low','mín')} ${fmt(Math.min(...arr)*u)}</span></div></div>
-    <div class="shold">${n?t(`You paid <b>${fmt(paid)}</b> (5% fee included) · worth now <b>${fmt(now$)}</b>`,`Pagaste <b>${fmt(paid)}</b> (con 5% de comisión) · valen hoy <b>${fmt(now$)}</b>`)+(n?`<br><span class="sline">- - -</span> ${t('your average price','tu precio promedio')}`:''):t('You have no shares of this company.','No tenés acciones de esta empresa.')}</div>
-    <div class="sbtns">${[[10,'+10'],[100,'+100'],[BOLSA.max,t('Max','Máx')]].map(([k,l])=>`<button class="sbuy" data-b="${k}" ${room>0&&n<BOLSA.max?'':'disabled'}>${t('Buy','Comprar')} ${l}</button>`).join('')}</div>
-    <div class="sbtns">${[[10,'10'],[100,'100'],[BOLSA.max,t('all','todo')]].map(([k,l])=>`<button class="ssell" data-s="${k}" ${n?'':'disabled'}>${t('Sell','Vender')} ${l}</button>`).join('')}</div>
-    ${ord('sell',t('Sell all if it reaches','Vender todo si llega a'))}${ord('buy',t('Buy max if it drops to','Comprar máx si baja a'))}
-    <p class="snote">${room<=0?t('Daily limit reached: buying opens again tomorrow. You can still sell.','Llegaste al tope de hoy: se puede volver a comprar mañana. Vender sí podés.'):t(`One share costs ${fmt(each)} with the fee. Profit left for today: ${fmt(room)}.`,`Una acción cuesta ${fmt(each)} con la comisión. Ganancia que te queda hoy: ${fmt(room)}.`)}</p></div>`;
+    <div class="schart"><div class="swrap">${svg}${marks.map(k=>`<span class="smark" style="top:${k.y}%;background:${k.col}">${k.lab} ${quote(k.v)}</span>`).join('')}</div><div class="sax"><span>${t('high','máx')} ${quote(Math.max(...arr))}</span><span>${t('low','mín')} ${quote(Math.min(...arr))}</span></div></div>
+    <div class="shold">${n?t(`You bought at <b>${quote(avg)}</b> on average (fee included)<br>Worth now <b>${fmt(now$)}</b> · <b class="${res>=0?'g':'r'}">${res>=0?'+':'−'}${fmt(Math.abs(res))}</b>`,`Compraste a <b>${quote(avg)}</b> en promedio (con comisión)<br>Valen hoy <b>${fmt(now$)}</b> · <b class="${res>=0?'g':'r'}">${res>=0?'+':'−'}${fmt(Math.abs(res))}</b>`):t('You have no shares of this company.','No tenés acciones de esta empresa.')}</div>
+    <div class="sbtns two"><button class="sbuy" data-sheet="buy" ${room>0&&n<BOLSA.max?'':'disabled'}>${t('Buy','Comprar')}</button><button class="ssell" data-sheet="sell" ${n?'':'disabled'}>${t('Sell','Vender')}</button></div>
+    ${ord('sell',t('Sell all if it reaches','Vender todo si llega a'),t('On: sells by itself, even with the game closed','Activa: se vende sola, aunque el juego esté cerrado'))}${ord('buy',t('Buy max if it drops to','Comprar máx si baja a'),t('On: buys by itself, even with the game closed','Activa: compra sola, aunque el juego esté cerrado'))}
+    <p class="snote">${room<=0?t('Daily limit reached: buying opens again tomorrow. You can still sell.','Llegaste al tope de hoy: se puede volver a comprar mañana. Vender sí podés.'):t(`Today you can still make up to ${fmt(room)} at the market.`,`Hoy todavía podés ganar hasta ${fmt(room)} en la Bolsa.`)}</p></div>`;
   const body=$('stockBody');
   body.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>{stockRange=b.dataset.r;drawStock()});
-  body.querySelectorAll('.sbuy').forEach(b=>b.onclick=()=>{const k=buyCo(c,+b.dataset.b,clockNow());if(k){play('buy');buzz(15);toast(t(`Bought ${k} shares`,`Compraste ${k} acciones`),'#CDEBDD');save()}else toast(t('Not enough money for a share','No te alcanza para una acción'));drawStock()});
-  body.querySelectorAll('.ssell').forEach(b=>b.onclick=()=>{const r=sellCo(c,+b.dataset.s,clockNow());if(r){play(r.profit>0?'find':'buy');buzz(15);if(r.capped)toast(t('Daily limit reached: part of that profit did not count','Llegaste al tope de hoy: parte de esa ganancia no se sumó'),null,true);save()}drawStock()});
-  body.querySelectorAll('[data-o]').forEach(b=>b.onclick=()=>{const k=b.dataset.o;const base=c[k]||Math.max(36,Math.min(249,Math.round(c.v*(k==='sell'?1.1:.9))));c[k]=Math.max(36,Math.min(249,base+(+b.dataset.d)*Math.max(1,Math.round(base*.02))));orderSet();drawStock()});
-  body.querySelectorAll('[data-ot]').forEach(b=>b.onclick=()=>{const k=b.dataset.ot;c[k]=c[k]?null:Math.max(36,Math.min(249,Math.round(c.v*(k==='sell'?1.1:.9))));if(c[k])orderSet();save();drawStock()});
+  body.querySelectorAll('[data-sheet]').forEach(b=>b.onclick=()=>openSheet(b.dataset.sheet));
+  body.querySelectorAll('[data-o]').forEach(b=>b.onclick=()=>{const k=b.dataset.o,base=ordVal(c,k),v=Math.max(36,Math.min(249,base+(+b.dataset.d)*Math.max(1,Math.round(base*.02))));c[k+'V']=v;if(c[k]){c[k]=v;orderSet()}save();drawStock()});
+  body.querySelectorAll('[data-ot]').forEach(b=>b.onclick=()=>{const k=b.dataset.ot;if(c[k]){c[k+'V']=c[k];c[k]=null}else{c[k]=ordVal(c,k);orderSet()}save();drawStock()});
 }
+// quotes are shown as plain numbers (100 = normal), money only where money actually moves
+const quote=v=>dec(Math.round(v),0);
+// the order value is remembered when you switch it off
+const ordVal=(c,k)=>c[k]||c[k+'V']||Math.max(36,Math.min(249,Math.round(c.v*(k==='sell'?1.1:.9))));
+// buy / sell sheet: pick how many and see what it costs before confirming
+let sheet=null;
+function sellPreview(c,n){let cost=0,val=0;for(const l of c.lots){if(n<=0)break;const k=Math.min(n,l.n);cost+=k*l.p*l.u;val+=k*c.v*l.u;n-=k}return {cost,val}}
+function sheetMax(kind,c){if(kind==='sell')return held(c);const each=c.v*(1+BOLSA.fee)*unitNow();return Math.max(0,Math.min(BOLSA.max-held(c),Math.floor(S.money/each)))}
+function openSheet(kind){const c=S.bolsa.cos[stockSel],mx=sheetMax(kind,c);if(mx<=0){toast(t('Not enough money for a share','No te alcanza para una acción'));return}sheet={kind,n:Math.min(mx,kind==='sell'?mx:Math.max(1,Math.min(10,mx)))};drawSheet();$('stockSheet').classList.add('on')}
+function drawSheet(){
+  if(!sheet)return;const c=S.bolsa.cos[stockSel],mx=sheetMax(sheet.kind,c);sheet.n=Math.max(mx?1:0,Math.min(sheet.n,mx));const n=sheet.n,buy=sheet.kind==='buy';
+  $('shTitle').textContent=(buy?t('Buy','Comprar'):t('Sell','Vender'))+' · '+coName(stockSel);
+  $('shN').textContent=dec(n,0);$('shRange').max=mx;$('shRange').value=n;$('shMax').textContent=t(`of ${dec(mx,0)}`,`de ${dec(mx,0)}`);
+  if(buy){const cost=n*c.v*(1+BOLSA.fee)*unitNow();$('shInfo').innerHTML=t(`It costs <b>${fmt(cost)}</b><small>5% fee included · you'd have ${fmt(S.money-cost)} left</small>`,`Cuesta <b>${fmt(cost)}</b><small>Incluye 5% de comisión · te quedarían ${fmt(S.money-cost)}</small>`)}
+  else{const p=sellPreview(c,n),r=p.val-p.cost;$('shInfo').innerHTML=t(`You get <b>${fmt(p.val)}</b><small>Result <span class="${r>=0?'g':'r'}">${r>=0?'+':'−'}${fmt(Math.abs(r))}</span> vs. what you paid</small>`,`Recibís <b>${fmt(p.val)}</b><small>Resultado <span class="${r>=0?'g':'r'}">${r>=0?'+':'−'}${fmt(Math.abs(r))}</span> contra lo que pagaste</small>`)}
+  $('shOk').textContent=buy?t(`Buy ${dec(n,0)}`,`Comprar ${dec(n,0)}`):t(`Sell ${dec(n,0)}`,`Vender ${dec(n,0)}`);$('shOk').className=buy?'sbuy':'ssell';
+}
+const closeSheet=()=>{sheet=null;$('stockSheet').classList.remove('on')};
+$('shRange').oninput=e=>{if(sheet){sheet.n=+e.target.value;drawSheet()}};
+$('shMinus').onclick=()=>{if(sheet){sheet.n--;drawSheet()}};$('shPlus').onclick=()=>{if(sheet){sheet.n++;drawSheet()}};
+$('shAll').onclick=()=>{if(sheet){sheet.n=1e9;drawSheet()}};
+$('shCancel').onclick=closeSheet;$('stockSheet').onclick=e=>{if(e.target.id==='stockSheet')closeSheet()};
+$('shOk').onclick=()=>{
+  if(!sheet)return;const c=S.bolsa.cos[stockSel];
+  if(sheet.kind==='buy'){const k=buyCo(c,sheet.n,clockNow());if(k){play('buy');buzz(15);toast(t(`Bought ${k} shares`,`Compraste ${k} acciones`),'#CDEBDD');save()}else toast(t('Not enough money for a share','No te alcanza para una acción'))}
+  else{const r=sellCo(c,sheet.n,clockNow());if(r){play(r.profit>0?'find':'buy');buzz(15);if(r.capped)toast(t('Daily limit reached: part of that profit did not count','Llegaste al tope de hoy: parte de esa ganancia no se sumó'),null,true);save()}}
+  closeSheet();drawStock();
+};
 // the first order is the moment to offer alerts: the benefit is the alert itself, there is no prize for it
 function orderSet(){const B=S.bolsa;save();if(!B.asked&&window.PennyNative){B.asked=true;save();$('stockAsk').classList.add('on')}}
 $('stockAskYes').onclick=()=>{S.settings.notifB=true;$('stockAsk').classList.remove('on');askNotif(true);syncSettings();save()};
 $('stockAskNo').onclick=()=>$('stockAsk').classList.remove('on');
 $('stockBtn').onclick=()=>{audioInit();if(S.bolsa)S.bolsa.isNew=false;unlockCheck();reportOrders(bolsaCatchUp());stockSel=-1;drawStock();$('stock').classList.add('on')};
-$('stockClose').onclick=()=>{$('stock').classList.remove('on');save()};
-$('stockBack').onclick=()=>{stockSel=-1;drawStock()};
+$('stockClose').onclick=()=>{closeSheet();$('stock').classList.remove('on');save()};
+$('stockBack').onclick=()=>{closeSheet();stockSel=-1;drawStock()};
 $('stockHelloGo').onclick=()=>{$('stockHello').classList.remove('on');$('stockBtn').onclick()};
 // ---------- Rush hour: a 30-second micro-game while you play ----------
 // shows up now and then if you tapped in the last 30 seconds, at most once every 15 minutes of play; 3 borrowed
@@ -1427,7 +1479,7 @@ function drawPeak(){
   $('peakLeft').textContent='0:'+String(Math.ceil(P.left)).padStart(2,'0');
   $('peakGain').textContent=(P.res<0?'−':'+')+fmt(Math.abs(peakMoney(P.res)));$('peakGain').className=P.res<0?'r':'g';
   $('peakChart').innerHTML=chartSvg(P.arr,320,170,{id:'pk',line:P.hold,h:170});
-  $('peakPrice').textContent=fmt(P.p*PEAK.sec*prodNow());
+  $('peakPrice').textContent=quote(P.p);
   $('peakBuy').disabled=!!P.hold||P.ops>=PEAK.ops;$('peakSell').disabled=!P.hold;
   $('peakOps').textContent=t(`Rounds left: ${PEAK.ops-P.ops}`,`Rondas que quedan: ${PEAK.ops-P.ops}`);
 }
@@ -1475,7 +1527,7 @@ function scheduleBolsaNotif(){
 function bolsaLive(){
   const B=S.bolsa;if(!B||!B.on)return;const before=B.m,rep=bolsaCatchUp();
   if(rep.length)reportOrders(rep);
-  if(B.m!==before&&$('stock').classList.contains('on'))drawStock();
+  if(B.m!==before&&$('stock').classList.contains('on')){drawStock();drawSheet()}
 }
 // ---------- main loop ----------
 let ringShown=-1;
